@@ -43,6 +43,7 @@ jobs:
           draft: false
           prerelease: false
   publish-crate:
+    runs-on: ubuntu-latest
     needs: sync-ggml
     if: needs.sync-ggml.outputs.new_release == 'true'
     steps:
