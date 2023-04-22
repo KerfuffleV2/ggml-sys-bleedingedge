@@ -2,6 +2,8 @@
 name = "ggml-sys-bleedingedge"
 version = "2304221527.0.0+llamacpp-release.master-0e018fe"
 description = "Bleeding edge low-level bindings to GGML. "
+repository = "https://github.com/KerfuffleV2/ggml-bleeding-edge"
+keywords = ["deep-learning", "machine-learning", "tensors", "ggml", "ml", "llms", "language-models", "inference"]
 edition = "2021"
 license = "MIT"
 resolver = "2"
