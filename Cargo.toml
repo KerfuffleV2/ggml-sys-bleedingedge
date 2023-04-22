@@ -1,6 +1,6 @@
 [package]
 name = "ggml-sys-bleedingedge"
-version = "0.0.230422152738-llamacpp-release.master-0e018fe"
+version = "2304221527.0.0+llamacpp-release.master-0e018fe"
 description = "Bleeding edge low-level bindings to GGML. "
 edition = "2021"
 license = "MIT"

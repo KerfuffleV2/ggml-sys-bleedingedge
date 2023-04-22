@@ -35,8 +35,8 @@ if test -z "`git status --untracked=no --porcelain`"; then
   exit 0
 fi
 
-STAMP=$(date -u '+%y%m%d%H%M%S')
-VERSION="0.0.${STAMP}-llamacpp-release.${LATEST_GGML_RELEASE}"
+STAMP=$(date -u '+%y%m%d%H%M')
+VERSION="${STAMP}.0.0+llamacpp-release.${LATEST_GGML_RELEASE}"
 
 sed -i "s@^version =.*@version = \"${VERSION}\"@" ./Cargo.toml
 mkdir -p src/

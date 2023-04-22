@@ -14,6 +14,11 @@ Note that the GGML project is undergoing very rapid development. Other than bein
 to generate the binding and build the package (on x86 Linux at least) you really can't
 make any assumptions about a release of this crate.
 
+Releases will be in the format `YYMMDDHHMM.0.0+sourcerepo-release.releasename` (UTC).
+At present, `sourcerepo` is going to be `llamacpp` (from the `llama.cpp` repo) but at
+some point it may change to point to the `ggml` repo instead (currently `llama.cpp` seems
+to get the features first). Build metadata after the `+` is informational only.
+
 ## Credits:
 
 ### GGML
