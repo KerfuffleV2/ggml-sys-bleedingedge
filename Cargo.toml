@@ -1,0 +1,11 @@
+[package]
+name = "ggml-sys-bleedingedge"
+version = "0.0.230422150234-llamacpp-release.master-0e018fe"
+edition = "2021"
+resolver = "2"
+
+[lib]
+
+[build-dependencies]
+cc = "^1.0"
+bindgen = "0.65"

@@ -1,0 +1,41 @@
+name: Sync GGML
+
+on:
+  workflow_dispatch: {}
+  schedule:
+    - cron: '0 */6 * * *'
+
+env:
+  CARGO_TERM_COLOR: never
+
+jobs:
+  sync-ggml:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: check-need-sync
+        id: check-need-sync
+        run: scripts/syncggml.sh only-check
+      - name: Early exit
+        if: steps.check-need-sync.outputs.new_release != 'true'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh run cancel ${{ github.run_id }}
+          gh run watch ${{ github.run_id }}
+      - uses: dtolnay/rust-toolchain@stable
+      - name: sync-if-needed
+        id: sync-if-needed
+        run: scripts/syncggml.sh
+      - uses: actions/checkout@v3
+      - name: make-release
+        id: make-release
+        if: steps.sync-if-needed.outputs.new_release == 'true'
+        uses: ncipollo/release-action@v1
+        with:
+          tag: v${{ steps.sync-if-needed.outputs.new_release_version }}
+          name: Release v${{ steps.sync-if-needed.outputs.new_release_version }}
+          generateReleaseNotes: true
+          makeLatest: true
+          draft: false
+          prerelease: false
