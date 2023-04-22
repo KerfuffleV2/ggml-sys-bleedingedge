@@ -19,18 +19,14 @@ jobs:
       - name: check-need-sync
         id: check-need-sync
         run: scripts/syncggml.sh only-check
-      - name: Early exit
-        if: steps.check-need-sync.outputs.new_release != 'true'
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          gh run cancel ${{ github.run_id }}
-          gh run watch ${{ github.run_id }}
       - uses: dtolnay/rust-toolchain@stable
+        if: steps.check-need-sync.outputs.new_release == 'true'
       - name: sync-if-needed
         id: sync-if-needed
+        if: steps.check-need-sync.outputs.new_release == 'true'
         run: scripts/syncggml.sh
       - uses: actions/checkout@v3
+        if: steps.check-need-sync.outputs.new_release == 'true'
       - name: make-release
         id: make-release
         if: steps.sync-if-needed.outputs.new_release == 'true'
