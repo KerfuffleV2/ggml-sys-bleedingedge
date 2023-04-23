@@ -13,6 +13,7 @@ jobs:
       - uses: actions/checkout@v3
       - name: Use latest release
         run: |
+          git fetch --tags && \
           git checkout "$(git describe --tags `git rev-list --tags='v*' --max-count=1`)"
       - uses: dtolnay/rust-toolchain@stable
       - uses: katyo/publish-crates@v2
