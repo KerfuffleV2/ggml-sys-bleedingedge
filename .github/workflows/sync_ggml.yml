@@ -11,9 +11,6 @@ env:
 jobs:
   sync-ggml:
     runs-on: ubuntu-latest
-    outputs:
-      new_release: ${{ steps.sync-if-needed.outputs.new_release }}
-      new_release_version: ${{ steps.sync-if-needed.outputs.new_release_version }}
     steps:
       - uses: actions/checkout@v3
       - name: check-need-sync
@@ -38,14 +35,3 @@ jobs:
           makeLatest: true
           draft: false
           prerelease: false
-  publish-crate:
-    runs-on: ubuntu-latest
-    needs: sync-ggml
-    if: needs.sync-ggml.outputs.new_release == 'true'
-    steps:
-      - uses: actions/checkout@v3
-      - uses: dtolnay/rust-toolchain@stable
-      - uses: katyo/publish-crates@v2
-        with:
-          registry-token: ${{ secrets.CARGO_REGISTRY_TOKEN }}
-          ignore-unpublished-changes: true
