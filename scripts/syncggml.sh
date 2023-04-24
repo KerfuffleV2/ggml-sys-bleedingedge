@@ -24,10 +24,10 @@ if test "${1:-}" = "only-check"; then
   exit 0
 fi
 echo "New release tag. Latest [${LATEST_GGML_RELEASE}], ours: [${OUR_GGML_RELEASE}]"
-mkdir -p ggml-src && ( \
-  cd ggml-src && \
-  curl -sLO "https://raw.githubusercontent.com/ggerganov/llama.cpp/${LATEST_GGML_RELEASE}/ggml.{c,h}" \
-  )
+git clone --depth 100 --single-branch https://github.com/ggerganov/llama.cpp ggml-repo && \
+  ( cd ggml-repo && git checkout "$LATEST_GGML_RELEASE" )
+mkdir -p ggml-src
+cp ggml-repo/ggml.c ggml-repo/ggml.h ggml-src/
 git add ggml-src/ggml.c ggml-src/ggml.h
 
 if test -z "`git status --untracked=no --porcelain`"; then
@@ -51,7 +51,10 @@ echo "$LATEST_GGML_RELEASE" > ./ggml-tag-current.txt
 git add Cargo.toml VERSION.txt ggml-tag-current.txt ggml-tag-previous.txt src/lib.rs
 git config user.name github-actions
 git config user.email github-actions@github.com
-git commit -m "[auto] Sync version ${VERSION}"
+( echo -e "[auto] Sync version ${VERSION}\n\n== Relevant log messages from source repo:\n" ; \
+  cd ggml-repo && \
+  git log "${OUR_GGML_RELEASE}..${LATEST_GGML_RELEASE}" -- ggml.c ggml.h 2>/dev/null || true \
+) | git commit
 git push
 echo 'new_release=true' >> $GITHUB_OUTPUT
 echo "new_release_version=${VERSION}" >> $GITHUB_OUTPUT
