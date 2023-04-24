@@ -54,7 +54,7 @@ git config user.email github-actions@github.com
 ( echo -e "[auto] Sync version ${VERSION}\n\n== Relevant log messages from source repo:\n" ; \
   cd ggml-repo && \
   git log "${OUR_GGML_RELEASE}..${LATEST_GGML_RELEASE}" -- ggml.c ggml.h 2>/dev/null || true \
-) | git commit
+) | git commit -F -
 git push
 echo 'new_release=true' >> $GITHUB_OUTPUT
 echo "new_release_version=${VERSION}" >> $GITHUB_OUTPUT
