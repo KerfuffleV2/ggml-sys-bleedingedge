@@ -3,21 +3,37 @@
 use std::{env, fs::metadata, path::PathBuf};
 
 fn generate_bindings() {
-    let ggml_header_path = PathBuf::from("ggml-src").join("ggml.h");
+    const SRC_FILES: &[&str] = &["ggml.h", "ggml.c"];
+
+    let ggml_paths = SRC_FILES
+        .iter()
+        .map(|fname| PathBuf::from("ggml-src").join(fname))
+        .collect::<Vec<_>>();
+    let ggml_header_path = &ggml_paths[0];
+    let ggml_mdata = ggml_paths
+        .iter()
+        .map(|p| metadata(p).expect(&format!("Cannot get metadata for {p:?}")))
+        .collect::<Vec<_>>();
     let librs_path = PathBuf::from("src").join("lib.rs");
-    let header_md = metadata(&ggml_header_path).expect("Missing GGML header file!");
     if let Ok(lib_md) = metadata(&librs_path) {
-        assert!(header_md.is_file(), "ggml.h unexpectedly isn't a file?");
+        assert!(
+            ggml_mdata.iter().all(|md| md.is_file()),
+            "Unexpected non-file in source list"
+        );
         assert!(lib_md.is_file(), "lib.rs unexpectedly isn't a file?");
-        let header_stamp = header_md
-            .modified()
-            .or_else(|_| header_md.created())
-            .expect("Couldn't get timestamp for ggml.h");
+        let ggml_stamps = ggml_mdata
+            .iter()
+            .map(|md| {
+                md.modified()
+                    .or_else(|_| md.created())
+                    .expect("Could not get timestamp")
+            })
+            .collect::<Vec<_>>();
         let lib_stamp = lib_md
             .modified()
-            .or_else(|_| header_md.created())
+            .or_else(|_| lib_md.created())
             .expect("Couldn't get timestamp for lib.rs");
-        if lib_md.len() > 0 && lib_stamp >= header_stamp {
+        if lib_md.len() > 0 && ggml_stamps.iter().all(|stamp| &lib_stamp >= stamp) {
             return;
         }
     }

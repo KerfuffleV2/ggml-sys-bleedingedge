@@ -39,8 +39,11 @@ STAMP=$(date -u '+%y%m%d%H%M')
 VERSION="${STAMP}.0.0+llamacpp-release.${LATEST_GGML_RELEASE}"
 
 sed -i "s@^version =.*@version = \"${VERSION}\"@" ./Cargo.toml
-mkdir -p src/
-touch src/lib.rs
+
+if ! test -f src/lib.rs; then
+  mkdir -p src/
+  touch src/lib.rs
+fi
 
 # Make sure it actually builds.
 cargo build
