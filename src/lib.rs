@@ -32,12 +32,14 @@ pub const ggml_type_GGML_TYPE_Q4_0: ggml_type = 2;
 pub const ggml_type_GGML_TYPE_Q4_1: ggml_type = 3;
 pub const ggml_type_GGML_TYPE_Q4_2: ggml_type = 4;
 pub const ggml_type_GGML_TYPE_Q4_3: ggml_type = 5;
-pub const ggml_type_GGML_TYPE_Q8_0: ggml_type = 6;
-pub const ggml_type_GGML_TYPE_Q8_1: ggml_type = 7;
-pub const ggml_type_GGML_TYPE_I8: ggml_type = 8;
-pub const ggml_type_GGML_TYPE_I16: ggml_type = 9;
-pub const ggml_type_GGML_TYPE_I32: ggml_type = 10;
-pub const ggml_type_GGML_TYPE_COUNT: ggml_type = 11;
+pub const ggml_type_GGML_TYPE_Q5_0: ggml_type = 6;
+pub const ggml_type_GGML_TYPE_Q5_1: ggml_type = 7;
+pub const ggml_type_GGML_TYPE_Q8_0: ggml_type = 8;
+pub const ggml_type_GGML_TYPE_Q8_1: ggml_type = 9;
+pub const ggml_type_GGML_TYPE_I8: ggml_type = 10;
+pub const ggml_type_GGML_TYPE_I16: ggml_type = 11;
+pub const ggml_type_GGML_TYPE_I32: ggml_type = 12;
+pub const ggml_type_GGML_TYPE_COUNT: ggml_type = 13;
 pub type ggml_type = ::std::os::raw::c_uint;
 pub const ggml_op_GGML_OP_NONE: ggml_op = 0;
 pub const ggml_op_GGML_OP_DUP: ggml_op = 1;
@@ -1404,6 +1406,24 @@ extern "C" {
 }
 extern "C" {
     pub fn ggml_quantize_q4_3(
+        src: *const f32,
+        dst: *mut ::std::os::raw::c_void,
+        n: ::std::os::raw::c_int,
+        k: ::std::os::raw::c_int,
+        hist: *mut i64,
+    ) -> usize;
+}
+extern "C" {
+    pub fn ggml_quantize_q5_0(
+        src: *const f32,
+        dst: *mut ::std::os::raw::c_void,
+        n: ::std::os::raw::c_int,
+        k: ::std::os::raw::c_int,
+        hist: *mut i64,
+    ) -> usize;
+}
+extern "C" {
+    pub fn ggml_quantize_q5_1(
         src: *const f32,
         dst: *mut ::std::os::raw::c_void,
         n: ::std::os::raw::c_int,
