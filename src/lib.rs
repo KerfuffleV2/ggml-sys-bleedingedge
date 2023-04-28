@@ -73,13 +73,14 @@ pub const ggml_op_GGML_OP_GET_ROWS: ggml_op = 28;
 pub const ggml_op_GGML_OP_DIAG_MASK_INF: ggml_op = 29;
 pub const ggml_op_GGML_OP_SOFT_MAX: ggml_op = 30;
 pub const ggml_op_GGML_OP_ROPE: ggml_op = 31;
-pub const ggml_op_GGML_OP_CONV_1D_1S: ggml_op = 32;
-pub const ggml_op_GGML_OP_CONV_1D_2S: ggml_op = 33;
-pub const ggml_op_GGML_OP_FLASH_ATTN: ggml_op = 34;
-pub const ggml_op_GGML_OP_FLASH_FF: ggml_op = 35;
-pub const ggml_op_GGML_OP_MAP_UNARY: ggml_op = 36;
-pub const ggml_op_GGML_OP_MAP_BINARY: ggml_op = 37;
-pub const ggml_op_GGML_OP_COUNT: ggml_op = 38;
+pub const ggml_op_GGML_OP_ALIBI: ggml_op = 32;
+pub const ggml_op_GGML_OP_CONV_1D_1S: ggml_op = 33;
+pub const ggml_op_GGML_OP_CONV_1D_2S: ggml_op = 34;
+pub const ggml_op_GGML_OP_FLASH_ATTN: ggml_op = 35;
+pub const ggml_op_GGML_OP_FLASH_FF: ggml_op = 36;
+pub const ggml_op_GGML_OP_MAP_UNARY: ggml_op = 37;
+pub const ggml_op_GGML_OP_MAP_BINARY: ggml_op = 38;
+pub const ggml_op_GGML_OP_COUNT: ggml_op = 39;
 pub type ggml_op = ::std::os::raw::c_uint;
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
@@ -924,6 +925,14 @@ extern "C" {
     ) -> *mut ggml_tensor;
 }
 extern "C" {
+    pub fn ggml_alibi(
+        ctx: *mut ggml_context,
+        a: *mut ggml_tensor,
+        n_past: ::std::os::raw::c_int,
+        n_head: ::std::os::raw::c_int,
+    ) -> *mut ggml_tensor;
+}
+extern "C" {
     pub fn ggml_conv_1d_1s(
         ctx: *mut ggml_context,
         a: *mut ggml_tensor,
@@ -1488,6 +1497,12 @@ extern "C" {
 }
 extern "C" {
     pub fn ggml_cpu_has_cublas() -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn ggml_cpu_has_clblast() -> ::std::os::raw::c_int;
+}
+extern "C" {
+    pub fn ggml_cpu_has_gpublas() -> ::std::os::raw::c_int;
 }
 extern "C" {
     pub fn ggml_cpu_has_sse3() -> ::std::os::raw::c_int;
