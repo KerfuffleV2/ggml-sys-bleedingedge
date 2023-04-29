@@ -35,6 +35,13 @@ fn main() {
 
     println!("cargo:rerun-if-changed=ggml-src");
 
+    // If running on docs.rs, the filesystem is readonly so we can't actually generate
+    // anything. This package should have been fetched with the bindings already generated
+    // so we just exit  here.
+    if env::var("DOCS_RS").is_ok() {
+        return;
+    }
+
     generate_bindings();
 
     let ggml_source_path = PathBuf::from(GGML_SOURCE_DIR).join(GGML_SOURCE);
