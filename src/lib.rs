@@ -40,6 +40,17 @@ pub const ggml_type_GGML_TYPE_I16: ggml_type = 11;
 pub const ggml_type_GGML_TYPE_I32: ggml_type = 12;
 pub const ggml_type_GGML_TYPE_COUNT: ggml_type = 13;
 pub type ggml_type = ::std::os::raw::c_uint;
+pub const ggml_ftype_GGML_FTYPE_UNKNOWN: ggml_ftype = -1;
+pub const ggml_ftype_GGML_FTYPE_ALL_F32: ggml_ftype = 0;
+pub const ggml_ftype_GGML_FTYPE_MOSTLY_F16: ggml_ftype = 1;
+pub const ggml_ftype_GGML_FTYPE_MOSTLY_Q4_0: ggml_ftype = 2;
+pub const ggml_ftype_GGML_FTYPE_MOSTLY_Q4_1: ggml_ftype = 3;
+pub const ggml_ftype_GGML_FTYPE_MOSTLY_Q4_1_SOME_F16: ggml_ftype = 4;
+pub const ggml_ftype_GGML_FTYPE_MOSTLY_Q4_2: ggml_ftype = 5;
+pub const ggml_ftype_GGML_FTYPE_MOSTLY_Q8_0: ggml_ftype = 7;
+pub const ggml_ftype_GGML_FTYPE_MOSTLY_Q5_0: ggml_ftype = 8;
+pub const ggml_ftype_GGML_FTYPE_MOSTLY_Q5_1: ggml_ftype = 9;
+pub type ggml_ftype = ::std::os::raw::c_int;
 pub const ggml_op_GGML_OP_NONE: ggml_op = 0;
 pub const ggml_op_GGML_OP_DUP: ggml_op = 1;
 pub const ggml_op_GGML_OP_ADD: ggml_op = 2;
@@ -628,6 +639,9 @@ extern "C" {
 }
 extern "C" {
     pub fn ggml_is_quantized(type_: ggml_type) -> bool;
+}
+extern "C" {
+    pub fn ggml_ftype_to_ggml_type(ftype: ggml_ftype) -> ggml_type;
 }
 extern "C" {
     pub fn ggml_init(params: ggml_init_params) -> *mut ggml_context;
