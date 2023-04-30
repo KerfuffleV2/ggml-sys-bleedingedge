@@ -1,6 +1,6 @@
 [package]
 name = "ggml-sys-bleedingedge"
-version = "2304291819.0.0+llamacpp-release.master-e8c0516"
+version = "2304300134.0.0+llamacpp-release.master-c3ca7a5"
 description = "Bleeding edge low-level bindings to GGML. "
 repository = "https://github.com/KerfuffleV2/ggml-sys-bleedingedge"
 keywords = ["deep-learning", "machine-learning", "tensors", "ggml", "ml"]
