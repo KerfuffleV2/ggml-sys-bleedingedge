@@ -21,6 +21,12 @@ extern "C" {
 extern "C" {
     pub fn ggml_fp32_to_fp16(x: f32) -> ggml_fp16_t;
 }
+extern "C" {
+    pub fn ggml_fp16_to_fp32_row(x: *const ggml_fp16_t, y: *mut f32, n: usize);
+}
+extern "C" {
+    pub fn ggml_fp32_to_fp16_row(x: *const f32, y: *mut ggml_fp16_t, n: usize);
+}
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct ggml_context {
