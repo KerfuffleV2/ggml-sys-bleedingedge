@@ -180,6 +180,7 @@ pub struct ggml_tensor {
     pub perf_cycles: i64,
     pub perf_time_us: i64,
     pub data: *mut ::std::os::raw::c_void,
+    pub name: [::std::os::raw::c_char; 32usize],
     pub padding: [::std::os::raw::c_char; 8usize],
 }
 #[test]
@@ -188,7 +189,7 @@ fn bindgen_test_layout_ggml_tensor() {
     let ptr = UNINIT.as_ptr();
     assert_eq!(
         ::std::mem::size_of::<ggml_tensor>(),
-        176usize,
+        208usize,
         concat!("Size of: ", stringify!(ggml_tensor))
     );
     assert_eq!(
@@ -347,8 +348,18 @@ fn bindgen_test_layout_ggml_tensor() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).padding) as usize - ptr as usize },
+        unsafe { ::std::ptr::addr_of!((*ptr).name) as usize - ptr as usize },
         168usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(ggml_tensor),
+            "::",
+            stringify!(name)
+        )
+    );
+    assert_eq!(
+        unsafe { ::std::ptr::addr_of!((*ptr).padding) as usize - ptr as usize },
+        200usize,
         concat!(
             "Offset of field: ",
             stringify!(ggml_tensor),
@@ -741,6 +752,12 @@ extern "C" {
 }
 extern "C" {
     pub fn ggml_get_data_f32(tensor: *const ggml_tensor) -> *mut f32;
+}
+extern "C" {
+    pub fn ggml_get_name(tensor: *const ggml_tensor) -> *const ::std::os::raw::c_char;
+}
+extern "C" {
+    pub fn ggml_set_name(tensor: *mut ggml_tensor, name: *const ::std::os::raw::c_char);
 }
 extern "C" {
     pub fn ggml_dup(ctx: *mut ggml_context, a: *mut ggml_tensor) -> *mut ggml_tensor;
