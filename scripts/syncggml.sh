@@ -47,6 +47,7 @@ fi
 
 # Make sure it actually builds.
 cargo build
+cargo test
 
 echo "$VERSION" > ./VERSION.txt
 echo "$OUR_GGML_RELEASE" > ./ggml-tag-previous.txt
