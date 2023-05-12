@@ -36,7 +36,6 @@ pub const ggml_type_GGML_TYPE_F32: ggml_type = 0;
 pub const ggml_type_GGML_TYPE_F16: ggml_type = 1;
 pub const ggml_type_GGML_TYPE_Q4_0: ggml_type = 2;
 pub const ggml_type_GGML_TYPE_Q4_1: ggml_type = 3;
-pub const ggml_type_GGML_TYPE_Q4_2: ggml_type = 4;
 pub const ggml_type_GGML_TYPE_Q5_0: ggml_type = 6;
 pub const ggml_type_GGML_TYPE_Q5_1: ggml_type = 7;
 pub const ggml_type_GGML_TYPE_Q8_0: ggml_type = 8;
@@ -52,7 +51,6 @@ pub const ggml_ftype_GGML_FTYPE_MOSTLY_F16: ggml_ftype = 1;
 pub const ggml_ftype_GGML_FTYPE_MOSTLY_Q4_0: ggml_ftype = 2;
 pub const ggml_ftype_GGML_FTYPE_MOSTLY_Q4_1: ggml_ftype = 3;
 pub const ggml_ftype_GGML_FTYPE_MOSTLY_Q4_1_SOME_F16: ggml_ftype = 4;
-pub const ggml_ftype_GGML_FTYPE_MOSTLY_Q4_2: ggml_ftype = 5;
 pub const ggml_ftype_GGML_FTYPE_MOSTLY_Q8_0: ggml_ftype = 7;
 pub const ggml_ftype_GGML_FTYPE_MOSTLY_Q5_0: ggml_ftype = 8;
 pub const ggml_ftype_GGML_FTYPE_MOSTLY_Q5_1: ggml_ftype = 9;
@@ -1433,15 +1431,6 @@ extern "C" {
 }
 extern "C" {
     pub fn ggml_quantize_q4_1(
-        src: *const f32,
-        dst: *mut ::std::os::raw::c_void,
-        n: ::std::os::raw::c_int,
-        k: ::std::os::raw::c_int,
-        hist: *mut i64,
-    ) -> usize;
-}
-extern "C" {
-    pub fn ggml_quantize_q4_2(
         src: *const f32,
         dst: *mut ::std::os::raw::c_void,
         n: ::std::os::raw::c_int,
