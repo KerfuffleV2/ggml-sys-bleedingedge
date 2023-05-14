@@ -196,7 +196,7 @@ pub struct ggml_tensor {
     pub perf_time_us: i64,
     pub data: *mut ::std::os::raw::c_void,
     pub name: [::std::os::raw::c_char; 32usize],
-    pub padding: [::std::os::raw::c_char; 9usize],
+    pub padding: [::std::os::raw::c_char; 16usize],
 }
 #[test]
 fn bindgen_test_layout_ggml_tensor() {
