@@ -8,6 +8,8 @@ pub const GGMLSYS_VERSION: Option<&str> = option_env!("CARGO_PKG_VERSION");
 
 pub const GGML_FILE_MAGIC: u32 = 1734831468;
 pub const GGML_FILE_VERSION: u32 = 1;
+pub const GGML_QNT_VERSION: u32 = 1;
+pub const GGML_QNT_VERSION_FACTOR: u32 = 1000;
 pub const GGML_MAX_DIMS: u32 = 4;
 pub const GGML_MAX_NODES: u32 = 4096;
 pub const GGML_MAX_PARAMS: u32 = 256;
