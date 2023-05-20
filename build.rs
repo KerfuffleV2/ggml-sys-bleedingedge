@@ -11,6 +11,17 @@ fn generate_bindings() {
     let librs_path = PathBuf::from("src").join("lib.rs");
 
     let bindings = bindgen::Builder::default()
+        .derive_copy(true)
+        .derive_debug(true)
+        .derive_partialeq(true)
+        .derive_partialord(true)
+        .derive_eq(true)
+        .derive_ord(true)
+        .derive_hash(true)
+        .impl_debug(true)
+        .merge_extern_blocks(true)
+        .enable_function_attribute_detection()
+        .sort_semantically(true)
         .header(ggml_header_path.to_string_lossy())
         // Suppress some warnings
         .raw_line("#![allow(non_upper_case_globals)]")
