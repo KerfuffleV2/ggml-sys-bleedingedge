@@ -6,6 +6,150 @@
 #![allow(unused)]
 pub const GGMLSYS_VERSION: Option<&str> = option_env!("CARGO_PKG_VERSION");
 
+pub type ggml_fp16_t = u16;
+pub type ggml_type = ::std::os::raw::c_uint;
+pub type ggml_backend = ::std::os::raw::c_uint;
+pub type ggml_ftype = ::std::os::raw::c_int;
+pub type ggml_op = ::std::os::raw::c_uint;
+pub type ggml_unary_op_f32_t = ::std::option::Option<
+    unsafe extern "C" fn(arg1: ::std::os::raw::c_int, arg2: *mut f32, arg3: *const f32),
+>;
+pub type ggml_binary_op_f32_t = ::std::option::Option<
+    unsafe extern "C" fn(
+        arg1: ::std::os::raw::c_int,
+        arg2: *mut f32,
+        arg3: *const f32,
+        arg4: *const f32,
+    ),
+>;
+pub type ggml_opt_type = ::std::os::raw::c_uint;
+pub type ggml_linesearch = ::std::os::raw::c_uint;
+pub type ggml_opt_result = ::std::os::raw::c_int;
+pub type dequantize_row_q_t = ::std::option::Option<
+    unsafe extern "C" fn(x: *const ::std::os::raw::c_void, y: *mut f32, k: ::std::os::raw::c_int),
+>;
+pub type quantize_row_q_t = ::std::option::Option<
+    unsafe extern "C" fn(x: *const f32, y: *mut ::std::os::raw::c_void, k: ::std::os::raw::c_int),
+>;
+pub type vec_dot_q_t = ::std::option::Option<
+    unsafe extern "C" fn(
+        n: ::std::os::raw::c_int,
+        s: *mut f32,
+        x: *const ::std::os::raw::c_void,
+        y: *const ::std::os::raw::c_void,
+    ),
+>;
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct ggml_context {
+    _unused: [u8; 0],
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+pub struct ggml_object {
+    pub offs: usize,
+    pub size: usize,
+    pub next: *mut ggml_object,
+    pub padding: [::std::os::raw::c_char; 8usize],
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+pub struct ggml_tensor {
+    pub type_: ggml_type,
+    pub backend: ggml_backend,
+    pub n_dims: ::std::os::raw::c_int,
+    pub ne: [i64; 4usize],
+    pub nb: [usize; 4usize],
+    pub op: ggml_op,
+    pub is_param: bool,
+    pub grad: *mut ggml_tensor,
+    pub src0: *mut ggml_tensor,
+    pub src1: *mut ggml_tensor,
+    pub opt: [*mut ggml_tensor; 4usize],
+    pub n_tasks: ::std::os::raw::c_int,
+    pub perf_runs: ::std::os::raw::c_int,
+    pub perf_cycles: i64,
+    pub perf_time_us: i64,
+    pub data: *mut ::std::os::raw::c_void,
+    pub name: [::std::os::raw::c_char; 32usize],
+    pub padding: [::std::os::raw::c_char; 16usize],
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+pub struct ggml_cgraph {
+    pub n_nodes: ::std::os::raw::c_int,
+    pub n_leafs: ::std::os::raw::c_int,
+    pub n_threads: ::std::os::raw::c_int,
+    pub work_size: usize,
+    pub work: *mut ggml_tensor,
+    pub nodes: [*mut ggml_tensor; 4096usize],
+    pub grads: [*mut ggml_tensor; 4096usize],
+    pub leafs: [*mut ggml_tensor; 4096usize],
+    pub perf_runs: ::std::os::raw::c_int,
+    pub perf_cycles: i64,
+    pub perf_time_us: i64,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+pub struct ggml_scratch {
+    pub offs: usize,
+    pub size: usize,
+    pub data: *mut ::std::os::raw::c_void,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+pub struct ggml_init_params {
+    pub mem_size: usize,
+    pub mem_buffer: *mut ::std::os::raw::c_void,
+    pub no_alloc: bool,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone, PartialOrd, PartialEq)]
+pub struct ggml_opt_params {
+    pub type_: ggml_opt_type,
+    pub n_threads: ::std::os::raw::c_int,
+    pub past: ::std::os::raw::c_int,
+    pub delta: f32,
+    pub max_no_improvement: ::std::os::raw::c_int,
+    pub print_forward_graph: bool,
+    pub print_backward_graph: bool,
+    pub adam: ggml_opt_params__bindgen_ty_1,
+    pub lbfgs: ggml_opt_params__bindgen_ty_2,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone, PartialOrd, PartialEq)]
+pub struct ggml_opt_params__bindgen_ty_1 {
+    pub n_iter: ::std::os::raw::c_int,
+    pub alpha: f32,
+    pub beta1: f32,
+    pub beta2: f32,
+    pub eps: f32,
+    pub eps_f: f32,
+    pub eps_g: f32,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone, PartialOrd, PartialEq)]
+pub struct ggml_opt_params__bindgen_ty_2 {
+    pub m: ::std::os::raw::c_int,
+    pub n_iter: ::std::os::raw::c_int,
+    pub max_linesearch: ::std::os::raw::c_int,
+    pub eps: f32,
+    pub ftol: f32,
+    pub wolfe: f32,
+    pub min_step: f32,
+    pub max_step: f32,
+    pub linesearch: ggml_linesearch,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+pub struct quantize_fns_t {
+    pub dequantize_row_q: dequantize_row_q_t,
+    pub quantize_row_q: quantize_row_q_t,
+    pub quantize_row_q_reference: quantize_row_q_t,
+    pub quantize_row_q_dot: quantize_row_q_t,
+    pub vec_dot_q: vec_dot_q_t,
+    pub vec_dot_type: ggml_type,
+}
 pub const GGML_FILE_MAGIC: u32 = 1734831468;
 pub const GGML_FILE_VERSION: u32 = 1;
 pub const GGML_QNT_VERSION: u32 = 2;
@@ -16,24 +160,6 @@ pub const GGML_MAX_PARAMS: u32 = 256;
 pub const GGML_MAX_CONTEXTS: u32 = 64;
 pub const GGML_MAX_OPT: u32 = 4;
 pub const GGML_DEFAULT_N_THREADS: u32 = 4;
-pub type ggml_fp16_t = u16;
-extern "C" {
-    pub fn ggml_fp16_to_fp32(x: ggml_fp16_t) -> f32;
-}
-extern "C" {
-    pub fn ggml_fp32_to_fp16(x: f32) -> ggml_fp16_t;
-}
-extern "C" {
-    pub fn ggml_fp16_to_fp32_row(x: *const ggml_fp16_t, y: *mut f32, n: usize);
-}
-extern "C" {
-    pub fn ggml_fp32_to_fp16_row(x: *const f32, y: *mut ggml_fp16_t, n: usize);
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct ggml_context {
-    _unused: [u8; 0],
-}
 pub const ggml_type_GGML_TYPE_F32: ggml_type = 0;
 pub const ggml_type_GGML_TYPE_F16: ggml_type = 1;
 pub const ggml_type_GGML_TYPE_Q4_0: ggml_type = 2;
@@ -46,10 +172,8 @@ pub const ggml_type_GGML_TYPE_I8: ggml_type = 10;
 pub const ggml_type_GGML_TYPE_I16: ggml_type = 11;
 pub const ggml_type_GGML_TYPE_I32: ggml_type = 12;
 pub const ggml_type_GGML_TYPE_COUNT: ggml_type = 13;
-pub type ggml_type = ::std::os::raw::c_uint;
 pub const ggml_backend_GGML_BACKEND_CPU: ggml_backend = 0;
 pub const ggml_backend_GGML_BACKEND_CUDA: ggml_backend = 1;
-pub type ggml_backend = ::std::os::raw::c_uint;
 pub const ggml_ftype_GGML_FTYPE_UNKNOWN: ggml_ftype = -1;
 pub const ggml_ftype_GGML_FTYPE_ALL_F32: ggml_ftype = 0;
 pub const ggml_ftype_GGML_FTYPE_MOSTLY_F16: ggml_ftype = 1;
@@ -59,7 +183,6 @@ pub const ggml_ftype_GGML_FTYPE_MOSTLY_Q4_1_SOME_F16: ggml_ftype = 4;
 pub const ggml_ftype_GGML_FTYPE_MOSTLY_Q8_0: ggml_ftype = 7;
 pub const ggml_ftype_GGML_FTYPE_MOSTLY_Q5_0: ggml_ftype = 8;
 pub const ggml_ftype_GGML_FTYPE_MOSTLY_Q5_1: ggml_ftype = 9;
-pub type ggml_ftype = ::std::os::raw::c_int;
 pub const ggml_op_GGML_OP_NONE: ggml_op = 0;
 pub const ggml_op_GGML_OP_DUP: ggml_op = 1;
 pub const ggml_op_GGML_OP_ADD: ggml_op = 2;
@@ -111,15 +234,23 @@ pub const ggml_op_GGML_OP_FLASH_FF: ggml_op = 47;
 pub const ggml_op_GGML_OP_MAP_UNARY: ggml_op = 48;
 pub const ggml_op_GGML_OP_MAP_BINARY: ggml_op = 49;
 pub const ggml_op_GGML_OP_COUNT: ggml_op = 50;
-pub type ggml_op = ::std::os::raw::c_uint;
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct ggml_object {
-    pub offs: usize,
-    pub size: usize,
-    pub next: *mut ggml_object,
-    pub padding: [::std::os::raw::c_char; 8usize],
-}
+pub const GGML_OBJECT_SIZE: usize = 32;
+pub const ggml_opt_type_GGML_OPT_ADAM: ggml_opt_type = 0;
+pub const ggml_opt_type_GGML_OPT_LBFGS: ggml_opt_type = 1;
+pub const ggml_linesearch_GGML_LINESEARCH_DEFAULT: ggml_linesearch = 1;
+pub const ggml_linesearch_GGML_LINESEARCH_BACKTRACKING_ARMIJO: ggml_linesearch = 0;
+pub const ggml_linesearch_GGML_LINESEARCH_BACKTRACKING_WOLFE: ggml_linesearch = 1;
+pub const ggml_linesearch_GGML_LINESEARCH_BACKTRACKING_STRONG_WOLFE: ggml_linesearch = 2;
+pub const ggml_opt_result_GGML_OPT_OK: ggml_opt_result = 0;
+pub const ggml_opt_result_GGML_OPT_DID_NOT_CONVERGE: ggml_opt_result = 1;
+pub const ggml_opt_result_GGML_OPT_NO_CONTEXT: ggml_opt_result = 2;
+pub const ggml_opt_result_GGML_OPT_INVALID_WOLFE: ggml_opt_result = 3;
+pub const ggml_opt_result_GGML_OPT_FAIL: ggml_opt_result = 4;
+pub const ggml_opt_result_GGML_LINESEARCH_FAIL: ggml_opt_result = -128;
+pub const ggml_opt_result_GGML_LINESEARCH_MINIMUM_STEP: ggml_opt_result = -127;
+pub const ggml_opt_result_GGML_LINESEARCH_MAXIMUM_STEP: ggml_opt_result = -126;
+pub const ggml_opt_result_GGML_LINESEARCH_MAXIMUM_ITERATIONS: ggml_opt_result = -125;
+pub const ggml_opt_result_GGML_LINESEARCH_INVALID_PARAMETERS: ggml_opt_result = -124;
 #[test]
 fn bindgen_test_layout_ggml_object() {
     const UNINIT: ::std::mem::MaybeUninit<ggml_object> = ::std::mem::MaybeUninit::uninit();
@@ -174,29 +305,6 @@ fn bindgen_test_layout_ggml_object() {
             stringify!(padding)
         )
     );
-}
-pub const GGML_OBJECT_SIZE: usize = 32;
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct ggml_tensor {
-    pub type_: ggml_type,
-    pub backend: ggml_backend,
-    pub n_dims: ::std::os::raw::c_int,
-    pub ne: [i64; 4usize],
-    pub nb: [usize; 4usize],
-    pub op: ggml_op,
-    pub is_param: bool,
-    pub grad: *mut ggml_tensor,
-    pub src0: *mut ggml_tensor,
-    pub src1: *mut ggml_tensor,
-    pub opt: [*mut ggml_tensor; 4usize],
-    pub n_tasks: ::std::os::raw::c_int,
-    pub perf_runs: ::std::os::raw::c_int,
-    pub perf_cycles: i64,
-    pub perf_time_us: i64,
-    pub data: *mut ::std::os::raw::c_void,
-    pub name: [::std::os::raw::c_char; 32usize],
-    pub padding: [::std::os::raw::c_char; 16usize],
 }
 #[test]
 fn bindgen_test_layout_ggml_tensor() {
@@ -393,21 +501,6 @@ fn bindgen_test_layout_ggml_tensor() {
         )
     );
 }
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct ggml_cgraph {
-    pub n_nodes: ::std::os::raw::c_int,
-    pub n_leafs: ::std::os::raw::c_int,
-    pub n_threads: ::std::os::raw::c_int,
-    pub work_size: usize,
-    pub work: *mut ggml_tensor,
-    pub nodes: [*mut ggml_tensor; 4096usize],
-    pub grads: [*mut ggml_tensor; 4096usize],
-    pub leafs: [*mut ggml_tensor; 4096usize],
-    pub perf_runs: ::std::os::raw::c_int,
-    pub perf_cycles: i64,
-    pub perf_time_us: i64,
-}
 #[test]
 fn bindgen_test_layout_ggml_cgraph() {
     const UNINIT: ::std::mem::MaybeUninit<ggml_cgraph> = ::std::mem::MaybeUninit::uninit();
@@ -533,13 +626,6 @@ fn bindgen_test_layout_ggml_cgraph() {
         )
     );
 }
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct ggml_scratch {
-    pub offs: usize,
-    pub size: usize,
-    pub data: *mut ::std::os::raw::c_void,
-}
 #[test]
 fn bindgen_test_layout_ggml_scratch() {
     const UNINIT: ::std::mem::MaybeUninit<ggml_scratch> = ::std::mem::MaybeUninit::uninit();
@@ -585,13 +671,6 @@ fn bindgen_test_layout_ggml_scratch() {
         )
     );
 }
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct ggml_init_params {
-    pub mem_size: usize,
-    pub mem_buffer: *mut ::std::os::raw::c_void,
-    pub no_alloc: bool,
-}
 #[test]
 fn bindgen_test_layout_ggml_init_params() {
     const UNINIT: ::std::mem::MaybeUninit<ggml_init_params> = ::std::mem::MaybeUninit::uninit();
@@ -636,695 +715,6 @@ fn bindgen_test_layout_ggml_init_params() {
             stringify!(no_alloc)
         )
     );
-}
-extern "C" {
-    pub fn ggml_time_init();
-}
-extern "C" {
-    pub fn ggml_time_ms() -> i64;
-}
-extern "C" {
-    pub fn ggml_time_us() -> i64;
-}
-extern "C" {
-    pub fn ggml_cycles() -> i64;
-}
-extern "C" {
-    pub fn ggml_cycles_per_ms() -> i64;
-}
-extern "C" {
-    pub fn ggml_print_object(obj: *const ggml_object);
-}
-extern "C" {
-    pub fn ggml_print_objects(ctx: *const ggml_context);
-}
-extern "C" {
-    pub fn ggml_nelements(tensor: *const ggml_tensor) -> i64;
-}
-extern "C" {
-    pub fn ggml_nbytes(tensor: *const ggml_tensor) -> usize;
-}
-extern "C" {
-    pub fn ggml_blck_size(type_: ggml_type) -> ::std::os::raw::c_int;
-}
-extern "C" {
-    pub fn ggml_type_size(type_: ggml_type) -> usize;
-}
-extern "C" {
-    pub fn ggml_type_sizef(type_: ggml_type) -> f32;
-}
-extern "C" {
-    pub fn ggml_type_name(type_: ggml_type) -> *const ::std::os::raw::c_char;
-}
-extern "C" {
-    pub fn ggml_element_size(tensor: *const ggml_tensor) -> usize;
-}
-extern "C" {
-    pub fn ggml_is_quantized(type_: ggml_type) -> bool;
-}
-extern "C" {
-    pub fn ggml_ftype_to_ggml_type(ftype: ggml_ftype) -> ggml_type;
-}
-extern "C" {
-    pub fn ggml_init(params: ggml_init_params) -> *mut ggml_context;
-}
-extern "C" {
-    pub fn ggml_free(ctx: *mut ggml_context);
-}
-extern "C" {
-    pub fn ggml_used_mem(ctx: *const ggml_context) -> usize;
-}
-extern "C" {
-    pub fn ggml_set_scratch(ctx: *mut ggml_context, scratch: ggml_scratch) -> usize;
-}
-extern "C" {
-    pub fn ggml_new_tensor(
-        ctx: *mut ggml_context,
-        type_: ggml_type,
-        n_dims: ::std::os::raw::c_int,
-        ne: *const i64,
-    ) -> *mut ggml_tensor;
-}
-extern "C" {
-    pub fn ggml_new_tensor_1d(
-        ctx: *mut ggml_context,
-        type_: ggml_type,
-        ne0: i64,
-    ) -> *mut ggml_tensor;
-}
-extern "C" {
-    pub fn ggml_new_tensor_2d(
-        ctx: *mut ggml_context,
-        type_: ggml_type,
-        ne0: i64,
-        ne1: i64,
-    ) -> *mut ggml_tensor;
-}
-extern "C" {
-    pub fn ggml_new_tensor_3d(
-        ctx: *mut ggml_context,
-        type_: ggml_type,
-        ne0: i64,
-        ne1: i64,
-        ne2: i64,
-    ) -> *mut ggml_tensor;
-}
-extern "C" {
-    pub fn ggml_new_tensor_4d(
-        ctx: *mut ggml_context,
-        type_: ggml_type,
-        ne0: i64,
-        ne1: i64,
-        ne2: i64,
-        ne3: i64,
-    ) -> *mut ggml_tensor;
-}
-extern "C" {
-    pub fn ggml_new_i32(ctx: *mut ggml_context, value: i32) -> *mut ggml_tensor;
-}
-extern "C" {
-    pub fn ggml_new_f32(ctx: *mut ggml_context, value: f32) -> *mut ggml_tensor;
-}
-extern "C" {
-    pub fn ggml_dup_tensor(ctx: *mut ggml_context, src: *const ggml_tensor) -> *mut ggml_tensor;
-}
-extern "C" {
-    pub fn ggml_view_tensor(ctx: *mut ggml_context, src: *const ggml_tensor) -> *mut ggml_tensor;
-}
-extern "C" {
-    pub fn ggml_set_zero(tensor: *mut ggml_tensor) -> *mut ggml_tensor;
-}
-extern "C" {
-    pub fn ggml_set_i32(tensor: *mut ggml_tensor, value: i32) -> *mut ggml_tensor;
-}
-extern "C" {
-    pub fn ggml_set_f32(tensor: *mut ggml_tensor, value: f32) -> *mut ggml_tensor;
-}
-extern "C" {
-    pub fn ggml_get_i32_1d(tensor: *const ggml_tensor, i: ::std::os::raw::c_int) -> i32;
-}
-extern "C" {
-    pub fn ggml_set_i32_1d(tensor: *const ggml_tensor, i: ::std::os::raw::c_int, value: i32);
-}
-extern "C" {
-    pub fn ggml_get_f32_1d(tensor: *const ggml_tensor, i: ::std::os::raw::c_int) -> f32;
-}
-extern "C" {
-    pub fn ggml_set_f32_1d(tensor: *const ggml_tensor, i: ::std::os::raw::c_int, value: f32);
-}
-extern "C" {
-    pub fn ggml_get_data(tensor: *const ggml_tensor) -> *mut ::std::os::raw::c_void;
-}
-extern "C" {
-    pub fn ggml_get_data_f32(tensor: *const ggml_tensor) -> *mut f32;
-}
-extern "C" {
-    pub fn ggml_get_name(tensor: *const ggml_tensor) -> *const ::std::os::raw::c_char;
-}
-extern "C" {
-    pub fn ggml_set_name(tensor: *mut ggml_tensor, name: *const ::std::os::raw::c_char);
-}
-extern "C" {
-    pub fn ggml_dup(ctx: *mut ggml_context, a: *mut ggml_tensor) -> *mut ggml_tensor;
-}
-extern "C" {
-    pub fn ggml_add(
-        ctx: *mut ggml_context,
-        a: *mut ggml_tensor,
-        b: *mut ggml_tensor,
-    ) -> *mut ggml_tensor;
-}
-extern "C" {
-    pub fn ggml_add_inplace(
-        ctx: *mut ggml_context,
-        a: *mut ggml_tensor,
-        b: *mut ggml_tensor,
-    ) -> *mut ggml_tensor;
-}
-extern "C" {
-    pub fn ggml_add1(
-        ctx: *mut ggml_context,
-        a: *mut ggml_tensor,
-        b: *mut ggml_tensor,
-    ) -> *mut ggml_tensor;
-}
-extern "C" {
-    pub fn ggml_acc(
-        ctx: *mut ggml_context,
-        a: *mut ggml_tensor,
-        b: *mut ggml_tensor,
-        nb1: usize,
-        nb2: usize,
-        nb3: usize,
-        offset: usize,
-    ) -> *mut ggml_tensor;
-}
-extern "C" {
-    pub fn ggml_acc_inplace(
-        ctx: *mut ggml_context,
-        a: *mut ggml_tensor,
-        b: *mut ggml_tensor,
-        nb1: usize,
-        nb2: usize,
-        nb3: usize,
-        offset: usize,
-    ) -> *mut ggml_tensor;
-}
-extern "C" {
-    pub fn ggml_sub(
-        ctx: *mut ggml_context,
-        a: *mut ggml_tensor,
-        b: *mut ggml_tensor,
-    ) -> *mut ggml_tensor;
-}
-extern "C" {
-    pub fn ggml_mul(
-        ctx: *mut ggml_context,
-        a: *mut ggml_tensor,
-        b: *mut ggml_tensor,
-    ) -> *mut ggml_tensor;
-}
-extern "C" {
-    pub fn ggml_div(
-        ctx: *mut ggml_context,
-        a: *mut ggml_tensor,
-        b: *mut ggml_tensor,
-    ) -> *mut ggml_tensor;
-}
-extern "C" {
-    pub fn ggml_sqr(ctx: *mut ggml_context, a: *mut ggml_tensor) -> *mut ggml_tensor;
-}
-extern "C" {
-    pub fn ggml_sqrt(ctx: *mut ggml_context, a: *mut ggml_tensor) -> *mut ggml_tensor;
-}
-extern "C" {
-    pub fn ggml_log(ctx: *mut ggml_context, a: *mut ggml_tensor) -> *mut ggml_tensor;
-}
-extern "C" {
-    pub fn ggml_log_inplace(ctx: *mut ggml_context, a: *mut ggml_tensor) -> *mut ggml_tensor;
-}
-extern "C" {
-    pub fn ggml_sum(ctx: *mut ggml_context, a: *mut ggml_tensor) -> *mut ggml_tensor;
-}
-extern "C" {
-    pub fn ggml_sum_rows(ctx: *mut ggml_context, a: *mut ggml_tensor) -> *mut ggml_tensor;
-}
-extern "C" {
-    pub fn ggml_mean(ctx: *mut ggml_context, a: *mut ggml_tensor) -> *mut ggml_tensor;
-}
-extern "C" {
-    pub fn ggml_repeat(
-        ctx: *mut ggml_context,
-        a: *mut ggml_tensor,
-        b: *mut ggml_tensor,
-    ) -> *mut ggml_tensor;
-}
-extern "C" {
-    pub fn ggml_abs(ctx: *mut ggml_context, a: *mut ggml_tensor) -> *mut ggml_tensor;
-}
-extern "C" {
-    pub fn ggml_sgn(ctx: *mut ggml_context, a: *mut ggml_tensor) -> *mut ggml_tensor;
-}
-extern "C" {
-    pub fn ggml_neg(ctx: *mut ggml_context, a: *mut ggml_tensor) -> *mut ggml_tensor;
-}
-extern "C" {
-    pub fn ggml_step(ctx: *mut ggml_context, a: *mut ggml_tensor) -> *mut ggml_tensor;
-}
-extern "C" {
-    pub fn ggml_relu(ctx: *mut ggml_context, a: *mut ggml_tensor) -> *mut ggml_tensor;
-}
-extern "C" {
-    pub fn ggml_gelu(ctx: *mut ggml_context, a: *mut ggml_tensor) -> *mut ggml_tensor;
-}
-extern "C" {
-    pub fn ggml_silu(ctx: *mut ggml_context, a: *mut ggml_tensor) -> *mut ggml_tensor;
-}
-extern "C" {
-    pub fn ggml_silu_back(
-        ctx: *mut ggml_context,
-        a: *mut ggml_tensor,
-        b: *mut ggml_tensor,
-    ) -> *mut ggml_tensor;
-}
-extern "C" {
-    pub fn ggml_norm(ctx: *mut ggml_context, a: *mut ggml_tensor) -> *mut ggml_tensor;
-}
-extern "C" {
-    pub fn ggml_rms_norm(ctx: *mut ggml_context, a: *mut ggml_tensor) -> *mut ggml_tensor;
-}
-extern "C" {
-    pub fn ggml_rms_norm_back(
-        ctx: *mut ggml_context,
-        a: *mut ggml_tensor,
-        b: *mut ggml_tensor,
-    ) -> *mut ggml_tensor;
-}
-extern "C" {
-    pub fn ggml_mul_mat(
-        ctx: *mut ggml_context,
-        a: *mut ggml_tensor,
-        b: *mut ggml_tensor,
-    ) -> *mut ggml_tensor;
-}
-extern "C" {
-    pub fn ggml_scale(
-        ctx: *mut ggml_context,
-        a: *mut ggml_tensor,
-        b: *mut ggml_tensor,
-    ) -> *mut ggml_tensor;
-}
-extern "C" {
-    pub fn ggml_scale_inplace(
-        ctx: *mut ggml_context,
-        a: *mut ggml_tensor,
-        b: *mut ggml_tensor,
-    ) -> *mut ggml_tensor;
-}
-extern "C" {
-    pub fn ggml_set(
-        ctx: *mut ggml_context,
-        a: *mut ggml_tensor,
-        b: *mut ggml_tensor,
-        nb1: usize,
-        nb2: usize,
-        nb3: usize,
-        offset: usize,
-    ) -> *mut ggml_tensor;
-}
-extern "C" {
-    pub fn ggml_set_inplace(
-        ctx: *mut ggml_context,
-        a: *mut ggml_tensor,
-        b: *mut ggml_tensor,
-        nb1: usize,
-        nb2: usize,
-        nb3: usize,
-        offset: usize,
-    ) -> *mut ggml_tensor;
-}
-extern "C" {
-    pub fn ggml_set_1d(
-        ctx: *mut ggml_context,
-        a: *mut ggml_tensor,
-        b: *mut ggml_tensor,
-        offset: usize,
-    ) -> *mut ggml_tensor;
-}
-extern "C" {
-    pub fn ggml_set_1d_inplace(
-        ctx: *mut ggml_context,
-        a: *mut ggml_tensor,
-        b: *mut ggml_tensor,
-        offset: usize,
-    ) -> *mut ggml_tensor;
-}
-extern "C" {
-    pub fn ggml_set_2d(
-        ctx: *mut ggml_context,
-        a: *mut ggml_tensor,
-        b: *mut ggml_tensor,
-        nb1: usize,
-        offset: usize,
-    ) -> *mut ggml_tensor;
-}
-extern "C" {
-    pub fn ggml_set_2d_inplace(
-        ctx: *mut ggml_context,
-        a: *mut ggml_tensor,
-        b: *mut ggml_tensor,
-        nb1: usize,
-        offset: usize,
-    ) -> *mut ggml_tensor;
-}
-extern "C" {
-    pub fn ggml_cpy(
-        ctx: *mut ggml_context,
-        a: *mut ggml_tensor,
-        b: *mut ggml_tensor,
-    ) -> *mut ggml_tensor;
-}
-extern "C" {
-    pub fn ggml_cont(ctx: *mut ggml_context, a: *mut ggml_tensor) -> *mut ggml_tensor;
-}
-extern "C" {
-    pub fn ggml_reshape(
-        ctx: *mut ggml_context,
-        a: *mut ggml_tensor,
-        b: *mut ggml_tensor,
-    ) -> *mut ggml_tensor;
-}
-extern "C" {
-    pub fn ggml_reshape_1d(
-        ctx: *mut ggml_context,
-        a: *mut ggml_tensor,
-        ne0: i64,
-    ) -> *mut ggml_tensor;
-}
-extern "C" {
-    pub fn ggml_reshape_2d(
-        ctx: *mut ggml_context,
-        a: *mut ggml_tensor,
-        ne0: i64,
-        ne1: i64,
-    ) -> *mut ggml_tensor;
-}
-extern "C" {
-    pub fn ggml_reshape_3d(
-        ctx: *mut ggml_context,
-        a: *mut ggml_tensor,
-        ne0: i64,
-        ne1: i64,
-        ne2: i64,
-    ) -> *mut ggml_tensor;
-}
-extern "C" {
-    pub fn ggml_reshape_4d(
-        ctx: *mut ggml_context,
-        a: *mut ggml_tensor,
-        ne0: i64,
-        ne1: i64,
-        ne2: i64,
-        ne3: i64,
-    ) -> *mut ggml_tensor;
-}
-extern "C" {
-    pub fn ggml_view_1d(
-        ctx: *mut ggml_context,
-        a: *mut ggml_tensor,
-        ne0: i64,
-        offset: usize,
-    ) -> *mut ggml_tensor;
-}
-extern "C" {
-    pub fn ggml_view_2d(
-        ctx: *mut ggml_context,
-        a: *mut ggml_tensor,
-        ne0: i64,
-        ne1: i64,
-        nb1: usize,
-        offset: usize,
-    ) -> *mut ggml_tensor;
-}
-extern "C" {
-    pub fn ggml_view_3d(
-        ctx: *mut ggml_context,
-        a: *mut ggml_tensor,
-        ne0: i64,
-        ne1: i64,
-        ne2: i64,
-        nb1: usize,
-        nb2: usize,
-        offset: usize,
-    ) -> *mut ggml_tensor;
-}
-extern "C" {
-    pub fn ggml_view_4d(
-        ctx: *mut ggml_context,
-        a: *mut ggml_tensor,
-        ne0: i64,
-        ne1: i64,
-        ne2: i64,
-        ne3: i64,
-        nb1: usize,
-        nb2: usize,
-        nb3: usize,
-        offset: usize,
-    ) -> *mut ggml_tensor;
-}
-extern "C" {
-    pub fn ggml_permute(
-        ctx: *mut ggml_context,
-        a: *mut ggml_tensor,
-        axis0: ::std::os::raw::c_int,
-        axis1: ::std::os::raw::c_int,
-        axis2: ::std::os::raw::c_int,
-        axis3: ::std::os::raw::c_int,
-    ) -> *mut ggml_tensor;
-}
-extern "C" {
-    pub fn ggml_transpose(ctx: *mut ggml_context, a: *mut ggml_tensor) -> *mut ggml_tensor;
-}
-extern "C" {
-    pub fn ggml_get_rows(
-        ctx: *mut ggml_context,
-        a: *mut ggml_tensor,
-        b: *mut ggml_tensor,
-    ) -> *mut ggml_tensor;
-}
-extern "C" {
-    pub fn ggml_get_rows_back(
-        ctx: *mut ggml_context,
-        a: *mut ggml_tensor,
-        b: *mut ggml_tensor,
-        c: *mut ggml_tensor,
-    ) -> *mut ggml_tensor;
-}
-extern "C" {
-    pub fn ggml_diag(ctx: *mut ggml_context, a: *mut ggml_tensor) -> *mut ggml_tensor;
-}
-extern "C" {
-    pub fn ggml_diag_mask_inf(
-        ctx: *mut ggml_context,
-        a: *mut ggml_tensor,
-        n_past: ::std::os::raw::c_int,
-    ) -> *mut ggml_tensor;
-}
-extern "C" {
-    pub fn ggml_diag_mask_inf_inplace(
-        ctx: *mut ggml_context,
-        a: *mut ggml_tensor,
-        n_past: ::std::os::raw::c_int,
-    ) -> *mut ggml_tensor;
-}
-extern "C" {
-    pub fn ggml_diag_mask_zero(
-        ctx: *mut ggml_context,
-        a: *mut ggml_tensor,
-        n_past: ::std::os::raw::c_int,
-    ) -> *mut ggml_tensor;
-}
-extern "C" {
-    pub fn gml_diag_mask_zero_inplace(
-        ctx: *mut ggml_context,
-        a: *mut ggml_tensor,
-        n_past: ::std::os::raw::c_int,
-    ) -> *mut ggml_tensor;
-}
-extern "C" {
-    pub fn ggml_soft_max(ctx: *mut ggml_context, a: *mut ggml_tensor) -> *mut ggml_tensor;
-}
-extern "C" {
-    pub fn ggml_soft_max_inplace(ctx: *mut ggml_context, a: *mut ggml_tensor) -> *mut ggml_tensor;
-}
-extern "C" {
-    pub fn ggml_rope(
-        ctx: *mut ggml_context,
-        a: *mut ggml_tensor,
-        n_past: ::std::os::raw::c_int,
-        n_dims: ::std::os::raw::c_int,
-        mode: ::std::os::raw::c_int,
-    ) -> *mut ggml_tensor;
-}
-extern "C" {
-    pub fn ggml_rope_inplace(
-        ctx: *mut ggml_context,
-        a: *mut ggml_tensor,
-        n_past: ::std::os::raw::c_int,
-        n_dims: ::std::os::raw::c_int,
-        mode: ::std::os::raw::c_int,
-    ) -> *mut ggml_tensor;
-}
-extern "C" {
-    pub fn ggml_rope_back(
-        ctx: *mut ggml_context,
-        a: *mut ggml_tensor,
-        n_past: ::std::os::raw::c_int,
-        n_dims: ::std::os::raw::c_int,
-        mode: ::std::os::raw::c_int,
-    ) -> *mut ggml_tensor;
-}
-extern "C" {
-    pub fn ggml_alibi(
-        ctx: *mut ggml_context,
-        a: *mut ggml_tensor,
-        n_past: ::std::os::raw::c_int,
-        n_head: ::std::os::raw::c_int,
-    ) -> *mut ggml_tensor;
-}
-extern "C" {
-    pub fn ggml_conv_1d_1s(
-        ctx: *mut ggml_context,
-        a: *mut ggml_tensor,
-        b: *mut ggml_tensor,
-    ) -> *mut ggml_tensor;
-}
-extern "C" {
-    pub fn ggml_conv_1d_2s(
-        ctx: *mut ggml_context,
-        a: *mut ggml_tensor,
-        b: *mut ggml_tensor,
-    ) -> *mut ggml_tensor;
-}
-extern "C" {
-    pub fn ggml_flash_attn(
-        ctx: *mut ggml_context,
-        q: *mut ggml_tensor,
-        k: *mut ggml_tensor,
-        v: *mut ggml_tensor,
-        masked: bool,
-    ) -> *mut ggml_tensor;
-}
-extern "C" {
-    pub fn ggml_flash_ff(
-        ctx: *mut ggml_context,
-        a: *mut ggml_tensor,
-        b0: *mut ggml_tensor,
-        b1: *mut ggml_tensor,
-        c0: *mut ggml_tensor,
-        c1: *mut ggml_tensor,
-    ) -> *mut ggml_tensor;
-}
-pub type ggml_unary_op_f32_t = ::std::option::Option<
-    unsafe extern "C" fn(arg1: ::std::os::raw::c_int, arg2: *mut f32, arg3: *const f32),
->;
-pub type ggml_binary_op_f32_t = ::std::option::Option<
-    unsafe extern "C" fn(
-        arg1: ::std::os::raw::c_int,
-        arg2: *mut f32,
-        arg3: *const f32,
-        arg4: *const f32,
-    ),
->;
-extern "C" {
-    pub fn ggml_map_unary_f32(
-        ctx: *mut ggml_context,
-        a: *mut ggml_tensor,
-        fun: ggml_unary_op_f32_t,
-    ) -> *mut ggml_tensor;
-}
-extern "C" {
-    pub fn ggml_map_binary_f32(
-        ctx: *mut ggml_context,
-        a: *mut ggml_tensor,
-        b: *mut ggml_tensor,
-        fun: ggml_binary_op_f32_t,
-    ) -> *mut ggml_tensor;
-}
-extern "C" {
-    pub fn ggml_set_param(ctx: *mut ggml_context, tensor: *mut ggml_tensor);
-}
-extern "C" {
-    pub fn ggml_build_forward_expand(cgraph: *mut ggml_cgraph, tensor: *mut ggml_tensor);
-}
-extern "C" {
-    pub fn ggml_build_forward(tensor: *mut ggml_tensor) -> ggml_cgraph;
-}
-extern "C" {
-    pub fn ggml_build_backward(
-        ctx: *mut ggml_context,
-        gf: *mut ggml_cgraph,
-        keep: bool,
-    ) -> ggml_cgraph;
-}
-extern "C" {
-    pub fn ggml_graph_compute(ctx: *mut ggml_context, cgraph: *mut ggml_cgraph);
-}
-extern "C" {
-    pub fn ggml_graph_reset(cgraph: *mut ggml_cgraph);
-}
-extern "C" {
-    pub fn ggml_graph_print(cgraph: *const ggml_cgraph);
-}
-extern "C" {
-    pub fn ggml_graph_dump_dot(
-        gb: *const ggml_cgraph,
-        gf: *const ggml_cgraph,
-        filename: *const ::std::os::raw::c_char,
-    );
-}
-pub const ggml_opt_type_GGML_OPT_ADAM: ggml_opt_type = 0;
-pub const ggml_opt_type_GGML_OPT_LBFGS: ggml_opt_type = 1;
-pub type ggml_opt_type = ::std::os::raw::c_uint;
-pub const ggml_linesearch_GGML_LINESEARCH_DEFAULT: ggml_linesearch = 1;
-pub const ggml_linesearch_GGML_LINESEARCH_BACKTRACKING_ARMIJO: ggml_linesearch = 0;
-pub const ggml_linesearch_GGML_LINESEARCH_BACKTRACKING_WOLFE: ggml_linesearch = 1;
-pub const ggml_linesearch_GGML_LINESEARCH_BACKTRACKING_STRONG_WOLFE: ggml_linesearch = 2;
-pub type ggml_linesearch = ::std::os::raw::c_uint;
-pub const ggml_opt_result_GGML_OPT_OK: ggml_opt_result = 0;
-pub const ggml_opt_result_GGML_OPT_DID_NOT_CONVERGE: ggml_opt_result = 1;
-pub const ggml_opt_result_GGML_OPT_NO_CONTEXT: ggml_opt_result = 2;
-pub const ggml_opt_result_GGML_OPT_INVALID_WOLFE: ggml_opt_result = 3;
-pub const ggml_opt_result_GGML_OPT_FAIL: ggml_opt_result = 4;
-pub const ggml_opt_result_GGML_LINESEARCH_FAIL: ggml_opt_result = -128;
-pub const ggml_opt_result_GGML_LINESEARCH_MINIMUM_STEP: ggml_opt_result = -127;
-pub const ggml_opt_result_GGML_LINESEARCH_MAXIMUM_STEP: ggml_opt_result = -126;
-pub const ggml_opt_result_GGML_LINESEARCH_MAXIMUM_ITERATIONS: ggml_opt_result = -125;
-pub const ggml_opt_result_GGML_LINESEARCH_INVALID_PARAMETERS: ggml_opt_result = -124;
-pub type ggml_opt_result = ::std::os::raw::c_int;
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct ggml_opt_params {
-    pub type_: ggml_opt_type,
-    pub n_threads: ::std::os::raw::c_int,
-    pub past: ::std::os::raw::c_int,
-    pub delta: f32,
-    pub max_no_improvement: ::std::os::raw::c_int,
-    pub print_forward_graph: bool,
-    pub print_backward_graph: bool,
-    pub adam: ggml_opt_params__bindgen_ty_1,
-    pub lbfgs: ggml_opt_params__bindgen_ty_2,
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct ggml_opt_params__bindgen_ty_1 {
-    pub n_iter: ::std::os::raw::c_int,
-    pub alpha: f32,
-    pub beta1: f32,
-    pub beta2: f32,
-    pub eps: f32,
-    pub eps_f: f32,
-    pub eps_g: f32,
 }
 #[test]
 fn bindgen_test_layout_ggml_opt_params__bindgen_ty_1() {
@@ -1411,19 +801,6 @@ fn bindgen_test_layout_ggml_opt_params__bindgen_ty_1() {
             stringify!(eps_g)
         )
     );
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct ggml_opt_params__bindgen_ty_2 {
-    pub m: ::std::os::raw::c_int,
-    pub n_iter: ::std::os::raw::c_int,
-    pub max_linesearch: ::std::os::raw::c_int,
-    pub eps: f32,
-    pub ftol: f32,
-    pub wolfe: f32,
-    pub min_step: f32,
-    pub max_step: f32,
-    pub linesearch: ggml_linesearch,
 }
 #[test]
 fn bindgen_test_layout_ggml_opt_params__bindgen_ty_2() {
@@ -1636,146 +1013,6 @@ fn bindgen_test_layout_ggml_opt_params() {
         )
     );
 }
-extern "C" {
-    pub fn ggml_opt_default_params(type_: ggml_opt_type) -> ggml_opt_params;
-}
-extern "C" {
-    pub fn ggml_opt(
-        ctx: *mut ggml_context,
-        params: ggml_opt_params,
-        f: *mut ggml_tensor,
-    ) -> ggml_opt_result;
-}
-extern "C" {
-    pub fn ggml_quantize_q4_0(
-        src: *const f32,
-        dst: *mut ::std::os::raw::c_void,
-        n: ::std::os::raw::c_int,
-        k: ::std::os::raw::c_int,
-        hist: *mut i64,
-    ) -> usize;
-}
-extern "C" {
-    pub fn ggml_quantize_q4_1(
-        src: *const f32,
-        dst: *mut ::std::os::raw::c_void,
-        n: ::std::os::raw::c_int,
-        k: ::std::os::raw::c_int,
-        hist: *mut i64,
-    ) -> usize;
-}
-extern "C" {
-    pub fn ggml_quantize_q5_0(
-        src: *const f32,
-        dst: *mut ::std::os::raw::c_void,
-        n: ::std::os::raw::c_int,
-        k: ::std::os::raw::c_int,
-        hist: *mut i64,
-    ) -> usize;
-}
-extern "C" {
-    pub fn ggml_quantize_q5_1(
-        src: *const f32,
-        dst: *mut ::std::os::raw::c_void,
-        n: ::std::os::raw::c_int,
-        k: ::std::os::raw::c_int,
-        hist: *mut i64,
-    ) -> usize;
-}
-extern "C" {
-    pub fn ggml_quantize_q8_0(
-        src: *const f32,
-        dst: *mut ::std::os::raw::c_void,
-        n: ::std::os::raw::c_int,
-        k: ::std::os::raw::c_int,
-        hist: *mut i64,
-    ) -> usize;
-}
-extern "C" {
-    pub fn ggml_quantize_chunk(
-        type_: ggml_type,
-        src: *const f32,
-        dst: *mut ::std::os::raw::c_void,
-        start: ::std::os::raw::c_int,
-        n: ::std::os::raw::c_int,
-        hist: *mut i64,
-    ) -> usize;
-}
-extern "C" {
-    pub fn ggml_cpu_has_avx() -> ::std::os::raw::c_int;
-}
-extern "C" {
-    pub fn ggml_cpu_has_avx2() -> ::std::os::raw::c_int;
-}
-extern "C" {
-    pub fn ggml_cpu_has_avx512() -> ::std::os::raw::c_int;
-}
-extern "C" {
-    pub fn ggml_cpu_has_avx512_vbmi() -> ::std::os::raw::c_int;
-}
-extern "C" {
-    pub fn ggml_cpu_has_avx512_vnni() -> ::std::os::raw::c_int;
-}
-extern "C" {
-    pub fn ggml_cpu_has_fma() -> ::std::os::raw::c_int;
-}
-extern "C" {
-    pub fn ggml_cpu_has_neon() -> ::std::os::raw::c_int;
-}
-extern "C" {
-    pub fn ggml_cpu_has_arm_fma() -> ::std::os::raw::c_int;
-}
-extern "C" {
-    pub fn ggml_cpu_has_f16c() -> ::std::os::raw::c_int;
-}
-extern "C" {
-    pub fn ggml_cpu_has_fp16_va() -> ::std::os::raw::c_int;
-}
-extern "C" {
-    pub fn ggml_cpu_has_wasm_simd() -> ::std::os::raw::c_int;
-}
-extern "C" {
-    pub fn ggml_cpu_has_blas() -> ::std::os::raw::c_int;
-}
-extern "C" {
-    pub fn ggml_cpu_has_cublas() -> ::std::os::raw::c_int;
-}
-extern "C" {
-    pub fn ggml_cpu_has_clblast() -> ::std::os::raw::c_int;
-}
-extern "C" {
-    pub fn ggml_cpu_has_gpublas() -> ::std::os::raw::c_int;
-}
-extern "C" {
-    pub fn ggml_cpu_has_sse3() -> ::std::os::raw::c_int;
-}
-extern "C" {
-    pub fn ggml_cpu_has_vsx() -> ::std::os::raw::c_int;
-}
-pub type dequantize_row_q_t = ::std::option::Option<
-    unsafe extern "C" fn(x: *const ::std::os::raw::c_void, y: *mut f32, k: ::std::os::raw::c_int),
->;
-pub type quantize_row_q_t = ::std::option::Option<
-    unsafe extern "C" fn(x: *const f32, y: *mut ::std::os::raw::c_void, k: ::std::os::raw::c_int),
->;
-pub type vec_dot_q_t = ::std::option::Option<
-    unsafe extern "C" fn(
-        n: ::std::os::raw::c_int,
-        s: *mut f32,
-        x: *const ::std::os::raw::c_void,
-        y: *const ::std::os::raw::c_void,
-    ),
->;
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct quantize_fns_t {
-    pub dequantize_row_q: dequantize_row_q_t,
-    pub quantize_row_q: quantize_row_q_t,
-    pub quantize_row_q_reference: quantize_row_q_t,
-    pub quantize_row_q_dot: quantize_row_q_t,
-    pub vec_dot_q: vec_dot_q_t,
-    pub vec_dot_type: ggml_type,
-}
 #[test]
 fn bindgen_test_layout_quantize_fns_t() {
     const UNINIT: ::std::mem::MaybeUninit<quantize_fns_t> = ::std::mem::MaybeUninit::uninit();
@@ -1852,5 +1089,476 @@ fn bindgen_test_layout_quantize_fns_t() {
     );
 }
 extern "C" {
+    pub fn ggml_fp16_to_fp32(x: ggml_fp16_t) -> f32;
+    pub fn ggml_fp32_to_fp16(x: f32) -> ggml_fp16_t;
+    pub fn ggml_fp16_to_fp32_row(x: *const ggml_fp16_t, y: *mut f32, n: usize);
+    pub fn ggml_fp32_to_fp16_row(x: *const f32, y: *mut ggml_fp16_t, n: usize);
+    pub fn ggml_time_init();
+    pub fn ggml_time_ms() -> i64;
+    pub fn ggml_time_us() -> i64;
+    pub fn ggml_cycles() -> i64;
+    pub fn ggml_cycles_per_ms() -> i64;
+    pub fn ggml_print_object(obj: *const ggml_object);
+    pub fn ggml_print_objects(ctx: *const ggml_context);
+    pub fn ggml_nelements(tensor: *const ggml_tensor) -> i64;
+    pub fn ggml_nbytes(tensor: *const ggml_tensor) -> usize;
+    pub fn ggml_blck_size(type_: ggml_type) -> ::std::os::raw::c_int;
+    pub fn ggml_type_size(type_: ggml_type) -> usize;
+    pub fn ggml_type_sizef(type_: ggml_type) -> f32;
+    pub fn ggml_type_name(type_: ggml_type) -> *const ::std::os::raw::c_char;
+    pub fn ggml_element_size(tensor: *const ggml_tensor) -> usize;
+    pub fn ggml_is_quantized(type_: ggml_type) -> bool;
+    pub fn ggml_ftype_to_ggml_type(ftype: ggml_ftype) -> ggml_type;
+    pub fn ggml_init(params: ggml_init_params) -> *mut ggml_context;
+    pub fn ggml_free(ctx: *mut ggml_context);
+    pub fn ggml_used_mem(ctx: *const ggml_context) -> usize;
+    pub fn ggml_set_scratch(ctx: *mut ggml_context, scratch: ggml_scratch) -> usize;
+    pub fn ggml_new_tensor(
+        ctx: *mut ggml_context,
+        type_: ggml_type,
+        n_dims: ::std::os::raw::c_int,
+        ne: *const i64,
+    ) -> *mut ggml_tensor;
+    pub fn ggml_new_tensor_1d(
+        ctx: *mut ggml_context,
+        type_: ggml_type,
+        ne0: i64,
+    ) -> *mut ggml_tensor;
+    pub fn ggml_new_tensor_2d(
+        ctx: *mut ggml_context,
+        type_: ggml_type,
+        ne0: i64,
+        ne1: i64,
+    ) -> *mut ggml_tensor;
+    pub fn ggml_new_tensor_3d(
+        ctx: *mut ggml_context,
+        type_: ggml_type,
+        ne0: i64,
+        ne1: i64,
+        ne2: i64,
+    ) -> *mut ggml_tensor;
+    pub fn ggml_new_tensor_4d(
+        ctx: *mut ggml_context,
+        type_: ggml_type,
+        ne0: i64,
+        ne1: i64,
+        ne2: i64,
+        ne3: i64,
+    ) -> *mut ggml_tensor;
+    pub fn ggml_new_i32(ctx: *mut ggml_context, value: i32) -> *mut ggml_tensor;
+    pub fn ggml_new_f32(ctx: *mut ggml_context, value: f32) -> *mut ggml_tensor;
+    pub fn ggml_dup_tensor(ctx: *mut ggml_context, src: *const ggml_tensor) -> *mut ggml_tensor;
+    pub fn ggml_view_tensor(ctx: *mut ggml_context, src: *const ggml_tensor) -> *mut ggml_tensor;
+    pub fn ggml_set_zero(tensor: *mut ggml_tensor) -> *mut ggml_tensor;
+    pub fn ggml_set_i32(tensor: *mut ggml_tensor, value: i32) -> *mut ggml_tensor;
+    pub fn ggml_set_f32(tensor: *mut ggml_tensor, value: f32) -> *mut ggml_tensor;
+    pub fn ggml_get_i32_1d(tensor: *const ggml_tensor, i: ::std::os::raw::c_int) -> i32;
+    pub fn ggml_set_i32_1d(tensor: *const ggml_tensor, i: ::std::os::raw::c_int, value: i32);
+    pub fn ggml_get_f32_1d(tensor: *const ggml_tensor, i: ::std::os::raw::c_int) -> f32;
+    pub fn ggml_set_f32_1d(tensor: *const ggml_tensor, i: ::std::os::raw::c_int, value: f32);
+    pub fn ggml_get_data(tensor: *const ggml_tensor) -> *mut ::std::os::raw::c_void;
+    pub fn ggml_get_data_f32(tensor: *const ggml_tensor) -> *mut f32;
+    pub fn ggml_get_name(tensor: *const ggml_tensor) -> *const ::std::os::raw::c_char;
+    pub fn ggml_set_name(tensor: *mut ggml_tensor, name: *const ::std::os::raw::c_char);
+    pub fn ggml_dup(ctx: *mut ggml_context, a: *mut ggml_tensor) -> *mut ggml_tensor;
+    pub fn ggml_add(
+        ctx: *mut ggml_context,
+        a: *mut ggml_tensor,
+        b: *mut ggml_tensor,
+    ) -> *mut ggml_tensor;
+    pub fn ggml_add_inplace(
+        ctx: *mut ggml_context,
+        a: *mut ggml_tensor,
+        b: *mut ggml_tensor,
+    ) -> *mut ggml_tensor;
+    pub fn ggml_add1(
+        ctx: *mut ggml_context,
+        a: *mut ggml_tensor,
+        b: *mut ggml_tensor,
+    ) -> *mut ggml_tensor;
+    pub fn ggml_acc(
+        ctx: *mut ggml_context,
+        a: *mut ggml_tensor,
+        b: *mut ggml_tensor,
+        nb1: usize,
+        nb2: usize,
+        nb3: usize,
+        offset: usize,
+    ) -> *mut ggml_tensor;
+    pub fn ggml_acc_inplace(
+        ctx: *mut ggml_context,
+        a: *mut ggml_tensor,
+        b: *mut ggml_tensor,
+        nb1: usize,
+        nb2: usize,
+        nb3: usize,
+        offset: usize,
+    ) -> *mut ggml_tensor;
+    pub fn ggml_sub(
+        ctx: *mut ggml_context,
+        a: *mut ggml_tensor,
+        b: *mut ggml_tensor,
+    ) -> *mut ggml_tensor;
+    pub fn ggml_mul(
+        ctx: *mut ggml_context,
+        a: *mut ggml_tensor,
+        b: *mut ggml_tensor,
+    ) -> *mut ggml_tensor;
+    pub fn ggml_div(
+        ctx: *mut ggml_context,
+        a: *mut ggml_tensor,
+        b: *mut ggml_tensor,
+    ) -> *mut ggml_tensor;
+    pub fn ggml_sqr(ctx: *mut ggml_context, a: *mut ggml_tensor) -> *mut ggml_tensor;
+    pub fn ggml_sqrt(ctx: *mut ggml_context, a: *mut ggml_tensor) -> *mut ggml_tensor;
+    pub fn ggml_log(ctx: *mut ggml_context, a: *mut ggml_tensor) -> *mut ggml_tensor;
+    pub fn ggml_log_inplace(ctx: *mut ggml_context, a: *mut ggml_tensor) -> *mut ggml_tensor;
+    pub fn ggml_sum(ctx: *mut ggml_context, a: *mut ggml_tensor) -> *mut ggml_tensor;
+    pub fn ggml_sum_rows(ctx: *mut ggml_context, a: *mut ggml_tensor) -> *mut ggml_tensor;
+    pub fn ggml_mean(ctx: *mut ggml_context, a: *mut ggml_tensor) -> *mut ggml_tensor;
+    pub fn ggml_repeat(
+        ctx: *mut ggml_context,
+        a: *mut ggml_tensor,
+        b: *mut ggml_tensor,
+    ) -> *mut ggml_tensor;
+    pub fn ggml_abs(ctx: *mut ggml_context, a: *mut ggml_tensor) -> *mut ggml_tensor;
+    pub fn ggml_sgn(ctx: *mut ggml_context, a: *mut ggml_tensor) -> *mut ggml_tensor;
+    pub fn ggml_neg(ctx: *mut ggml_context, a: *mut ggml_tensor) -> *mut ggml_tensor;
+    pub fn ggml_step(ctx: *mut ggml_context, a: *mut ggml_tensor) -> *mut ggml_tensor;
+    pub fn ggml_relu(ctx: *mut ggml_context, a: *mut ggml_tensor) -> *mut ggml_tensor;
+    pub fn ggml_gelu(ctx: *mut ggml_context, a: *mut ggml_tensor) -> *mut ggml_tensor;
+    pub fn ggml_silu(ctx: *mut ggml_context, a: *mut ggml_tensor) -> *mut ggml_tensor;
+    pub fn ggml_silu_back(
+        ctx: *mut ggml_context,
+        a: *mut ggml_tensor,
+        b: *mut ggml_tensor,
+    ) -> *mut ggml_tensor;
+    pub fn ggml_norm(ctx: *mut ggml_context, a: *mut ggml_tensor) -> *mut ggml_tensor;
+    pub fn ggml_rms_norm(ctx: *mut ggml_context, a: *mut ggml_tensor) -> *mut ggml_tensor;
+    pub fn ggml_rms_norm_back(
+        ctx: *mut ggml_context,
+        a: *mut ggml_tensor,
+        b: *mut ggml_tensor,
+    ) -> *mut ggml_tensor;
+    pub fn ggml_mul_mat(
+        ctx: *mut ggml_context,
+        a: *mut ggml_tensor,
+        b: *mut ggml_tensor,
+    ) -> *mut ggml_tensor;
+    pub fn ggml_scale(
+        ctx: *mut ggml_context,
+        a: *mut ggml_tensor,
+        b: *mut ggml_tensor,
+    ) -> *mut ggml_tensor;
+    pub fn ggml_scale_inplace(
+        ctx: *mut ggml_context,
+        a: *mut ggml_tensor,
+        b: *mut ggml_tensor,
+    ) -> *mut ggml_tensor;
+    pub fn ggml_set(
+        ctx: *mut ggml_context,
+        a: *mut ggml_tensor,
+        b: *mut ggml_tensor,
+        nb1: usize,
+        nb2: usize,
+        nb3: usize,
+        offset: usize,
+    ) -> *mut ggml_tensor;
+    pub fn ggml_set_inplace(
+        ctx: *mut ggml_context,
+        a: *mut ggml_tensor,
+        b: *mut ggml_tensor,
+        nb1: usize,
+        nb2: usize,
+        nb3: usize,
+        offset: usize,
+    ) -> *mut ggml_tensor;
+    pub fn ggml_set_1d(
+        ctx: *mut ggml_context,
+        a: *mut ggml_tensor,
+        b: *mut ggml_tensor,
+        offset: usize,
+    ) -> *mut ggml_tensor;
+    pub fn ggml_set_1d_inplace(
+        ctx: *mut ggml_context,
+        a: *mut ggml_tensor,
+        b: *mut ggml_tensor,
+        offset: usize,
+    ) -> *mut ggml_tensor;
+    pub fn ggml_set_2d(
+        ctx: *mut ggml_context,
+        a: *mut ggml_tensor,
+        b: *mut ggml_tensor,
+        nb1: usize,
+        offset: usize,
+    ) -> *mut ggml_tensor;
+    pub fn ggml_set_2d_inplace(
+        ctx: *mut ggml_context,
+        a: *mut ggml_tensor,
+        b: *mut ggml_tensor,
+        nb1: usize,
+        offset: usize,
+    ) -> *mut ggml_tensor;
+    pub fn ggml_cpy(
+        ctx: *mut ggml_context,
+        a: *mut ggml_tensor,
+        b: *mut ggml_tensor,
+    ) -> *mut ggml_tensor;
+    pub fn ggml_cont(ctx: *mut ggml_context, a: *mut ggml_tensor) -> *mut ggml_tensor;
+    pub fn ggml_reshape(
+        ctx: *mut ggml_context,
+        a: *mut ggml_tensor,
+        b: *mut ggml_tensor,
+    ) -> *mut ggml_tensor;
+    pub fn ggml_reshape_1d(
+        ctx: *mut ggml_context,
+        a: *mut ggml_tensor,
+        ne0: i64,
+    ) -> *mut ggml_tensor;
+    pub fn ggml_reshape_2d(
+        ctx: *mut ggml_context,
+        a: *mut ggml_tensor,
+        ne0: i64,
+        ne1: i64,
+    ) -> *mut ggml_tensor;
+    pub fn ggml_reshape_3d(
+        ctx: *mut ggml_context,
+        a: *mut ggml_tensor,
+        ne0: i64,
+        ne1: i64,
+        ne2: i64,
+    ) -> *mut ggml_tensor;
+    pub fn ggml_reshape_4d(
+        ctx: *mut ggml_context,
+        a: *mut ggml_tensor,
+        ne0: i64,
+        ne1: i64,
+        ne2: i64,
+        ne3: i64,
+    ) -> *mut ggml_tensor;
+    pub fn ggml_view_1d(
+        ctx: *mut ggml_context,
+        a: *mut ggml_tensor,
+        ne0: i64,
+        offset: usize,
+    ) -> *mut ggml_tensor;
+    pub fn ggml_view_2d(
+        ctx: *mut ggml_context,
+        a: *mut ggml_tensor,
+        ne0: i64,
+        ne1: i64,
+        nb1: usize,
+        offset: usize,
+    ) -> *mut ggml_tensor;
+    pub fn ggml_view_3d(
+        ctx: *mut ggml_context,
+        a: *mut ggml_tensor,
+        ne0: i64,
+        ne1: i64,
+        ne2: i64,
+        nb1: usize,
+        nb2: usize,
+        offset: usize,
+    ) -> *mut ggml_tensor;
+    pub fn ggml_view_4d(
+        ctx: *mut ggml_context,
+        a: *mut ggml_tensor,
+        ne0: i64,
+        ne1: i64,
+        ne2: i64,
+        ne3: i64,
+        nb1: usize,
+        nb2: usize,
+        nb3: usize,
+        offset: usize,
+    ) -> *mut ggml_tensor;
+    pub fn ggml_permute(
+        ctx: *mut ggml_context,
+        a: *mut ggml_tensor,
+        axis0: ::std::os::raw::c_int,
+        axis1: ::std::os::raw::c_int,
+        axis2: ::std::os::raw::c_int,
+        axis3: ::std::os::raw::c_int,
+    ) -> *mut ggml_tensor;
+    pub fn ggml_transpose(ctx: *mut ggml_context, a: *mut ggml_tensor) -> *mut ggml_tensor;
+    pub fn ggml_get_rows(
+        ctx: *mut ggml_context,
+        a: *mut ggml_tensor,
+        b: *mut ggml_tensor,
+    ) -> *mut ggml_tensor;
+    pub fn ggml_get_rows_back(
+        ctx: *mut ggml_context,
+        a: *mut ggml_tensor,
+        b: *mut ggml_tensor,
+        c: *mut ggml_tensor,
+    ) -> *mut ggml_tensor;
+    pub fn ggml_diag(ctx: *mut ggml_context, a: *mut ggml_tensor) -> *mut ggml_tensor;
+    pub fn ggml_diag_mask_inf(
+        ctx: *mut ggml_context,
+        a: *mut ggml_tensor,
+        n_past: ::std::os::raw::c_int,
+    ) -> *mut ggml_tensor;
+    pub fn ggml_diag_mask_inf_inplace(
+        ctx: *mut ggml_context,
+        a: *mut ggml_tensor,
+        n_past: ::std::os::raw::c_int,
+    ) -> *mut ggml_tensor;
+    pub fn ggml_diag_mask_zero(
+        ctx: *mut ggml_context,
+        a: *mut ggml_tensor,
+        n_past: ::std::os::raw::c_int,
+    ) -> *mut ggml_tensor;
+    pub fn gml_diag_mask_zero_inplace(
+        ctx: *mut ggml_context,
+        a: *mut ggml_tensor,
+        n_past: ::std::os::raw::c_int,
+    ) -> *mut ggml_tensor;
+    pub fn ggml_soft_max(ctx: *mut ggml_context, a: *mut ggml_tensor) -> *mut ggml_tensor;
+    pub fn ggml_soft_max_inplace(ctx: *mut ggml_context, a: *mut ggml_tensor) -> *mut ggml_tensor;
+    pub fn ggml_rope(
+        ctx: *mut ggml_context,
+        a: *mut ggml_tensor,
+        n_past: ::std::os::raw::c_int,
+        n_dims: ::std::os::raw::c_int,
+        mode: ::std::os::raw::c_int,
+    ) -> *mut ggml_tensor;
+    pub fn ggml_rope_inplace(
+        ctx: *mut ggml_context,
+        a: *mut ggml_tensor,
+        n_past: ::std::os::raw::c_int,
+        n_dims: ::std::os::raw::c_int,
+        mode: ::std::os::raw::c_int,
+    ) -> *mut ggml_tensor;
+    pub fn ggml_rope_back(
+        ctx: *mut ggml_context,
+        a: *mut ggml_tensor,
+        n_past: ::std::os::raw::c_int,
+        n_dims: ::std::os::raw::c_int,
+        mode: ::std::os::raw::c_int,
+    ) -> *mut ggml_tensor;
+    pub fn ggml_alibi(
+        ctx: *mut ggml_context,
+        a: *mut ggml_tensor,
+        n_past: ::std::os::raw::c_int,
+        n_head: ::std::os::raw::c_int,
+    ) -> *mut ggml_tensor;
+    pub fn ggml_conv_1d_1s(
+        ctx: *mut ggml_context,
+        a: *mut ggml_tensor,
+        b: *mut ggml_tensor,
+    ) -> *mut ggml_tensor;
+    pub fn ggml_conv_1d_2s(
+        ctx: *mut ggml_context,
+        a: *mut ggml_tensor,
+        b: *mut ggml_tensor,
+    ) -> *mut ggml_tensor;
+    pub fn ggml_flash_attn(
+        ctx: *mut ggml_context,
+        q: *mut ggml_tensor,
+        k: *mut ggml_tensor,
+        v: *mut ggml_tensor,
+        masked: bool,
+    ) -> *mut ggml_tensor;
+    pub fn ggml_flash_ff(
+        ctx: *mut ggml_context,
+        a: *mut ggml_tensor,
+        b0: *mut ggml_tensor,
+        b1: *mut ggml_tensor,
+        c0: *mut ggml_tensor,
+        c1: *mut ggml_tensor,
+    ) -> *mut ggml_tensor;
+    pub fn ggml_map_unary_f32(
+        ctx: *mut ggml_context,
+        a: *mut ggml_tensor,
+        fun: ggml_unary_op_f32_t,
+    ) -> *mut ggml_tensor;
+    pub fn ggml_map_binary_f32(
+        ctx: *mut ggml_context,
+        a: *mut ggml_tensor,
+        b: *mut ggml_tensor,
+        fun: ggml_binary_op_f32_t,
+    ) -> *mut ggml_tensor;
+    pub fn ggml_set_param(ctx: *mut ggml_context, tensor: *mut ggml_tensor);
+    pub fn ggml_build_forward_expand(cgraph: *mut ggml_cgraph, tensor: *mut ggml_tensor);
+    pub fn ggml_build_forward(tensor: *mut ggml_tensor) -> ggml_cgraph;
+    pub fn ggml_build_backward(
+        ctx: *mut ggml_context,
+        gf: *mut ggml_cgraph,
+        keep: bool,
+    ) -> ggml_cgraph;
+    pub fn ggml_graph_compute(ctx: *mut ggml_context, cgraph: *mut ggml_cgraph);
+    pub fn ggml_graph_reset(cgraph: *mut ggml_cgraph);
+    pub fn ggml_graph_print(cgraph: *const ggml_cgraph);
+    pub fn ggml_graph_dump_dot(
+        gb: *const ggml_cgraph,
+        gf: *const ggml_cgraph,
+        filename: *const ::std::os::raw::c_char,
+    );
+    pub fn ggml_opt_default_params(type_: ggml_opt_type) -> ggml_opt_params;
+    pub fn ggml_opt(
+        ctx: *mut ggml_context,
+        params: ggml_opt_params,
+        f: *mut ggml_tensor,
+    ) -> ggml_opt_result;
+    pub fn ggml_quantize_q4_0(
+        src: *const f32,
+        dst: *mut ::std::os::raw::c_void,
+        n: ::std::os::raw::c_int,
+        k: ::std::os::raw::c_int,
+        hist: *mut i64,
+    ) -> usize;
+    pub fn ggml_quantize_q4_1(
+        src: *const f32,
+        dst: *mut ::std::os::raw::c_void,
+        n: ::std::os::raw::c_int,
+        k: ::std::os::raw::c_int,
+        hist: *mut i64,
+    ) -> usize;
+    pub fn ggml_quantize_q5_0(
+        src: *const f32,
+        dst: *mut ::std::os::raw::c_void,
+        n: ::std::os::raw::c_int,
+        k: ::std::os::raw::c_int,
+        hist: *mut i64,
+    ) -> usize;
+    pub fn ggml_quantize_q5_1(
+        src: *const f32,
+        dst: *mut ::std::os::raw::c_void,
+        n: ::std::os::raw::c_int,
+        k: ::std::os::raw::c_int,
+        hist: *mut i64,
+    ) -> usize;
+    pub fn ggml_quantize_q8_0(
+        src: *const f32,
+        dst: *mut ::std::os::raw::c_void,
+        n: ::std::os::raw::c_int,
+        k: ::std::os::raw::c_int,
+        hist: *mut i64,
+    ) -> usize;
+    pub fn ggml_quantize_chunk(
+        type_: ggml_type,
+        src: *const f32,
+        dst: *mut ::std::os::raw::c_void,
+        start: ::std::os::raw::c_int,
+        n: ::std::os::raw::c_int,
+        hist: *mut i64,
+    ) -> usize;
+    pub fn ggml_cpu_has_avx() -> ::std::os::raw::c_int;
+    pub fn ggml_cpu_has_avx2() -> ::std::os::raw::c_int;
+    pub fn ggml_cpu_has_avx512() -> ::std::os::raw::c_int;
+    pub fn ggml_cpu_has_avx512_vbmi() -> ::std::os::raw::c_int;
+    pub fn ggml_cpu_has_avx512_vnni() -> ::std::os::raw::c_int;
+    pub fn ggml_cpu_has_fma() -> ::std::os::raw::c_int;
+    pub fn ggml_cpu_has_neon() -> ::std::os::raw::c_int;
+    pub fn ggml_cpu_has_arm_fma() -> ::std::os::raw::c_int;
+    pub fn ggml_cpu_has_f16c() -> ::std::os::raw::c_int;
+    pub fn ggml_cpu_has_fp16_va() -> ::std::os::raw::c_int;
+    pub fn ggml_cpu_has_wasm_simd() -> ::std::os::raw::c_int;
+    pub fn ggml_cpu_has_blas() -> ::std::os::raw::c_int;
+    pub fn ggml_cpu_has_cublas() -> ::std::os::raw::c_int;
+    pub fn ggml_cpu_has_clblast() -> ::std::os::raw::c_int;
+    pub fn ggml_cpu_has_gpublas() -> ::std::os::raw::c_int;
+    pub fn ggml_cpu_has_sse3() -> ::std::os::raw::c_int;
+    pub fn ggml_cpu_has_vsx() -> ::std::os::raw::c_int;
     pub fn ggml_internal_get_quantize_fn(i: usize) -> quantize_fns_t;
 }
