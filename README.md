@@ -19,7 +19,19 @@ At present, `sourcerepo` is going to be `llamacpp` (from the `llama.cpp` repo) b
 some point it may change to point to the `ggml` repo instead (currently `llama.cpp` seems
 to get the features first). Build metadata after the `+` is informational only.
 
-## Credits:
+## Crate
+
+You can find the crate published here: https://crates.io/crates/ggml-sys-bleedingedge
+
+Automatically generated documentation: https://docs.rs/ggml-sys-bleedingedge/
+
+## Limitations
+
+GGML recently added support for GPU offloading via CUDA and OpenCL. At the moment, it's not possible to
+take advantage of that with this crate. I have plans to support this in the future via feature flags
+but it may be a while before that actually happens.
+
+## Credits
 
 ### GGML
 
