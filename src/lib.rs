@@ -159,6 +159,7 @@ pub const GGML_MAX_NODES: u32 = 4096;
 pub const GGML_MAX_PARAMS: u32 = 256;
 pub const GGML_MAX_CONTEXTS: u32 = 64;
 pub const GGML_MAX_OPT: u32 = 4;
+pub const GGML_MAX_NAME: u32 = 32;
 pub const GGML_DEFAULT_N_THREADS: u32 = 4;
 pub const ggml_type_GGML_TYPE_F32: ggml_type = 0;
 pub const ggml_type_GGML_TYPE_F16: ggml_type = 1;
@@ -237,6 +238,7 @@ pub const ggml_op_GGML_OP_MAP_UNARY: ggml_op = 49;
 pub const ggml_op_GGML_OP_MAP_BINARY: ggml_op = 50;
 pub const ggml_op_GGML_OP_COUNT: ggml_op = 51;
 pub const GGML_OBJECT_SIZE: usize = 32;
+pub const GGML_TENSOR_SIZE: usize = 224;
 pub const ggml_opt_type_GGML_OPT_ADAM: ggml_opt_type = 0;
 pub const ggml_opt_type_GGML_OPT_LBFGS: ggml_opt_type = 1;
 pub const ggml_linesearch_GGML_LINESEARCH_DEFAULT: ggml_linesearch = 1;
@@ -1108,13 +1110,16 @@ extern "C" {
     pub fn ggml_type_size(type_: ggml_type) -> usize;
     pub fn ggml_type_sizef(type_: ggml_type) -> f32;
     pub fn ggml_type_name(type_: ggml_type) -> *const ::std::os::raw::c_char;
+    pub fn ggml_op_name(op: ggml_op) -> *const ::std::os::raw::c_char;
     pub fn ggml_element_size(tensor: *const ggml_tensor) -> usize;
     pub fn ggml_is_quantized(type_: ggml_type) -> bool;
     pub fn ggml_ftype_to_ggml_type(ftype: ggml_ftype) -> ggml_type;
+    pub fn ggml_tensor_overhead() -> usize;
     pub fn ggml_init(params: ggml_init_params) -> *mut ggml_context;
     pub fn ggml_free(ctx: *mut ggml_context);
     pub fn ggml_used_mem(ctx: *const ggml_context) -> usize;
     pub fn ggml_set_scratch(ctx: *mut ggml_context, scratch: ggml_scratch) -> usize;
+    pub fn ggml_set_no_alloc(ctx: *mut ggml_context, no_alloc: bool);
     pub fn ggml_new_tensor(
         ctx: *mut ggml_context,
         type_: ggml_type,
@@ -1497,6 +1502,10 @@ extern "C" {
     ) -> ggml_cgraph;
     pub fn ggml_graph_compute(ctx: *mut ggml_context, cgraph: *mut ggml_cgraph);
     pub fn ggml_graph_reset(cgraph: *mut ggml_cgraph);
+    pub fn ggml_get_tensor_by_name(
+        cgraph: *mut ggml_cgraph,
+        name: *const ::std::os::raw::c_char,
+    ) -> *mut ggml_tensor;
     pub fn ggml_graph_print(cgraph: *const ggml_cgraph);
     pub fn ggml_graph_dump_dot(
         gb: *const ggml_cgraph,
