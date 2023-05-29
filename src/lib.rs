@@ -1120,6 +1120,8 @@ extern "C" {
     pub fn ggml_used_mem(ctx: *const ggml_context) -> usize;
     pub fn ggml_set_scratch(ctx: *mut ggml_context, scratch: ggml_scratch) -> usize;
     pub fn ggml_set_no_alloc(ctx: *mut ggml_context, no_alloc: bool);
+    pub fn ggml_get_mem_buffer(ctx: *mut ggml_context) -> *mut ::std::os::raw::c_void;
+    pub fn ggml_get_mem_size(ctx: *mut ggml_context) -> usize;
     pub fn ggml_new_tensor(
         ctx: *mut ggml_context,
         type_: ggml_type,
@@ -1156,6 +1158,10 @@ extern "C" {
     pub fn ggml_new_f32(ctx: *mut ggml_context, value: f32) -> *mut ggml_tensor;
     pub fn ggml_dup_tensor(ctx: *mut ggml_context, src: *const ggml_tensor) -> *mut ggml_tensor;
     pub fn ggml_view_tensor(ctx: *mut ggml_context, src: *const ggml_tensor) -> *mut ggml_tensor;
+    pub fn ggml_get_tensor(
+        ctx: *mut ggml_context,
+        name: *const ::std::os::raw::c_char,
+    ) -> *mut ggml_tensor;
     pub fn ggml_set_zero(tensor: *mut ggml_tensor) -> *mut ggml_tensor;
     pub fn ggml_set_i32(tensor: *mut ggml_tensor, value: i32) -> *mut ggml_tensor;
     pub fn ggml_set_f32(tensor: *mut ggml_tensor, value: f32) -> *mut ggml_tensor;
@@ -1502,10 +1508,16 @@ extern "C" {
     ) -> ggml_cgraph;
     pub fn ggml_graph_compute(ctx: *mut ggml_context, cgraph: *mut ggml_cgraph);
     pub fn ggml_graph_reset(cgraph: *mut ggml_cgraph);
-    pub fn ggml_get_tensor_by_name(
+    pub fn ggml_graph_get_tensor(
         cgraph: *mut ggml_cgraph,
         name: *const ::std::os::raw::c_char,
     ) -> *mut ggml_tensor;
+    pub fn ggml_graph_export(cgraph: *const ggml_cgraph, fname: *const ::std::os::raw::c_char);
+    pub fn ggml_graph_import(
+        fname: *const ::std::os::raw::c_char,
+        ctx_data: *mut *mut ggml_context,
+        ctx_eval: *mut *mut ggml_context,
+    ) -> ggml_cgraph;
     pub fn ggml_graph_print(cgraph: *const ggml_cgraph);
     pub fn ggml_graph_dump_dot(
         gb: *const ggml_cgraph,
