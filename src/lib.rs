@@ -1105,6 +1105,7 @@ extern "C" {
     pub fn ggml_print_object(obj: *const ggml_object);
     pub fn ggml_print_objects(ctx: *const ggml_context);
     pub fn ggml_nelements(tensor: *const ggml_tensor) -> i64;
+    pub fn ggml_nrows(tensor: *const ggml_tensor) -> i64;
     pub fn ggml_nbytes(tensor: *const ggml_tensor) -> usize;
     pub fn ggml_blck_size(type_: ggml_type) -> ::std::os::raw::c_int;
     pub fn ggml_type_size(type_: ggml_type) -> usize;
@@ -1114,6 +1115,8 @@ extern "C" {
     pub fn ggml_element_size(tensor: *const ggml_tensor) -> usize;
     pub fn ggml_is_quantized(type_: ggml_type) -> bool;
     pub fn ggml_ftype_to_ggml_type(ftype: ggml_ftype) -> ggml_type;
+    pub fn ggml_is_transposed(tensor: *const ggml_tensor) -> bool;
+    pub fn ggml_is_contiguous(tensor: *const ggml_tensor) -> bool;
     pub fn ggml_tensor_overhead() -> usize;
     pub fn ggml_init(params: ggml_init_params) -> *mut ggml_context;
     pub fn ggml_free(ctx: *mut ggml_context);
