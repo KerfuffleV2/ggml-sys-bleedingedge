@@ -35,6 +35,12 @@
 #define static_assert(cond, msg) struct global_scope_noop_trick
 #endif
 
+#if defined(_MSC_VER)
+// disable "possible loss of data" to avoid hundreds of casts
+// we should just be careful :)
+#pragma warning(disable: 4244 4267)
+#endif
+
 #if defined(_WIN32)
 
 #include <windows.h>
@@ -3937,6 +3943,12 @@ bool ggml_is_contiguous(const struct ggml_tensor * tensor) {
         tensor->nb[1] == (tensor->nb[0]*tensor->ne[0])/GGML_BLCK_SIZE[tensor->type] &&
         tensor->nb[2] == tensor->nb[1]*tensor->ne[1] &&
         tensor->nb[3] == tensor->nb[2]*tensor->ne[2];
+}
+
+bool ggml_is_permuted(const struct ggml_tensor * tensor) {
+    static_assert(GGML_MAX_DIMS == 4, "GGML_MAX_DIMS is not 4 - update this function");
+
+    return tensor->nb[0] > tensor->nb[1] || tensor->nb[1] > tensor->nb[2] || tensor->nb[2] > tensor->nb[3];
 }
 
 static inline bool ggml_is_padded_1d(const struct ggml_tensor * tensor) {

@@ -1682,6 +1682,7 @@ extern "C" {
     pub fn ggml_ftype_to_ggml_type(ftype: ggml_ftype) -> ggml_type;
     pub fn ggml_is_transposed(tensor: *const ggml_tensor) -> bool;
     pub fn ggml_is_contiguous(tensor: *const ggml_tensor) -> bool;
+    pub fn ggml_is_permuted(tensor: *const ggml_tensor) -> bool;
     pub fn ggml_tensor_overhead() -> usize;
     pub fn ggml_init(params: ggml_init_params) -> *mut ggml_context;
     pub fn ggml_free(ctx: *mut ggml_context);
