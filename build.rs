@@ -4,7 +4,6 @@ use std::{collections::HashSet, env, path::PathBuf};
 
 const GGML_SOURCE_DIR: &str = "ggml-src";
 const GGML_HEADER: &str = "ggml.h";
-const GGML_SOURCE: &str = "ggml.c";
 
 fn generate_bindings() {
     let ggml_header_path = PathBuf::from(GGML_SOURCE_DIR).join(GGML_HEADER);
@@ -43,7 +42,6 @@ fn main() {
     // By default, this crate will attempt to compile ggml with the features of your host system if
     // the host and target are the same. If they are not, it will turn off auto-feature-detection,
     // and you will need to manually specify target features through target-features.
-
     println!("cargo:rerun-if-changed=ggml-src");
 
     // If running on docs.rs, the filesystem is readonly so we can't actually generate
@@ -52,12 +50,101 @@ fn main() {
     if env::var("DOCS_RS").is_ok() {
         return;
     }
+    if cfg!(not(feature = "use_cmake")) {
+        return build_simple();
+    }
+    build_cmake();
+}
+
+fn build_cmake() {
+    let target_os = env::var("CARGO_CFG_TARGET_OS").unwrap();
 
     generate_bindings();
 
-    let ggml_source_path = PathBuf::from(GGML_SOURCE_DIR).join(GGML_SOURCE);
+    // This silliness is necessary to get the cc crate to discover and
+    // spit out the necessary stuff to link with C++ (and CUDA if enabled).
+    let mut build = cc::Build::new();
+    build.cpp(true).file("dummy/dummy.c");
+
+    if cfg!(feature = "cublas") {
+        build.cuda(true);
+    }
+    build.compile("dummy");
+
+    let mut cmbuild = cmake::Config::new("ggml-src");
+    cmbuild.build_target("llama");
+    if cfg!(feature = "no_k_quants") {
+        cmbuild.define("LLAMA_K_QUANTS", "OFF");
+    }
+    if cfg!(feature = "cublas") {
+        cmbuild.define("LLAMA_CUBLAS", "ON");
+    } else if cfg!(feature = "clblast") {
+        cmbuild.define("LLAMA_CLBLAST", "ON");
+    } else if cfg!(feature = "openblas") {
+        cmbuild.define("LLAMA_BLAS", "ON");
+        cmbuild.define("LLAMA_BLAS_VENDOR", "OpenBLAS");
+    }
+    if target_os == "macos" {
+        cmbuild.define(
+            "LLAMA_ACCELERATE",
+            if cfg!(feature = "no_accelerate") {
+                "OFF"
+            } else {
+                "ON"
+            },
+        );
+        cmbuild.define(
+            "LLAMA_METAL",
+            if cfg!(feature = "metal") { "ON" } else { "OFF" },
+        );
+    }
+    let dst = cmbuild.build();
+    if cfg!(feature = "cublas") {
+        println!("cargo:rustc-link-lib=cublas");
+    } else if cfg!(feature = "clblast") {
+        println!("cargo:rustc-link-lib=clblast");
+        println!(
+            "cargo:rustc-link-lib={}OpenCL",
+            if target_os == "macos" {
+                "framework="
+            } else {
+                ""
+            }
+        );
+    } else if cfg!(feature = "openblas") {
+        println!("cargo:rustc-link-lib=openblas");
+    }
+    if target_os == "macos" {
+        if cfg!(not(feature = "no_accelerate")) {
+            println!("cargo:rustc-link-lib=framework=Accelerate");
+        }
+        if cfg!(feature = "metal") {
+            println!("cargo:rustc-link-lib=framework=Foundation");
+            println!("cargo:rustc-link-lib=framework=Metal");
+            println!("cargo:rustc-link-lib=framework=MetalKit");
+            println!("cargo:rustc-link-lib=framework=MetalPerformanceShaders");
+        }
+    }
+    println!("cargo:rustc-link-search=native={}/build", dst.display());
+    println!("cargo:rustc-link-lib=static=llama");
+}
+
+fn build_simple() {
+    if cfg!(feature = "cublas") || cfg!(feature = "clblast") {
+        panic!("Must build with feature use_cmake when enabling BLAS!");
+    }
+    generate_bindings();
+
     let mut builder = cc::Build::new();
-    let build = builder.files([ggml_source_path].iter()).include("include");
+    let build = builder
+        .files([
+            PathBuf::from(GGML_SOURCE_DIR).join("ggml.c"),
+            #[cfg(not(feature = "no_k_quants"))]
+            PathBuf::from(GGML_SOURCE_DIR).join("k_quants.c"),
+        ])
+        .include("include");
+    #[cfg(not(feature = "no_k_quants"))]
+    build.define("GGML_USE_K_QUANTS", None);
 
     // This is a very basic heuristic for applying compile flags.
     // Feel free to update this to fit your operating system.

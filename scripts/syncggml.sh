@@ -26,9 +26,14 @@ fi
 echo "New release tag. Latest [${LATEST_GGML_RELEASE}], ours: [${OUR_GGML_RELEASE}]"
 git clone --depth 100 --single-branch https://github.com/ggerganov/llama.cpp ggml-repo && \
   ( cd ggml-repo && git checkout "$LATEST_GGML_RELEASE" )
-mkdir -p ggml-src
-cp ggml-repo/ggml.c ggml-repo/ggml.h ggml-src/
-git add ggml-src/ggml.c ggml-src/ggml.h
+mkdir -p ggml-src/{pocs,tests,examples,scripts}
+touch ggml-src/{pocs,tests,examples}/CMakeLists.txt
+cp ggml-repo/*.{c,cpp,h,m,metal,cu} ggml-repo/CMakeLists.txt ggml-src/
+cp ggml-repo/scripts/build-info.{cmake,h.in} ggml-src/scripts/
+git add \
+  ggml-src/*.{c,cpp,h,m,metal,cu} \
+  ggml-src/scripts/build-info.* \
+  ggml-src/CMakeLists.txt ggml-src/{tests,pocs,examples}/CMakeLists.txt
 
 if test -z "`git status --untracked=no --porcelain`"; then
   # New release tag but no relevant changes, so nothing to do.
@@ -48,16 +53,20 @@ fi
 # Make sure it actually builds.
 cargo build
 cargo test
+cargo clean
+cargo build --features use_cmake
+cargo test --features use_cmake
 
 echo "$VERSION" > ./VERSION.txt
 echo "$OUR_GGML_RELEASE" > ./ggml-tag-previous.txt
 echo "$LATEST_GGML_RELEASE" > ./ggml-tag-current.txt
-git add Cargo.toml VERSION.txt ggml-tag-current.txt ggml-tag-previous.txt src/lib.rs
+git add Cargo.toml VERSION.txt ggml-tag-current.txt ggml-tag-previous.txt src/lib.rs ggml-src/build-info.h
 git config user.name github-actions
 git config user.email github-actions@github.com
 ( echo -e "[auto] Sync version ${VERSION}\n\n== Relevant log messages from source repo:\n" ; \
   cd ggml-repo && \
-  git log "${OUR_GGML_RELEASE}..${LATEST_GGML_RELEASE}" -- ggml.c ggml.h 2>/dev/null || true \
+  git log "${OUR_GGML_RELEASE}..${LATEST_GGML_RELEASE}" -- \
+    *.{c,cpp,h,m,metal,cu} CMakeLists.txt scripts/build-info.{cmake,h.in} 2>/dev/null || true \
 ) | git commit -F -
 git push
 echo 'new_release=true' >> $GITHUB_OUTPUT
