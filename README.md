@@ -33,13 +33,13 @@ Available features:
 
 - `n_k_quants` - Disables building with k_quant quantizations (i.e. Q4_K)
 - `no_accelerate` - Only relevant on Mac, disables building with Accelerate.
-- `use_cmake` - Builds and links against the libllama using cmake.
+- `use_cmake` - Builds and links against `libllama` using cmake.
 - `cublas` - Nvidia's CUDA BLAS implementation.
 - `clblast` - OpenCL BLAS.
 - `openblas` - OpenBLAS.
 - `metal` - Metal support, only available on Mac.
 
-Enabling any of the BLAS features or `metal` implies `use_cmake`. You will need a working C++ compiler and cmake set up to build with this feature. Due to limitations in the llama.cpp cmake build system currently, it's necessary to build and link against libllama (which pulls in stuff like `libstdc++`) even though we only need GGML. Also, although we can build the library using cmake there's no simple way to know the necessary library search paths and libraries: we try to make a reasonable choice here but if you have libraries in unusual locations or multiple versions then weird stuff may happen.
+Enabling any of the BLAS features or `metal` implies `use_cmake`. You will need a working C++ compiler and cmake set up to build with this feature. Due to limitations in the llama.cpp cmake build system currently, it's necessary to build and link against `libllama` (which pulls in stuff like `libstdc++`) even though we only need GGML. Also, although we can build the library using cmake there's no simple way to know the necessary library search paths and libraries: we try to make a reasonable choice here but if you have libraries in unusual locations or multiple versions then weird stuff may happen.
 
 
 ## Limitations
