@@ -25,17 +25,32 @@ You can find the crate published here: https://crates.io/crates/ggml-sys-bleedin
 
 Automatically generated documentation: https://docs.rs/ggml-sys-bleedingedge/
 
+## Features
+
+There is now experimental support for compiling with BLAS.
+
+Available features:
+
+- `n_k_quants` - Disables building with k_quant quantizations (i.e. Q4_K)
+- `no_accelerate` - Only relevant on Mac, disables building with Accelerate.
+- `use_cmake` - Builds and links against the libllama using cmake.
+- `cublas` - Nvidia's CUDA BLAS implementation.
+- `clblast` - OpenCL BLAS.
+- `openblas` - OpenBLAS.
+- `metal` - Metal support, only available on Mac.
+
+Enabling any of the BLAS features or `metal` implies `use_cmake`. You will need a working C++ compiler and cmake set up to build with this feature. Due to limitations in the llama.cpp cmake build system currently, it's necessary to build and link against libllama (which pulls in stuff like `libstdc++`) even though we only need GGML. Also, although we can build the library using cmake there's no simple way to know the necessary library search paths and libraries: we try to make a reasonable choice here but if you have libraries in unusual locations or multiple versions then weird stuff may happen.
+
+
 ## Limitations
 
-GGML recently added support for GPU offloading via CUDA and OpenCL. At the moment, it's not possible to
-take advantage of that with this crate. I have plans to support this in the future via feature flags
-but it may be a while before that actually happens.
+The project has a slow, irresponsible person like me maintaining it. This is not an ideal situation.
 
 ## Credits
 
 ### GGML
 
-The `ggml.c` and `ggml.h` files are distributed under the terms of the MIT license.
+The files under `ggml-src/` are distributed under the terms of the MIT license. As they are simply copied from the source repo (see below) refer to that for definitive information on the license or credits.
 
 Credit goes to the original authors: Copyright (c) 2023 Georgi Gerganov
 
@@ -43,4 +58,4 @@ Currently automatically generated from the [llama.cpp](https://github.com/ggerga
 
 ### Build Scripts
 
-Initially derived from the build script and bindings generation in the [llama-rs](https://github.com/rustformers/llama-rs/) project.
+Initially derived from the build script and bindings generation in the Rustformers [llm](https://github.com/rustformers/llm/) project.
