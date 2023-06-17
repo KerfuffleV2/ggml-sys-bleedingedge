@@ -9,7 +9,7 @@ fn generate_bindings() {
     let ggml_header_path = PathBuf::from(GGML_SOURCE_DIR).join(GGML_HEADER);
     let librs_path = PathBuf::from("src").join("lib.rs");
 
-    let bindings = bindgen::Builder::default()
+    let mut bbuilder = bindgen::Builder::default()
         .derive_copy(true)
         .derive_debug(true)
         .derive_partialeq(true)
@@ -29,10 +29,26 @@ fn generate_bindings() {
         .raw_line("#![allow(unused)]")
         .raw_line("pub const GGMLSYS_VERSION: Option<&str> = option_env!(\"CARGO_PKG_VERSION\");")
         // Do not generate code for ggml's includes (stdlib)
-        .allowlist_file(ggml_header_path.to_string_lossy())
-        .generate()
-        .expect("Unable to generate bindings");
+        .allowlist_file(ggml_header_path.to_string_lossy());
+    if cfg!(feature = "use_cmake") {
+        if cfg!(feature = "cublas") {
+            let hfn = PathBuf::from(GGML_SOURCE_DIR).join("ggml-cuda.h");
+            let hfn = hfn.to_string_lossy();
+            bbuilder = bbuilder.header(hfn.clone()).allowlist_file(hfn);
+        }
+        if cfg!(feature = "clblast") {
+            let hfn = PathBuf::from(GGML_SOURCE_DIR).join("ggml-opencl.h");
+            let hfn = hfn.to_string_lossy();
+            bbuilder = bbuilder.header(hfn.clone()).allowlist_file(hfn);
+        }
+        if cfg!(feature = "metal") {
+            let hfn = PathBuf::from(GGML_SOURCE_DIR).join("ggml-metal.h");
+            let hfn = hfn.to_string_lossy();
+            bbuilder = bbuilder.header(hfn.clone()).allowlist_file(hfn);
+        }
+    }
 
+    let bindings = bbuilder.generate().expect("Unable to generate bindings");
     bindings
         .write_to_file(librs_path)
         .expect("Couldn't write bindings");
