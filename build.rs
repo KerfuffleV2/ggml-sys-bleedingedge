@@ -88,7 +88,7 @@ fn build_cmake() {
     build.compile("dummy");
 
     let mut cmbuild = cmake::Config::new("ggml-src");
-    cmbuild.build_target("llama");
+    cmbuild.build_target("ggml_static");
     if cfg!(feature = "no_k_quants") {
         cmbuild.define("LLAMA_K_QUANTS", "OFF");
     }
@@ -142,7 +142,7 @@ fn build_cmake() {
         }
     }
     println!("cargo:rustc-link-search=native={}/build", dst.display());
-    println!("cargo:rustc-link-lib=static=llama");
+    println!("cargo:rustc-link-lib=static=ggml_static");
 }
 
 fn build_simple() {
