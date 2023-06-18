@@ -19,6 +19,11 @@
 #ifdef GGML_USE_METAL
 #include "ggml-metal.h"
 #endif
+#ifdef GGML_USE_K_QUANTS
+#ifndef QK_K
+#define QK_K 256
+#endif
+#endif
 
 #include <array>
 #include <ctime>
@@ -2491,6 +2496,17 @@ static void llama_model_quantize_internal(const std::string & fname_inp, const s
         } else {
             new_type = quantized_type;
 #ifdef GGML_USE_K_QUANTS
+            if (quantized_type == GGML_TYPE_Q2_K || quantized_type == GGML_TYPE_Q3_K || quantized_type == GGML_TYPE_Q4_K ||
+                quantized_type == GGML_TYPE_Q5_K || quantized_type == GGML_TYPE_Q6_K) {
+                int nx = tensor.ne.at(0);
+                int ny = tensor.ne.at(0);
+                if (nx % QK_K != 0 || ny % QK_K != 0) {
+                    fprintf(stderr, "\n\n========================= Tensor sizes %d x %d are not divisible by %d\n",nx,ny,QK_K);
+                    fprintf(stderr, "This is required to be able to use k-quants for now!\n");
+                    fprintf(stderr, "========================================================================================\n\n");
+                    throw std::runtime_error("Unsupported tensor size encountered\n");
+                }
+            }
             if (tensor.name == "output.weight") {
                new_type = GGML_TYPE_Q6_K;
             } else if (tensor.name.find("attention.wv.weight") != std::string::npos) {
@@ -2696,15 +2712,20 @@ struct llama_context * llama_init_from_file(
         // this allocates all Metal resources and memory buffers
         ctx->ctx_metal = ggml_metal_init();
 
-        void *data_ptr = NULL;
+        void * data_ptr  = NULL;
         size_t data_size = 0;
+
         if (params.use_mmap) {
-            data_ptr = ctx->model.mapping->addr;
-            data_size= ctx->model.mapping->size;
+            data_ptr  = ctx->model.mapping->addr;
+            data_size = ctx->model.mapping->size;
         } else {
-            data_ptr = ggml_get_mem_buffer(ctx->model.ctx);
-            data_size= ggml_get_mem_size(ctx->model.ctx);
+            data_ptr  = ggml_get_mem_buffer(ctx->model.ctx);
+            data_size = ggml_get_mem_size  (ctx->model.ctx);
         }
+
+        const size_t max_size = ggml_get_max_tensor_size(ctx->model.ctx);
+
+        printf("%s: max tensor size = %8.2f MB\n", __func__, max_size/1024.0/1024.0);
 
 #define LLAMA_METAL_CHECK_BUF(result)                                          \
     if (!(result)) {                                                           \
@@ -2713,12 +2734,13 @@ struct llama_context * llama_init_from_file(
         return NULL;                                                           \
     }
 
-        LLAMA_METAL_CHECK_BUF(ggml_metal_add_buffer(ctx->ctx_metal, "data", data_ptr, data_size));
-        LLAMA_METAL_CHECK_BUF(ggml_metal_add_buffer(ctx->ctx_metal, "eval", ctx->buf_compute.addr, ctx->buf_compute.size));
+        LLAMA_METAL_CHECK_BUF(ggml_metal_add_buffer(ctx->ctx_metal, "data", data_ptr, data_size, max_size));
 
-        LLAMA_METAL_CHECK_BUF(ggml_metal_add_buffer(ctx->ctx_metal, "kv",   ctx->model.kv_self.buf.addr, ctx->model.kv_self.buf.size));
-        LLAMA_METAL_CHECK_BUF(ggml_metal_add_buffer(ctx->ctx_metal, "scr0", ctx->buf_scratch[0].addr,    ctx->buf_scratch[0].size));
-        LLAMA_METAL_CHECK_BUF(ggml_metal_add_buffer(ctx->ctx_metal, "scr1", ctx->buf_scratch[1].addr,    ctx->buf_scratch[1].size));
+        LLAMA_METAL_CHECK_BUF(ggml_metal_add_buffer(ctx->ctx_metal, "eval", ctx->buf_compute.addr,       ctx->buf_compute.size,       0));
+        LLAMA_METAL_CHECK_BUF(ggml_metal_add_buffer(ctx->ctx_metal, "kv",   ctx->model.kv_self.buf.addr, ctx->model.kv_self.buf.size, 0));
+
+        LLAMA_METAL_CHECK_BUF(ggml_metal_add_buffer(ctx->ctx_metal, "scr0", ctx->buf_scratch[0].addr, ctx->buf_scratch[0].size, 0));
+        LLAMA_METAL_CHECK_BUF(ggml_metal_add_buffer(ctx->ctx_metal, "scr1", ctx->buf_scratch[1].addr, ctx->buf_scratch[1].size, 0));
 #undef LLAMA_METAL_CHECK_BUF
     }
 #endif

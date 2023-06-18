@@ -4154,12 +4154,32 @@ void ggml_set_no_alloc(struct ggml_context * ctx, bool no_alloc) {
     ctx->no_alloc = no_alloc;
 }
 
-void * ggml_get_mem_buffer(struct ggml_context * ctx) {
+void * ggml_get_mem_buffer(const struct ggml_context * ctx) {
     return ctx->mem_buffer;
 }
 
-size_t ggml_get_mem_size(struct ggml_context * ctx) {
+size_t ggml_get_mem_size(const struct ggml_context * ctx) {
     return ctx->mem_size;
+}
+
+size_t ggml_get_max_tensor_size(const struct ggml_context * ctx) {
+    size_t max_size = 0;
+
+    struct ggml_object * obj = ctx->objects_begin;
+
+    while (obj != NULL) {
+        struct ggml_tensor * tensor = (struct ggml_tensor *) ((char *) ctx->mem_buffer + obj->offs);
+
+        const size_t size = ggml_nbytes(tensor);
+
+        if (max_size < size) {
+            max_size = size;
+        }
+
+        obj = obj->next;
+    }
+
+    return max_size;
 }
 
 // IMPORTANT:
@@ -7898,7 +7918,7 @@ static void ggml_compute_forward_add_q_f32(
 
         void  * src0_row = (void *) ((char *) src0->data + (i01*nb01 + i02*nb02 + i03*nb03));
         float * src1_row = (float *)((char *) src1->data + (i11*nb11 + i12*nb12 + i13*nb13));
-        void  * dst_row  = (void *) ((char *)  dst->data + ( i1*nb1  +  i2*nb2  +  i3*nb0));
+        void  * dst_row  = (void *) ((char *)  dst->data + ( i1*nb1  +  i2*nb2  +  i3*nb3));
 
         assert(ne00 % 32 == 0);
 
