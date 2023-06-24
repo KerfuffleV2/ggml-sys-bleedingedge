@@ -1750,6 +1750,11 @@ extern "C" {
         tensor: *mut ggml_tensor,
         name: *const ::std::os::raw::c_char,
     ) -> *mut ggml_tensor;
+    pub fn ggml_format_name(
+        tensor: *mut ggml_tensor,
+        fmt: *const ::std::os::raw::c_char,
+        ...
+    ) -> *mut ggml_tensor;
     pub fn ggml_dup(ctx: *mut ggml_context, a: *mut ggml_tensor) -> *mut ggml_tensor;
     pub fn ggml_add(
         ctx: *mut ggml_context,
