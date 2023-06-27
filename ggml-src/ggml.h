@@ -198,7 +198,7 @@
 #define GGML_MAX_PARAMS        256
 #define GGML_MAX_CONTEXTS      64
 #define GGML_MAX_OPT           4
-#define GGML_MAX_NAME          32
+#define GGML_MAX_NAME          48
 #define GGML_DEFAULT_N_THREADS 4
 
 #define GGML_ASSERT(x) \
@@ -468,6 +468,9 @@ extern "C" {
     GGML_API int64_t ggml_time_us(void);
     GGML_API int64_t ggml_cycles(void);
     GGML_API int64_t ggml_cycles_per_ms(void);
+
+    GGML_API void    ggml_numa_init(void); // call once for better performance on NUMA systems
+    GGML_API bool    ggml_is_numa(void); // true if init detected that system has >1 NUMA node
 
     GGML_API void    ggml_print_object (const struct ggml_object * obj);
     GGML_API void    ggml_print_objects(const struct ggml_context * ctx);

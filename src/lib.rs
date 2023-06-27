@@ -89,7 +89,7 @@ pub struct ggml_tensor {
     pub perf_cycles: i64,
     pub perf_time_us: i64,
     pub data: *mut ::std::os::raw::c_void,
-    pub name: [::std::os::raw::c_char; 32usize],
+    pub name: [::std::os::raw::c_char; 48usize],
     pub extra: *mut ::std::os::raw::c_void,
     pub padding: [::std::os::raw::c_char; 4usize],
 }
@@ -235,7 +235,7 @@ pub const GGML_MAX_NODES: u32 = 4096;
 pub const GGML_MAX_PARAMS: u32 = 256;
 pub const GGML_MAX_CONTEXTS: u32 = 64;
 pub const GGML_MAX_OPT: u32 = 4;
-pub const GGML_MAX_NAME: u32 = 32;
+pub const GGML_MAX_NAME: u32 = 48;
 pub const GGML_DEFAULT_N_THREADS: u32 = 4;
 pub const ggml_type_GGML_TYPE_F32: ggml_type = 0;
 pub const ggml_type_GGML_TYPE_F16: ggml_type = 1;
@@ -338,7 +338,7 @@ pub const ggml_op_GGML_OP_CROSS_ENTROPY_LOSS: ggml_op = 62;
 pub const ggml_op_GGML_OP_CROSS_ENTROPY_LOSS_BACK: ggml_op = 63;
 pub const ggml_op_GGML_OP_COUNT: ggml_op = 64;
 pub const GGML_OBJECT_SIZE: usize = 32;
-pub const GGML_TENSOR_SIZE: usize = 224;
+pub const GGML_TENSOR_SIZE: usize = 240;
 pub const ggml_task_type_GGML_TASK_INIT: ggml_task_type = 0;
 pub const ggml_task_type_GGML_TASK_COMPUTE: ggml_task_type = 1;
 pub const ggml_task_type_GGML_TASK_FINALIZE: ggml_task_type = 2;
@@ -419,7 +419,7 @@ fn bindgen_test_layout_ggml_tensor() {
     let ptr = UNINIT.as_ptr();
     assert_eq!(
         ::std::mem::size_of::<ggml_tensor>(),
-        224usize,
+        240usize,
         concat!("Size of: ", stringify!(ggml_tensor))
     );
     assert_eq!(
@@ -599,7 +599,7 @@ fn bindgen_test_layout_ggml_tensor() {
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).extra) as usize - ptr as usize },
-        208usize,
+        224usize,
         concat!(
             "Offset of field: ",
             stringify!(ggml_tensor),
@@ -609,7 +609,7 @@ fn bindgen_test_layout_ggml_tensor() {
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).padding) as usize - ptr as usize },
-        216usize,
+        232usize,
         concat!(
             "Offset of field: ",
             stringify!(ggml_tensor),
@@ -1687,6 +1687,8 @@ extern "C" {
     pub fn ggml_time_us() -> i64;
     pub fn ggml_cycles() -> i64;
     pub fn ggml_cycles_per_ms() -> i64;
+    pub fn ggml_numa_init();
+    pub fn ggml_is_numa() -> bool;
     pub fn ggml_print_object(obj: *const ggml_object);
     pub fn ggml_print_objects(ctx: *const ggml_context);
     pub fn ggml_nelements(tensor: *const ggml_tensor) -> i64;
