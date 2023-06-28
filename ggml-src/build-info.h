@@ -2,6 +2,6 @@
 #define BUILD_INFO_H
 
 #define BUILD_NUMBER 1
-#define BUILD_COMMIT "4f7ba03"
+#define BUILD_COMMIT "822216f"
 
 #endif // BUILD_INFO_H
