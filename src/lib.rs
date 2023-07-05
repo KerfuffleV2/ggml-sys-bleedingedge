@@ -43,13 +43,13 @@ pub type ggml_custom3_op_f32_t = ::std::option::Option<
 pub type ggml_opt_type = ::std::os::raw::c_uint;
 pub type ggml_linesearch = ::std::os::raw::c_uint;
 pub type ggml_opt_result = ::std::os::raw::c_int;
-pub type dequantize_row_q_t = ::std::option::Option<
+pub type ggml_to_float_t = ::std::option::Option<
     unsafe extern "C" fn(x: *const ::std::os::raw::c_void, y: *mut f32, k: ::std::os::raw::c_int),
 >;
-pub type quantize_row_q_t = ::std::option::Option<
+pub type ggml_from_float_t = ::std::option::Option<
     unsafe extern "C" fn(x: *const f32, y: *mut ::std::os::raw::c_void, k: ::std::os::raw::c_int),
 >;
-pub type vec_dot_q_t = ::std::option::Option<
+pub type ggml_vec_dot_t = ::std::option::Option<
     unsafe extern "C" fn(
         n: ::std::os::raw::c_int,
         s: *mut f32,
@@ -218,12 +218,11 @@ pub struct ggml_opt_context__bindgen_ty_2 {
 }
 #[repr(C)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
-pub struct quantize_fns_t {
-    pub dequantize_row_q: dequantize_row_q_t,
-    pub quantize_row_q: quantize_row_q_t,
-    pub quantize_row_q_reference: quantize_row_q_t,
-    pub quantize_row_q_dot: quantize_row_q_t,
-    pub vec_dot_q: vec_dot_q_t,
+pub struct ggml_type_traits_t {
+    pub to_float: ggml_to_float_t,
+    pub from_float: ggml_from_float_t,
+    pub from_float_reference: ggml_from_float_t,
+    pub vec_dot: ggml_vec_dot_t,
     pub vec_dot_type: ggml_type,
 }
 pub const GGML_FILE_MAGIC: u32 = 1734831468;
@@ -1605,75 +1604,65 @@ fn bindgen_test_layout_ggml_opt_context() {
     );
 }
 #[test]
-fn bindgen_test_layout_quantize_fns_t() {
-    const UNINIT: ::std::mem::MaybeUninit<quantize_fns_t> = ::std::mem::MaybeUninit::uninit();
+fn bindgen_test_layout_ggml_type_traits_t() {
+    const UNINIT: ::std::mem::MaybeUninit<ggml_type_traits_t> = ::std::mem::MaybeUninit::uninit();
     let ptr = UNINIT.as_ptr();
     assert_eq!(
-        ::std::mem::size_of::<quantize_fns_t>(),
-        48usize,
-        concat!("Size of: ", stringify!(quantize_fns_t))
+        ::std::mem::size_of::<ggml_type_traits_t>(),
+        40usize,
+        concat!("Size of: ", stringify!(ggml_type_traits_t))
     );
     assert_eq!(
-        ::std::mem::align_of::<quantize_fns_t>(),
+        ::std::mem::align_of::<ggml_type_traits_t>(),
         8usize,
-        concat!("Alignment of ", stringify!(quantize_fns_t))
+        concat!("Alignment of ", stringify!(ggml_type_traits_t))
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).dequantize_row_q) as usize - ptr as usize },
+        unsafe { ::std::ptr::addr_of!((*ptr).to_float) as usize - ptr as usize },
         0usize,
         concat!(
             "Offset of field: ",
-            stringify!(quantize_fns_t),
+            stringify!(ggml_type_traits_t),
             "::",
-            stringify!(dequantize_row_q)
+            stringify!(to_float)
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).quantize_row_q) as usize - ptr as usize },
+        unsafe { ::std::ptr::addr_of!((*ptr).from_float) as usize - ptr as usize },
         8usize,
         concat!(
             "Offset of field: ",
-            stringify!(quantize_fns_t),
+            stringify!(ggml_type_traits_t),
             "::",
-            stringify!(quantize_row_q)
+            stringify!(from_float)
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).quantize_row_q_reference) as usize - ptr as usize },
+        unsafe { ::std::ptr::addr_of!((*ptr).from_float_reference) as usize - ptr as usize },
         16usize,
         concat!(
             "Offset of field: ",
-            stringify!(quantize_fns_t),
+            stringify!(ggml_type_traits_t),
             "::",
-            stringify!(quantize_row_q_reference)
+            stringify!(from_float_reference)
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).quantize_row_q_dot) as usize - ptr as usize },
+        unsafe { ::std::ptr::addr_of!((*ptr).vec_dot) as usize - ptr as usize },
         24usize,
         concat!(
             "Offset of field: ",
-            stringify!(quantize_fns_t),
+            stringify!(ggml_type_traits_t),
             "::",
-            stringify!(quantize_row_q_dot)
-        )
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).vec_dot_q) as usize - ptr as usize },
-        32usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(quantize_fns_t),
-            "::",
-            stringify!(vec_dot_q)
+            stringify!(vec_dot)
         )
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).vec_dot_type) as usize - ptr as usize },
-        40usize,
+        32usize,
         concat!(
             "Offset of field: ",
-            stringify!(quantize_fns_t),
+            stringify!(ggml_type_traits_t),
             "::",
             stringify!(vec_dot_type)
         )
@@ -1682,8 +1671,8 @@ fn bindgen_test_layout_quantize_fns_t() {
 extern "C" {
     pub fn ggml_fp16_to_fp32(x: ggml_fp16_t) -> f32;
     pub fn ggml_fp32_to_fp16(x: f32) -> ggml_fp16_t;
-    pub fn ggml_fp16_to_fp32_row(x: *const ggml_fp16_t, y: *mut f32, n: usize);
-    pub fn ggml_fp32_to_fp16_row(x: *const f32, y: *mut ggml_fp16_t, n: usize);
+    pub fn ggml_fp16_to_fp32_row(x: *const ggml_fp16_t, y: *mut f32, n: ::std::os::raw::c_int);
+    pub fn ggml_fp32_to_fp16_row(x: *const f32, y: *mut ggml_fp16_t, n: ::std::os::raw::c_int);
     pub fn ggml_time_init();
     pub fn ggml_time_ms() -> i64;
     pub fn ggml_time_us() -> i64;
@@ -2369,5 +2358,5 @@ extern "C" {
     pub fn ggml_cpu_has_gpublas() -> ::std::os::raw::c_int;
     pub fn ggml_cpu_has_sse3() -> ::std::os::raw::c_int;
     pub fn ggml_cpu_has_vsx() -> ::std::os::raw::c_int;
-    pub fn ggml_internal_get_quantize_fn(i: usize) -> quantize_fns_t;
+    pub fn ggml_internal_get_type_traits(i: ggml_type) -> ggml_type_traits_t;
 }
