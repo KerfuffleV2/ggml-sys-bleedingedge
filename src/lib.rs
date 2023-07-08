@@ -84,23 +84,27 @@ pub struct ggml_tensor {
     pub src0: *mut ggml_tensor,
     pub src1: *mut ggml_tensor,
     pub opt: [*mut ggml_tensor; 4usize],
-    pub n_tasks: ::std::os::raw::c_int,
     pub perf_runs: ::std::os::raw::c_int,
     pub perf_cycles: i64,
     pub perf_time_us: i64,
     pub data: *mut ::std::os::raw::c_void,
     pub name: [::std::os::raw::c_char; 48usize],
     pub extra: *mut ::std::os::raw::c_void,
-    pub padding: [::std::os::raw::c_char; 4usize],
+    pub padding: [::std::os::raw::c_char; 8usize],
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+pub struct ggml_cplan {
+    pub work_size: usize,
+    pub work_data: *mut u8,
+    pub n_threads: ::std::os::raw::c_int,
+    pub n_tasks: [::std::os::raw::c_int; 4096usize],
 }
 #[repr(C)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct ggml_cgraph {
     pub n_nodes: ::std::os::raw::c_int,
     pub n_leafs: ::std::os::raw::c_int,
-    pub n_threads: ::std::os::raw::c_int,
-    pub work_size: usize,
-    pub work: *mut ggml_tensor,
     pub nodes: [*mut ggml_tensor; 4096usize],
     pub grads: [*mut ggml_tensor; 4096usize],
     pub leafs: [*mut ggml_tensor; 4096usize],
@@ -539,18 +543,8 @@ fn bindgen_test_layout_ggml_tensor() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).n_tasks) as usize - ptr as usize },
-        144usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(ggml_tensor),
-            "::",
-            stringify!(n_tasks)
-        )
-    );
-    assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).perf_runs) as usize - ptr as usize },
-        148usize,
+        144usize,
         concat!(
             "Offset of field: ",
             stringify!(ggml_tensor),
@@ -620,12 +614,67 @@ fn bindgen_test_layout_ggml_tensor() {
     );
 }
 #[test]
+fn bindgen_test_layout_ggml_cplan() {
+    const UNINIT: ::std::mem::MaybeUninit<ggml_cplan> = ::std::mem::MaybeUninit::uninit();
+    let ptr = UNINIT.as_ptr();
+    assert_eq!(
+        ::std::mem::size_of::<ggml_cplan>(),
+        16408usize,
+        concat!("Size of: ", stringify!(ggml_cplan))
+    );
+    assert_eq!(
+        ::std::mem::align_of::<ggml_cplan>(),
+        8usize,
+        concat!("Alignment of ", stringify!(ggml_cplan))
+    );
+    assert_eq!(
+        unsafe { ::std::ptr::addr_of!((*ptr).work_size) as usize - ptr as usize },
+        0usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(ggml_cplan),
+            "::",
+            stringify!(work_size)
+        )
+    );
+    assert_eq!(
+        unsafe { ::std::ptr::addr_of!((*ptr).work_data) as usize - ptr as usize },
+        8usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(ggml_cplan),
+            "::",
+            stringify!(work_data)
+        )
+    );
+    assert_eq!(
+        unsafe { ::std::ptr::addr_of!((*ptr).n_threads) as usize - ptr as usize },
+        16usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(ggml_cplan),
+            "::",
+            stringify!(n_threads)
+        )
+    );
+    assert_eq!(
+        unsafe { ::std::ptr::addr_of!((*ptr).n_tasks) as usize - ptr as usize },
+        20usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(ggml_cplan),
+            "::",
+            stringify!(n_tasks)
+        )
+    );
+}
+#[test]
 fn bindgen_test_layout_ggml_cgraph() {
     const UNINIT: ::std::mem::MaybeUninit<ggml_cgraph> = ::std::mem::MaybeUninit::uninit();
     let ptr = UNINIT.as_ptr();
     assert_eq!(
         ::std::mem::size_of::<ggml_cgraph>(),
-        98360usize,
+        98336usize,
         concat!("Size of: ", stringify!(ggml_cgraph))
     );
     assert_eq!(
@@ -654,38 +703,8 @@ fn bindgen_test_layout_ggml_cgraph() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).n_threads) as usize - ptr as usize },
-        8usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(ggml_cgraph),
-            "::",
-            stringify!(n_threads)
-        )
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).work_size) as usize - ptr as usize },
-        16usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(ggml_cgraph),
-            "::",
-            stringify!(work_size)
-        )
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).work) as usize - ptr as usize },
-        24usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(ggml_cgraph),
-            "::",
-            stringify!(work)
-        )
-    );
-    assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).nodes) as usize - ptr as usize },
-        32usize,
+        8usize,
         concat!(
             "Offset of field: ",
             stringify!(ggml_cgraph),
@@ -695,7 +714,7 @@ fn bindgen_test_layout_ggml_cgraph() {
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).grads) as usize - ptr as usize },
-        32800usize,
+        32776usize,
         concat!(
             "Offset of field: ",
             stringify!(ggml_cgraph),
@@ -705,7 +724,7 @@ fn bindgen_test_layout_ggml_cgraph() {
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).leafs) as usize - ptr as usize },
-        65568usize,
+        65544usize,
         concat!(
             "Offset of field: ",
             stringify!(ggml_cgraph),
@@ -715,7 +734,7 @@ fn bindgen_test_layout_ggml_cgraph() {
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).perf_runs) as usize - ptr as usize },
-        98336usize,
+        98312usize,
         concat!(
             "Offset of field: ",
             stringify!(ggml_cgraph),
@@ -725,7 +744,7 @@ fn bindgen_test_layout_ggml_cgraph() {
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).perf_cycles) as usize - ptr as usize },
-        98344usize,
+        98320usize,
         concat!(
             "Offset of field: ",
             stringify!(ggml_cgraph),
@@ -735,7 +754,7 @@ fn bindgen_test_layout_ggml_cgraph() {
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).perf_time_us) as usize - ptr as usize },
-        98352usize,
+        98328usize,
         concat!(
             "Offset of field: ",
             stringify!(ggml_cgraph),
@@ -2256,8 +2275,17 @@ extern "C" {
         gf: *mut ggml_cgraph,
         keep: bool,
     ) -> ggml_cgraph;
-    pub fn ggml_graph_compute(ctx: *mut ggml_context, cgraph: *mut ggml_cgraph);
+    pub fn ggml_graph_plan(
+        cgraph: *mut ggml_cgraph,
+        n_threads: ::std::os::raw::c_int,
+    ) -> ggml_cplan;
+    pub fn ggml_graph_compute(cgraph: *mut ggml_cgraph, cplan: *mut ggml_cplan);
     pub fn ggml_graph_reset(cgraph: *mut ggml_cgraph);
+    pub fn ggml_graph_compute_with_ctx(
+        ctx: *mut ggml_context,
+        cgraph: *mut ggml_cgraph,
+        n_threads: ::std::os::raw::c_int,
+    );
     pub fn ggml_graph_get_tensor(
         cgraph: *mut ggml_cgraph,
         name: *const ::std::os::raw::c_char,
