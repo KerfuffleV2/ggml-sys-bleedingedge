@@ -81,9 +81,7 @@ pub struct ggml_tensor {
     pub op: ggml_op,
     pub is_param: bool,
     pub grad: *mut ggml_tensor,
-    pub src0: *mut ggml_tensor,
-    pub src1: *mut ggml_tensor,
-    pub opt: [*mut ggml_tensor; 4usize],
+    pub src: [*mut ggml_tensor; 6usize],
     pub perf_runs: ::std::os::raw::c_int,
     pub perf_cycles: i64,
     pub perf_time_us: i64,
@@ -237,7 +235,7 @@ pub const GGML_MAX_DIMS: u32 = 4;
 pub const GGML_MAX_NODES: u32 = 4096;
 pub const GGML_MAX_PARAMS: u32 = 256;
 pub const GGML_MAX_CONTEXTS: u32 = 64;
-pub const GGML_MAX_OPT: u32 = 4;
+pub const GGML_MAX_SRC: u32 = 6;
 pub const GGML_MAX_NAME: u32 = 48;
 pub const GGML_DEFAULT_N_THREADS: u32 = 4;
 pub const ggml_type_GGML_TYPE_F32: ggml_type = 0;
@@ -513,33 +511,13 @@ fn bindgen_test_layout_ggml_tensor() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).src0) as usize - ptr as usize },
+        unsafe { ::std::ptr::addr_of!((*ptr).src) as usize - ptr as usize },
         96usize,
         concat!(
             "Offset of field: ",
             stringify!(ggml_tensor),
             "::",
-            stringify!(src0)
-        )
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).src1) as usize - ptr as usize },
-        104usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(ggml_tensor),
-            "::",
-            stringify!(src1)
-        )
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).opt) as usize - ptr as usize },
-        112usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(ggml_tensor),
-            "::",
-            stringify!(opt)
+            stringify!(src)
         )
     );
     assert_eq!(

@@ -2167,6 +2167,62 @@ void llama_sample_frequency_and_presence_penalties(struct llama_context * ctx, l
     }
 }
 
+static void llama_log_softmax(float * array, size_t size) {
+    float max_l = *std::max_element(array, array + size);
+    float sum = 0.f;
+    for (size_t i = 0; i < size; ++i) {
+        float p = expf(array[i] - max_l);
+        sum += p;
+        array[i] = p;
+    }
+
+    for (size_t i = 0; i < size; ++i) {
+        array[i] = logf(array[i] / sum);
+    }
+}
+
+void llama_sample_classifier_free_guidance(
+          struct llama_context * ctx,
+        llama_token_data_array * candidates,
+          struct llama_context * guidance_ctx,
+                         float   scale,
+                         float   smooth_factor) {
+    int64_t t_start_sample_us = t_start_sample_us = ggml_time_us();
+
+    assert(ctx);
+    auto n_vocab = llama_n_vocab(ctx);
+    assert(n_vocab == (int)candidates->size);
+    assert(!candidates->sorted);
+
+    std::vector<float> logits_base;
+    logits_base.reserve(candidates->size);
+    for (size_t i = 0; i < candidates->size; ++i) {
+        logits_base.push_back(candidates->data[i].logit);
+    }
+    llama_log_softmax(logits_base.data(), candidates->size);
+
+    float* logits_guidance = llama_get_logits(guidance_ctx);
+    llama_log_softmax(logits_guidance, n_vocab);
+
+    for (int i = 0; i < n_vocab; ++i) {
+        float logit_guidance = logits_guidance[i];
+        float logit_base = logits_base[i];
+        logits_guidance[i] = scale * (logit_base - logit_guidance) + logit_guidance;
+    }
+
+    llama_log_softmax(logits_guidance, n_vocab);
+
+    for (int i = 0; i < n_vocab; ++i) {
+        float logit_base = logits_base[i];
+        float logit_guidance = logits_guidance[i];
+
+        candidates->data[i].logit = smooth_factor * logit_guidance + (1.f - smooth_factor) * logit_base;
+    }
+
+    if (ctx) {
+        ctx->t_sample_us += ggml_time_us() - t_start_sample_us;
+    }
+}
 
 llama_token llama_sample_token_mirostat(struct llama_context * ctx, llama_token_data_array * candidates, float tau, float eta, int m, float * mu) {
     assert(ctx);
@@ -2454,15 +2510,14 @@ static void llama_model_quantize_internal(const std::string & fname_inp, const s
         } else {
             new_type = quantized_type;
 #ifdef GGML_USE_K_QUANTS
+            bool convert_incompatible_tensor = false;
             if (quantized_type == GGML_TYPE_Q2_K || quantized_type == GGML_TYPE_Q3_K || quantized_type == GGML_TYPE_Q4_K ||
                 quantized_type == GGML_TYPE_Q5_K || quantized_type == GGML_TYPE_Q6_K) {
                 int nx = tensor.ne.at(0);
                 int ny = tensor.ne.at(1);
                 if (nx % QK_K != 0 || ny % QK_K != 0) {
-                    fprintf(stderr, "\n\n========================= Tensor sizes %d x %d are not divisible by %d\n",nx,ny,QK_K);
-                    fprintf(stderr, "This is required to be able to use k-quants for now!\n");
-                    fprintf(stderr, "========================================================================================\n\n");
-                    throw std::runtime_error("Unsupported tensor size encountered\n");
+                    fprintf(stderr, "\n\nTensor sizes %d x %d are not divisible by %d, required for k-quants.\n",nx,ny,QK_K);
+                    convert_incompatible_tensor = true;
                 }
             }
             if (tensor.name == "output.weight") {
@@ -2489,6 +2544,17 @@ static void llama_model_quantize_internal(const std::string & fname_inp, const s
             } else if (tensor.name.find("attention.wo.weight") != std::string::npos) {
                 if      (ftype == LLAMA_FTYPE_MOSTLY_Q3_K_M || ftype == LLAMA_FTYPE_MOSTLY_Q2_K) new_type = GGML_TYPE_Q4_K;
                 else if (ftype == LLAMA_FTYPE_MOSTLY_Q3_K_L) new_type = GGML_TYPE_Q5_K;
+            }
+            if (convert_incompatible_tensor) {
+                if (tensor.name == "output.weight") {
+                    new_type = GGML_TYPE_F16; //fall back to F16 instead of just failing.
+                    fprintf(stderr, "F16 will be used for this tensor instead.\n");
+                } else if (tensor.name == "tok_embeddings.weight") {
+                    new_type = GGML_TYPE_Q4_0; //fall back to Q4_0 instead of just failing.
+                    fprintf(stderr, "Q4_0 will be used for this tensor instead.\n");
+                } else {
+                    throw std::runtime_error("Unsupported tensor size encountered\n");
+                }
             }
 #endif
 
