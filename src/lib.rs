@@ -97,6 +97,9 @@ pub struct ggml_cplan {
     pub work_data: *mut u8,
     pub n_threads: ::std::os::raw::c_int,
     pub n_tasks: [::std::os::raw::c_int; 4096usize],
+    pub abort_callback:
+        ::std::option::Option<unsafe extern "C" fn(data: *mut ::std::os::raw::c_void) -> bool>,
+    pub abort_callback_data: *mut ::std::os::raw::c_void,
 }
 #[repr(C)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
@@ -238,6 +241,8 @@ pub const GGML_MAX_CONTEXTS: u32 = 64;
 pub const GGML_MAX_SRC: u32 = 6;
 pub const GGML_MAX_NAME: u32 = 48;
 pub const GGML_DEFAULT_N_THREADS: u32 = 4;
+pub const GGML_EXIT_SUCCESS: u32 = 0;
+pub const GGML_EXIT_ABORTED: u32 = 1;
 pub const ggml_type_GGML_TYPE_F32: ggml_type = 0;
 pub const ggml_type_GGML_TYPE_F16: ggml_type = 1;
 pub const ggml_type_GGML_TYPE_Q4_0: ggml_type = 2;
@@ -597,7 +602,7 @@ fn bindgen_test_layout_ggml_cplan() {
     let ptr = UNINIT.as_ptr();
     assert_eq!(
         ::std::mem::size_of::<ggml_cplan>(),
-        16408usize,
+        16424usize,
         concat!("Size of: ", stringify!(ggml_cplan))
     );
     assert_eq!(
@@ -643,6 +648,26 @@ fn bindgen_test_layout_ggml_cplan() {
             stringify!(ggml_cplan),
             "::",
             stringify!(n_tasks)
+        )
+    );
+    assert_eq!(
+        unsafe { ::std::ptr::addr_of!((*ptr).abort_callback) as usize - ptr as usize },
+        16408usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(ggml_cplan),
+            "::",
+            stringify!(abort_callback)
+        )
+    );
+    assert_eq!(
+        unsafe { ::std::ptr::addr_of!((*ptr).abort_callback_data) as usize - ptr as usize },
+        16416usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(ggml_cplan),
+            "::",
+            stringify!(abort_callback_data)
         )
     );
 }
@@ -2257,7 +2282,10 @@ extern "C" {
         cgraph: *mut ggml_cgraph,
         n_threads: ::std::os::raw::c_int,
     ) -> ggml_cplan;
-    pub fn ggml_graph_compute(cgraph: *mut ggml_cgraph, cplan: *mut ggml_cplan);
+    pub fn ggml_graph_compute(
+        cgraph: *mut ggml_cgraph,
+        cplan: *mut ggml_cplan,
+    ) -> ::std::os::raw::c_int;
     pub fn ggml_graph_reset(cgraph: *mut ggml_cgraph);
     pub fn ggml_graph_compute_with_ctx(
         ctx: *mut ggml_context,
