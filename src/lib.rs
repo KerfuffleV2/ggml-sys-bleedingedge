@@ -2132,9 +2132,9 @@ extern "C" {
         n_past: ::std::os::raw::c_int,
         n_dims: ::std::os::raw::c_int,
         mode: ::std::os::raw::c_int,
+        n_ctx: ::std::os::raw::c_int,
         freq_base: f32,
         freq_scale: f32,
-        n_ctx: ::std::os::raw::c_int,
     ) -> *mut ggml_tensor;
     pub fn ggml_rope_back(
         ctx: *mut ggml_context,
@@ -2142,6 +2142,7 @@ extern "C" {
         n_past: ::std::os::raw::c_int,
         n_dims: ::std::os::raw::c_int,
         mode: ::std::os::raw::c_int,
+        n_ctx: ::std::os::raw::c_int,
     ) -> *mut ggml_tensor;
     pub fn ggml_alibi(
         ctx: *mut ggml_context,
