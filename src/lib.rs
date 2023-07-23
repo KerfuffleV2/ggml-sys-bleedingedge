@@ -80,6 +80,7 @@ pub struct ggml_tensor {
     pub ne: [i64; 4usize],
     pub nb: [usize; 4usize],
     pub op: ggml_op,
+    pub op_params: [i32; 8usize],
     pub is_param: bool,
     pub grad: *mut ggml_tensor,
     pub src: [*mut ggml_tensor; 6usize],
@@ -241,6 +242,7 @@ pub const GGML_MAX_PARAMS: u32 = 256;
 pub const GGML_MAX_CONTEXTS: u32 = 64;
 pub const GGML_MAX_SRC: u32 = 6;
 pub const GGML_MAX_NAME: u32 = 48;
+pub const GGML_MAX_OP_PARAMS: u32 = 32;
 pub const GGML_DEFAULT_N_THREADS: u32 = 4;
 pub const GGML_EXIT_SUCCESS: u32 = 0;
 pub const GGML_EXIT_ABORTED: u32 = 1;
@@ -349,7 +351,7 @@ pub const ggml_op_GGML_OP_CROSS_ENTROPY_LOSS: ggml_op = 66;
 pub const ggml_op_GGML_OP_CROSS_ENTROPY_LOSS_BACK: ggml_op = 67;
 pub const ggml_op_GGML_OP_COUNT: ggml_op = 68;
 pub const GGML_OBJECT_SIZE: usize = 32;
-pub const GGML_TENSOR_SIZE: usize = 240;
+pub const GGML_TENSOR_SIZE: usize = 272;
 pub const ggml_task_type_GGML_TASK_INIT: ggml_task_type = 0;
 pub const ggml_task_type_GGML_TASK_COMPUTE: ggml_task_type = 1;
 pub const ggml_task_type_GGML_TASK_FINALIZE: ggml_task_type = 2;
@@ -433,7 +435,7 @@ fn bindgen_test_layout_ggml_tensor() {
     let ptr = UNINIT.as_ptr();
     assert_eq!(
         ::std::mem::size_of::<ggml_tensor>(),
-        240usize,
+        272usize,
         concat!("Size of: ", stringify!(ggml_tensor))
     );
     assert_eq!(
@@ -502,8 +504,18 @@ fn bindgen_test_layout_ggml_tensor() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).is_param) as usize - ptr as usize },
+        unsafe { ::std::ptr::addr_of!((*ptr).op_params) as usize - ptr as usize },
         84usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(ggml_tensor),
+            "::",
+            stringify!(op_params)
+        )
+    );
+    assert_eq!(
+        unsafe { ::std::ptr::addr_of!((*ptr).is_param) as usize - ptr as usize },
+        116usize,
         concat!(
             "Offset of field: ",
             stringify!(ggml_tensor),
@@ -513,7 +525,7 @@ fn bindgen_test_layout_ggml_tensor() {
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).grad) as usize - ptr as usize },
-        88usize,
+        120usize,
         concat!(
             "Offset of field: ",
             stringify!(ggml_tensor),
@@ -523,7 +535,7 @@ fn bindgen_test_layout_ggml_tensor() {
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).src) as usize - ptr as usize },
-        96usize,
+        128usize,
         concat!(
             "Offset of field: ",
             stringify!(ggml_tensor),
@@ -533,7 +545,7 @@ fn bindgen_test_layout_ggml_tensor() {
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).perf_runs) as usize - ptr as usize },
-        144usize,
+        176usize,
         concat!(
             "Offset of field: ",
             stringify!(ggml_tensor),
@@ -543,7 +555,7 @@ fn bindgen_test_layout_ggml_tensor() {
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).perf_cycles) as usize - ptr as usize },
-        152usize,
+        184usize,
         concat!(
             "Offset of field: ",
             stringify!(ggml_tensor),
@@ -553,7 +565,7 @@ fn bindgen_test_layout_ggml_tensor() {
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).perf_time_us) as usize - ptr as usize },
-        160usize,
+        192usize,
         concat!(
             "Offset of field: ",
             stringify!(ggml_tensor),
@@ -563,7 +575,7 @@ fn bindgen_test_layout_ggml_tensor() {
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).data) as usize - ptr as usize },
-        168usize,
+        200usize,
         concat!(
             "Offset of field: ",
             stringify!(ggml_tensor),
@@ -573,7 +585,7 @@ fn bindgen_test_layout_ggml_tensor() {
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).name) as usize - ptr as usize },
-        176usize,
+        208usize,
         concat!(
             "Offset of field: ",
             stringify!(ggml_tensor),
@@ -583,7 +595,7 @@ fn bindgen_test_layout_ggml_tensor() {
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).extra) as usize - ptr as usize },
-        224usize,
+        256usize,
         concat!(
             "Offset of field: ",
             stringify!(ggml_tensor),
@@ -593,7 +605,7 @@ fn bindgen_test_layout_ggml_tensor() {
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).padding) as usize - ptr as usize },
-        232usize,
+        264usize,
         concat!(
             "Offset of field: ",
             stringify!(ggml_tensor),
