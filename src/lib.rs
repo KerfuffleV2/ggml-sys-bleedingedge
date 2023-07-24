@@ -11,6 +11,7 @@ pub type ggml_type = ::std::os::raw::c_uint;
 pub type ggml_backend = ::std::os::raw::c_uint;
 pub type ggml_ftype = ::std::os::raw::c_int;
 pub type ggml_op = ::std::os::raw::c_uint;
+pub type ggml_unary_op = ::std::os::raw::c_uint;
 pub type ggml_task_type = ::std::os::raw::c_uint;
 pub type ggml_op_pool = ::std::os::raw::c_uint;
 pub type ggml_unary_op_f32_t = ::std::option::Option<
@@ -298,58 +299,59 @@ pub const ggml_op_GGML_OP_MEAN: ggml_op = 13;
 pub const ggml_op_GGML_OP_ARGMAX: ggml_op = 14;
 pub const ggml_op_GGML_OP_REPEAT: ggml_op = 15;
 pub const ggml_op_GGML_OP_REPEAT_BACK: ggml_op = 16;
-pub const ggml_op_GGML_OP_ABS: ggml_op = 17;
-pub const ggml_op_GGML_OP_SGN: ggml_op = 18;
-pub const ggml_op_GGML_OP_NEG: ggml_op = 19;
-pub const ggml_op_GGML_OP_STEP: ggml_op = 20;
-pub const ggml_op_GGML_OP_TANH: ggml_op = 21;
-pub const ggml_op_GGML_OP_ELU: ggml_op = 22;
-pub const ggml_op_GGML_OP_RELU: ggml_op = 23;
-pub const ggml_op_GGML_OP_GELU: ggml_op = 24;
-pub const ggml_op_GGML_OP_GELU_QUICK: ggml_op = 25;
-pub const ggml_op_GGML_OP_SILU: ggml_op = 26;
-pub const ggml_op_GGML_OP_SILU_BACK: ggml_op = 27;
-pub const ggml_op_GGML_OP_NORM: ggml_op = 28;
-pub const ggml_op_GGML_OP_RMS_NORM: ggml_op = 29;
-pub const ggml_op_GGML_OP_RMS_NORM_BACK: ggml_op = 30;
-pub const ggml_op_GGML_OP_MUL_MAT: ggml_op = 31;
-pub const ggml_op_GGML_OP_OUT_PROD: ggml_op = 32;
-pub const ggml_op_GGML_OP_SCALE: ggml_op = 33;
-pub const ggml_op_GGML_OP_SET: ggml_op = 34;
-pub const ggml_op_GGML_OP_CPY: ggml_op = 35;
-pub const ggml_op_GGML_OP_CONT: ggml_op = 36;
-pub const ggml_op_GGML_OP_RESHAPE: ggml_op = 37;
-pub const ggml_op_GGML_OP_VIEW: ggml_op = 38;
-pub const ggml_op_GGML_OP_PERMUTE: ggml_op = 39;
-pub const ggml_op_GGML_OP_TRANSPOSE: ggml_op = 40;
-pub const ggml_op_GGML_OP_GET_ROWS: ggml_op = 41;
-pub const ggml_op_GGML_OP_GET_ROWS_BACK: ggml_op = 42;
-pub const ggml_op_GGML_OP_DIAG: ggml_op = 43;
-pub const ggml_op_GGML_OP_DIAG_MASK_INF: ggml_op = 44;
-pub const ggml_op_GGML_OP_DIAG_MASK_ZERO: ggml_op = 45;
-pub const ggml_op_GGML_OP_SOFT_MAX: ggml_op = 46;
-pub const ggml_op_GGML_OP_SOFT_MAX_BACK: ggml_op = 47;
-pub const ggml_op_GGML_OP_ROPE: ggml_op = 48;
-pub const ggml_op_GGML_OP_ROPE_BACK: ggml_op = 49;
-pub const ggml_op_GGML_OP_ALIBI: ggml_op = 50;
-pub const ggml_op_GGML_OP_CLAMP: ggml_op = 51;
-pub const ggml_op_GGML_OP_CONV_1D: ggml_op = 52;
-pub const ggml_op_GGML_OP_CONV_2D: ggml_op = 53;
-pub const ggml_op_GGML_OP_POOL_1D: ggml_op = 54;
-pub const ggml_op_GGML_OP_POOL_2D: ggml_op = 55;
-pub const ggml_op_GGML_OP_FLASH_ATTN: ggml_op = 56;
-pub const ggml_op_GGML_OP_FLASH_FF: ggml_op = 57;
-pub const ggml_op_GGML_OP_FLASH_ATTN_BACK: ggml_op = 58;
-pub const ggml_op_GGML_OP_WIN_PART: ggml_op = 59;
-pub const ggml_op_GGML_OP_WIN_UNPART: ggml_op = 60;
-pub const ggml_op_GGML_OP_MAP_UNARY: ggml_op = 61;
-pub const ggml_op_GGML_OP_MAP_BINARY: ggml_op = 62;
-pub const ggml_op_GGML_OP_MAP_CUSTOM1: ggml_op = 63;
-pub const ggml_op_GGML_OP_MAP_CUSTOM2: ggml_op = 64;
-pub const ggml_op_GGML_OP_MAP_CUSTOM3: ggml_op = 65;
-pub const ggml_op_GGML_OP_CROSS_ENTROPY_LOSS: ggml_op = 66;
-pub const ggml_op_GGML_OP_CROSS_ENTROPY_LOSS_BACK: ggml_op = 67;
-pub const ggml_op_GGML_OP_COUNT: ggml_op = 68;
+pub const ggml_op_GGML_OP_SILU_BACK: ggml_op = 17;
+pub const ggml_op_GGML_OP_NORM: ggml_op = 18;
+pub const ggml_op_GGML_OP_RMS_NORM: ggml_op = 19;
+pub const ggml_op_GGML_OP_RMS_NORM_BACK: ggml_op = 20;
+pub const ggml_op_GGML_OP_MUL_MAT: ggml_op = 21;
+pub const ggml_op_GGML_OP_OUT_PROD: ggml_op = 22;
+pub const ggml_op_GGML_OP_SCALE: ggml_op = 23;
+pub const ggml_op_GGML_OP_SET: ggml_op = 24;
+pub const ggml_op_GGML_OP_CPY: ggml_op = 25;
+pub const ggml_op_GGML_OP_CONT: ggml_op = 26;
+pub const ggml_op_GGML_OP_RESHAPE: ggml_op = 27;
+pub const ggml_op_GGML_OP_VIEW: ggml_op = 28;
+pub const ggml_op_GGML_OP_PERMUTE: ggml_op = 29;
+pub const ggml_op_GGML_OP_TRANSPOSE: ggml_op = 30;
+pub const ggml_op_GGML_OP_GET_ROWS: ggml_op = 31;
+pub const ggml_op_GGML_OP_GET_ROWS_BACK: ggml_op = 32;
+pub const ggml_op_GGML_OP_DIAG: ggml_op = 33;
+pub const ggml_op_GGML_OP_DIAG_MASK_INF: ggml_op = 34;
+pub const ggml_op_GGML_OP_DIAG_MASK_ZERO: ggml_op = 35;
+pub const ggml_op_GGML_OP_SOFT_MAX: ggml_op = 36;
+pub const ggml_op_GGML_OP_SOFT_MAX_BACK: ggml_op = 37;
+pub const ggml_op_GGML_OP_ROPE: ggml_op = 38;
+pub const ggml_op_GGML_OP_ROPE_BACK: ggml_op = 39;
+pub const ggml_op_GGML_OP_ALIBI: ggml_op = 40;
+pub const ggml_op_GGML_OP_CLAMP: ggml_op = 41;
+pub const ggml_op_GGML_OP_CONV_1D: ggml_op = 42;
+pub const ggml_op_GGML_OP_CONV_2D: ggml_op = 43;
+pub const ggml_op_GGML_OP_POOL_1D: ggml_op = 44;
+pub const ggml_op_GGML_OP_POOL_2D: ggml_op = 45;
+pub const ggml_op_GGML_OP_FLASH_ATTN: ggml_op = 46;
+pub const ggml_op_GGML_OP_FLASH_FF: ggml_op = 47;
+pub const ggml_op_GGML_OP_FLASH_ATTN_BACK: ggml_op = 48;
+pub const ggml_op_GGML_OP_WIN_PART: ggml_op = 49;
+pub const ggml_op_GGML_OP_WIN_UNPART: ggml_op = 50;
+pub const ggml_op_GGML_OP_UNARY: ggml_op = 51;
+pub const ggml_op_GGML_OP_MAP_UNARY: ggml_op = 52;
+pub const ggml_op_GGML_OP_MAP_BINARY: ggml_op = 53;
+pub const ggml_op_GGML_OP_MAP_CUSTOM1: ggml_op = 54;
+pub const ggml_op_GGML_OP_MAP_CUSTOM2: ggml_op = 55;
+pub const ggml_op_GGML_OP_MAP_CUSTOM3: ggml_op = 56;
+pub const ggml_op_GGML_OP_CROSS_ENTROPY_LOSS: ggml_op = 57;
+pub const ggml_op_GGML_OP_CROSS_ENTROPY_LOSS_BACK: ggml_op = 58;
+pub const ggml_op_GGML_OP_COUNT: ggml_op = 59;
+pub const ggml_unary_op_GGML_UNARY_OP_ABS: ggml_unary_op = 0;
+pub const ggml_unary_op_GGML_UNARY_OP_SGN: ggml_unary_op = 1;
+pub const ggml_unary_op_GGML_UNARY_OP_NEG: ggml_unary_op = 2;
+pub const ggml_unary_op_GGML_UNARY_OP_STEP: ggml_unary_op = 3;
+pub const ggml_unary_op_GGML_UNARY_OP_TANH: ggml_unary_op = 4;
+pub const ggml_unary_op_GGML_UNARY_OP_ELU: ggml_unary_op = 5;
+pub const ggml_unary_op_GGML_UNARY_OP_RELU: ggml_unary_op = 6;
+pub const ggml_unary_op_GGML_UNARY_OP_GELU: ggml_unary_op = 7;
+pub const ggml_unary_op_GGML_UNARY_OP_GELU_QUICK: ggml_unary_op = 8;
+pub const ggml_unary_op_GGML_UNARY_OP_SILU: ggml_unary_op = 9;
 pub const GGML_OBJECT_SIZE: usize = 32;
 pub const GGML_TENSOR_SIZE: usize = 272;
 pub const ggml_task_type_GGML_TASK_INIT: ggml_task_type = 0;
@@ -1734,6 +1736,7 @@ extern "C" {
     pub fn ggml_type_sizef(type_: ggml_type) -> f32;
     pub fn ggml_type_name(type_: ggml_type) -> *const ::std::os::raw::c_char;
     pub fn ggml_op_name(op: ggml_op) -> *const ::std::os::raw::c_char;
+    pub fn ggml_op_symbol(op: ggml_op) -> *const ::std::os::raw::c_char;
     pub fn ggml_element_size(tensor: *const ggml_tensor) -> usize;
     pub fn ggml_is_quantized(type_: ggml_type) -> bool;
     pub fn ggml_ftype_to_ggml_type(ftype: ggml_ftype) -> ggml_type;
@@ -1745,6 +1748,7 @@ extern "C" {
     pub fn ggml_free(ctx: *mut ggml_context);
     pub fn ggml_used_mem(ctx: *const ggml_context) -> usize;
     pub fn ggml_set_scratch(ctx: *mut ggml_context, scratch: ggml_scratch) -> usize;
+    pub fn ggml_get_no_alloc(ctx: *mut ggml_context) -> bool;
     pub fn ggml_set_no_alloc(ctx: *mut ggml_context, no_alloc: bool);
     pub fn ggml_get_mem_buffer(ctx: *const ggml_context) -> *mut ::std::os::raw::c_void;
     pub fn ggml_get_mem_size(ctx: *const ggml_context) -> usize;
@@ -1798,6 +1802,7 @@ extern "C" {
     pub fn ggml_set_f32_1d(tensor: *const ggml_tensor, i: ::std::os::raw::c_int, value: f32);
     pub fn ggml_get_data(tensor: *const ggml_tensor) -> *mut ::std::os::raw::c_void;
     pub fn ggml_get_data_f32(tensor: *const ggml_tensor) -> *mut f32;
+    pub fn ggml_get_unary_op(tensor: *const ggml_tensor) -> ggml_unary_op;
     pub fn ggml_get_name(tensor: *const ggml_tensor) -> *const ::std::os::raw::c_char;
     pub fn ggml_set_name(
         tensor: *mut ggml_tensor,
@@ -1809,6 +1814,7 @@ extern "C" {
         ...
     ) -> *mut ggml_tensor;
     pub fn ggml_dup(ctx: *mut ggml_context, a: *mut ggml_tensor) -> *mut ggml_tensor;
+    pub fn ggml_dup_inplace(ctx: *mut ggml_context, a: *mut ggml_tensor) -> *mut ggml_tensor;
     pub fn ggml_add(
         ctx: *mut ggml_context,
         a: *mut ggml_tensor,
@@ -2001,7 +2007,13 @@ extern "C" {
         a: *mut ggml_tensor,
         b: *mut ggml_tensor,
     ) -> *mut ggml_tensor;
+    pub fn ggml_cpy_inplace(
+        ctx: *mut ggml_context,
+        a: *mut ggml_tensor,
+        b: *mut ggml_tensor,
+    ) -> *mut ggml_tensor;
     pub fn ggml_cont(ctx: *mut ggml_context, a: *mut ggml_tensor) -> *mut ggml_tensor;
+    pub fn ggml_cont_inplace(ctx: *mut ggml_context, a: *mut ggml_tensor) -> *mut ggml_tensor;
     pub fn ggml_reshape(
         ctx: *mut ggml_context,
         a: *mut ggml_tensor,
@@ -2248,6 +2260,16 @@ extern "C" {
         w0: ::std::os::raw::c_int,
         h0: ::std::os::raw::c_int,
         w: ::std::os::raw::c_int,
+    ) -> *mut ggml_tensor;
+    pub fn ggml_unary(
+        ctx: *mut ggml_context,
+        a: *mut ggml_tensor,
+        op: ggml_unary_op,
+    ) -> *mut ggml_tensor;
+    pub fn ggml_unary_inplace(
+        ctx: *mut ggml_context,
+        a: *mut ggml_tensor,
+        op: ggml_unary_op,
     ) -> *mut ggml_tensor;
     pub fn ggml_map_unary_f32(
         ctx: *mut ggml_context,
