@@ -1931,8 +1931,13 @@ extern "C" {
     ) -> *mut ggml_tensor;
     pub fn ggml_norm(ctx: *mut ggml_context, a: *mut ggml_tensor) -> *mut ggml_tensor;
     pub fn ggml_norm_inplace(ctx: *mut ggml_context, a: *mut ggml_tensor) -> *mut ggml_tensor;
-    pub fn ggml_rms_norm(ctx: *mut ggml_context, a: *mut ggml_tensor) -> *mut ggml_tensor;
-    pub fn ggml_rms_norm_inplace(ctx: *mut ggml_context, a: *mut ggml_tensor) -> *mut ggml_tensor;
+    pub fn ggml_rms_norm(ctx: *mut ggml_context, a: *mut ggml_tensor, eps: f32)
+        -> *mut ggml_tensor;
+    pub fn ggml_rms_norm_inplace(
+        ctx: *mut ggml_context,
+        a: *mut ggml_tensor,
+        eps: f32,
+    ) -> *mut ggml_tensor;
     pub fn ggml_rms_norm_back(
         ctx: *mut ggml_context,
         a: *mut ggml_tensor,
