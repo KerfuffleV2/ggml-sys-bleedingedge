@@ -12,6 +12,7 @@ pub type ggml_backend = ::std::os::raw::c_uint;
 pub type ggml_ftype = ::std::os::raw::c_int;
 pub type ggml_op = ::std::os::raw::c_uint;
 pub type ggml_unary_op = ::std::os::raw::c_uint;
+pub type ggml_object_type = ::std::os::raw::c_uint;
 pub type ggml_task_type = ::std::os::raw::c_uint;
 pub type ggml_op_pool = ::std::os::raw::c_uint;
 pub type ggml_unary_op_f32_t = ::std::option::Option<
@@ -70,7 +71,8 @@ pub struct ggml_object {
     pub offs: usize,
     pub size: usize,
     pub next: *mut ggml_object,
-    pub padding: [::std::os::raw::c_char; 8usize],
+    pub type_: ggml_object_type,
+    pub padding: [::std::os::raw::c_char; 4usize],
 }
 #[repr(C)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
@@ -354,8 +356,12 @@ pub const ggml_unary_op_GGML_UNARY_OP_RELU: ggml_unary_op = 6;
 pub const ggml_unary_op_GGML_UNARY_OP_GELU: ggml_unary_op = 7;
 pub const ggml_unary_op_GGML_UNARY_OP_GELU_QUICK: ggml_unary_op = 8;
 pub const ggml_unary_op_GGML_UNARY_OP_SILU: ggml_unary_op = 9;
+pub const ggml_object_type_GGML_OBJECT_TENSOR: ggml_object_type = 0;
+pub const ggml_object_type_GGML_OBJECT_GRAPH: ggml_object_type = 1;
+pub const ggml_object_type_GGML_OBJECT_WORK_BUFFER: ggml_object_type = 2;
 pub const GGML_OBJECT_SIZE: usize = 32;
 pub const GGML_TENSOR_SIZE: usize = 272;
+pub const GGML_GRAPH_SIZE: usize = 164520;
 pub const ggml_task_type_GGML_TASK_INIT: ggml_task_type = 0;
 pub const ggml_task_type_GGML_TASK_COMPUTE: ggml_task_type = 1;
 pub const ggml_task_type_GGML_TASK_FINALIZE: ggml_task_type = 2;
@@ -423,8 +429,18 @@ fn bindgen_test_layout_ggml_object() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).padding) as usize - ptr as usize },
+        unsafe { ::std::ptr::addr_of!((*ptr).type_) as usize - ptr as usize },
         24usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(ggml_object),
+            "::",
+            stringify!(type_)
+        )
+    );
+    assert_eq!(
+        unsafe { ::std::ptr::addr_of!((*ptr).padding) as usize - ptr as usize },
+        28usize,
         concat!(
             "Offset of field: ",
             stringify!(ggml_object),
@@ -2365,6 +2381,12 @@ extern "C" {
         gf: *mut ggml_cgraph,
         keep: bool,
     ) -> ggml_cgraph;
+    pub fn ggml_new_graph(ctx: *mut ggml_context) -> *mut ggml_cgraph;
+    pub fn ggml_build_forward_ctx(
+        ctx: *mut ggml_context,
+        tensor: *mut ggml_tensor,
+    ) -> *mut ggml_cgraph;
+    pub fn ggml_graph_overhead() -> usize;
     pub fn ggml_graph_plan(
         cgraph: *mut ggml_cgraph,
         n_threads: ::std::os::raw::c_int,
