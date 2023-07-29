@@ -1924,7 +1924,9 @@ struct llama_tokenizer {
             if (token == vocab_.token_to_id.end()) {
                 // output any symbols that did not form tokens as bytes.
                 for (int j = 0; j < (int) symbol.n; ++j) {
-                    llama_vocab::id token_id = static_cast<uint8_t>(symbol.text[j]) + 3;
+                    // NOTE: old version, before #2420 - not sure what are the implications of this
+                    //llama_vocab::id token_id = static_cast<uint8_t>(symbol.text[j]) + 3;
+                    llama_vocab::id token_id = vocab_.token_to_id.at(std::string(1, symbol.text[j]));
                     output.push_back(token_id);
                 }
             } else {
@@ -3663,7 +3665,7 @@ size_t llama_copy_state_data(struct llama_context * ctx, uint8_t * dst) {
         const auto & kv_self = ctx->kv_self;
         const auto & hparams = ctx->model.hparams;
         const int    n_layer = hparams.n_layer;
-        const int    n_embd  = hparams.n_embd;
+        const int    n_embd  = hparams.n_embd_gqa();
         const int    n_ctx   = hparams.n_ctx;
 
         const size_t kv_size = kv_self.buf.size;
@@ -3766,7 +3768,7 @@ size_t llama_set_state_data(struct llama_context * ctx, uint8_t * src) {
         const auto & kv_self = ctx->kv_self;
         const auto & hparams = ctx->model.hparams;
         const int    n_layer = hparams.n_layer;
-        const int    n_embd  = hparams.n_embd;
+        const int    n_embd  = hparams.n_embd_gqa();
         const int    n_ctx   = hparams.n_ctx;
 
         size_t kv_size;
