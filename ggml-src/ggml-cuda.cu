@@ -5203,7 +5203,7 @@ static void ggml_cuda_op(const ggml_tensor * src0, const ggml_tensor * src1, ggm
     if (split && g_device_count > 1) {
         CUDA_CHECK(cudaSetDevice(g_main_device));
         for (int id = 0; id < g_device_count; ++id) {
-            if (id != g_main_device) {
+            if (id != g_main_device && src0_extra->events[id]) {
                 CUDA_CHECK(cudaStreamWaitEvent(g_cudaStreams_main[g_main_device], src0_extra->events[id]));
             }
         }
@@ -5347,7 +5347,8 @@ void ggml_cuda_mul_mat(const ggml_tensor * src0, const ggml_tensor * src1, ggml_
         } else {
             int min_compute_capability = INT_MAX;
             for (int id = 0; id < g_device_count; ++id) {
-                if (min_compute_capability > g_compute_capabilities[id]) {
+                if (min_compute_capability > g_compute_capabilities[id]
+                        && g_tensor_split[id] < (id + 1 < g_device_count ? g_tensor_split[id + 1] : 1.0f)) {
                     min_compute_capability = g_compute_capabilities[id];
                 }
             }
