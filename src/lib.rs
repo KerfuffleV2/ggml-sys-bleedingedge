@@ -43,6 +43,36 @@ pub type ggml_custom3_op_f32_t = ::std::option::Option<
         arg4: *const ggml_tensor,
     ),
 >;
+pub type ggml_custom1_op_t = ::std::option::Option<
+    unsafe extern "C" fn(
+        dst: *mut ggml_tensor,
+        a: *const ggml_tensor,
+        ith: ::std::os::raw::c_int,
+        nth: ::std::os::raw::c_int,
+        userdata: *mut ::std::os::raw::c_void,
+    ),
+>;
+pub type ggml_custom2_op_t = ::std::option::Option<
+    unsafe extern "C" fn(
+        dst: *mut ggml_tensor,
+        a: *const ggml_tensor,
+        b: *const ggml_tensor,
+        ith: ::std::os::raw::c_int,
+        nth: ::std::os::raw::c_int,
+        userdata: *mut ::std::os::raw::c_void,
+    ),
+>;
+pub type ggml_custom3_op_t = ::std::option::Option<
+    unsafe extern "C" fn(
+        dst: *mut ggml_tensor,
+        a: *const ggml_tensor,
+        b: *const ggml_tensor,
+        c: *const ggml_tensor,
+        ith: ::std::os::raw::c_int,
+        nth: ::std::os::raw::c_int,
+        userdata: *mut ::std::os::raw::c_void,
+    ),
+>;
 pub type ggml_opt_type = ::std::os::raw::c_uint;
 pub type ggml_linesearch = ::std::os::raw::c_uint;
 pub type ggml_opt_result = ::std::os::raw::c_int;
@@ -251,6 +281,7 @@ pub const GGML_DEFAULT_N_THREADS: u32 = 4;
 pub const GGML_EXIT_SUCCESS: u32 = 0;
 pub const GGML_EXIT_ABORTED: u32 = 1;
 pub const GGML_GRAPH_HASHTABLE_SIZE: u32 = 8273;
+pub const GGML_N_TASKS_MAX: i32 = -1;
 pub const ggml_type_GGML_TYPE_F32: ggml_type = 0;
 pub const ggml_type_GGML_TYPE_F16: ggml_type = 1;
 pub const ggml_type_GGML_TYPE_Q4_0: ggml_type = 2;
@@ -340,12 +371,15 @@ pub const ggml_op_GGML_OP_WIN_UNPART: ggml_op = 50;
 pub const ggml_op_GGML_OP_UNARY: ggml_op = 51;
 pub const ggml_op_GGML_OP_MAP_UNARY: ggml_op = 52;
 pub const ggml_op_GGML_OP_MAP_BINARY: ggml_op = 53;
-pub const ggml_op_GGML_OP_MAP_CUSTOM1: ggml_op = 54;
-pub const ggml_op_GGML_OP_MAP_CUSTOM2: ggml_op = 55;
-pub const ggml_op_GGML_OP_MAP_CUSTOM3: ggml_op = 56;
-pub const ggml_op_GGML_OP_CROSS_ENTROPY_LOSS: ggml_op = 57;
-pub const ggml_op_GGML_OP_CROSS_ENTROPY_LOSS_BACK: ggml_op = 58;
-pub const ggml_op_GGML_OP_COUNT: ggml_op = 59;
+pub const ggml_op_GGML_OP_MAP_CUSTOM1_F32: ggml_op = 54;
+pub const ggml_op_GGML_OP_MAP_CUSTOM2_F32: ggml_op = 55;
+pub const ggml_op_GGML_OP_MAP_CUSTOM3_F32: ggml_op = 56;
+pub const ggml_op_GGML_OP_MAP_CUSTOM1: ggml_op = 57;
+pub const ggml_op_GGML_OP_MAP_CUSTOM2: ggml_op = 58;
+pub const ggml_op_GGML_OP_MAP_CUSTOM3: ggml_op = 59;
+pub const ggml_op_GGML_OP_CROSS_ENTROPY_LOSS: ggml_op = 60;
+pub const ggml_op_GGML_OP_CROSS_ENTROPY_LOSS_BACK: ggml_op = 61;
+pub const ggml_op_GGML_OP_COUNT: ggml_op = 62;
 pub const ggml_unary_op_GGML_UNARY_OP_ABS: ggml_unary_op = 0;
 pub const ggml_unary_op_GGML_UNARY_OP_SGN: ggml_unary_op = 1;
 pub const ggml_unary_op_GGML_UNARY_OP_NEG: ggml_unary_op = 2;
@@ -1771,6 +1805,7 @@ extern "C" {
     pub fn ggml_is_transposed(tensor: *const ggml_tensor) -> bool;
     pub fn ggml_is_contiguous(tensor: *const ggml_tensor) -> bool;
     pub fn ggml_is_permuted(tensor: *const ggml_tensor) -> bool;
+    pub fn ggml_are_same_shape(t0: *const ggml_tensor, t1: *const ggml_tensor) -> bool;
     pub fn ggml_tensor_overhead() -> usize;
     pub fn ggml_init(params: ggml_init_params) -> *mut ggml_context;
     pub fn ggml_free(ctx: *mut ggml_context);
@@ -2371,6 +2406,54 @@ extern "C" {
         b: *mut ggml_tensor,
         c: *mut ggml_tensor,
         fun: ggml_custom3_op_f32_t,
+    ) -> *mut ggml_tensor;
+    pub fn ggml_map_custom1(
+        ctx: *mut ggml_context,
+        a: *mut ggml_tensor,
+        fun: ggml_custom1_op_t,
+        n_tasks: ::std::os::raw::c_int,
+        userdata: *mut ::std::os::raw::c_void,
+    ) -> *mut ggml_tensor;
+    pub fn ggml_map_custom1_inplace(
+        ctx: *mut ggml_context,
+        a: *mut ggml_tensor,
+        fun: ggml_custom1_op_t,
+        n_tasks: ::std::os::raw::c_int,
+        userdata: *mut ::std::os::raw::c_void,
+    ) -> *mut ggml_tensor;
+    pub fn ggml_map_custom2(
+        ctx: *mut ggml_context,
+        a: *mut ggml_tensor,
+        b: *mut ggml_tensor,
+        fun: ggml_custom2_op_t,
+        n_tasks: ::std::os::raw::c_int,
+        userdata: *mut ::std::os::raw::c_void,
+    ) -> *mut ggml_tensor;
+    pub fn ggml_map_custom2_inplace(
+        ctx: *mut ggml_context,
+        a: *mut ggml_tensor,
+        b: *mut ggml_tensor,
+        fun: ggml_custom2_op_t,
+        n_tasks: ::std::os::raw::c_int,
+        userdata: *mut ::std::os::raw::c_void,
+    ) -> *mut ggml_tensor;
+    pub fn ggml_map_custom3(
+        ctx: *mut ggml_context,
+        a: *mut ggml_tensor,
+        b: *mut ggml_tensor,
+        c: *mut ggml_tensor,
+        fun: ggml_custom3_op_t,
+        n_tasks: ::std::os::raw::c_int,
+        userdata: *mut ::std::os::raw::c_void,
+    ) -> *mut ggml_tensor;
+    pub fn ggml_map_custom3_inplace(
+        ctx: *mut ggml_context,
+        a: *mut ggml_tensor,
+        b: *mut ggml_tensor,
+        c: *mut ggml_tensor,
+        fun: ggml_custom3_op_t,
+        n_tasks: ::std::os::raw::c_int,
+        userdata: *mut ::std::os::raw::c_void,
     ) -> *mut ggml_tensor;
     pub fn ggml_cross_entropy_loss(
         ctx: *mut ggml_context,
