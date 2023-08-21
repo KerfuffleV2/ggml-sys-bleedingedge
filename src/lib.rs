@@ -260,6 +260,10 @@ pub struct ggml_opt_context__bindgen_ty_2 {
 #[repr(C)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct ggml_type_traits_t {
+    pub type_name: *const ::std::os::raw::c_char,
+    pub blck_size: ::std::os::raw::c_int,
+    pub type_size: usize,
+    pub is_quantized: bool,
     pub to_float: ggml_to_float_t,
     pub from_float: ggml_from_float_t,
     pub from_float_reference: ggml_from_float_t,
@@ -1713,7 +1717,7 @@ fn bindgen_test_layout_ggml_type_traits_t() {
     let ptr = UNINIT.as_ptr();
     assert_eq!(
         ::std::mem::size_of::<ggml_type_traits_t>(),
-        40usize,
+        72usize,
         concat!("Size of: ", stringify!(ggml_type_traits_t))
     );
     assert_eq!(
@@ -1722,8 +1726,48 @@ fn bindgen_test_layout_ggml_type_traits_t() {
         concat!("Alignment of ", stringify!(ggml_type_traits_t))
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).to_float) as usize - ptr as usize },
+        unsafe { ::std::ptr::addr_of!((*ptr).type_name) as usize - ptr as usize },
         0usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(ggml_type_traits_t),
+            "::",
+            stringify!(type_name)
+        )
+    );
+    assert_eq!(
+        unsafe { ::std::ptr::addr_of!((*ptr).blck_size) as usize - ptr as usize },
+        8usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(ggml_type_traits_t),
+            "::",
+            stringify!(blck_size)
+        )
+    );
+    assert_eq!(
+        unsafe { ::std::ptr::addr_of!((*ptr).type_size) as usize - ptr as usize },
+        16usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(ggml_type_traits_t),
+            "::",
+            stringify!(type_size)
+        )
+    );
+    assert_eq!(
+        unsafe { ::std::ptr::addr_of!((*ptr).is_quantized) as usize - ptr as usize },
+        24usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(ggml_type_traits_t),
+            "::",
+            stringify!(is_quantized)
+        )
+    );
+    assert_eq!(
+        unsafe { ::std::ptr::addr_of!((*ptr).to_float) as usize - ptr as usize },
+        32usize,
         concat!(
             "Offset of field: ",
             stringify!(ggml_type_traits_t),
@@ -1733,7 +1777,7 @@ fn bindgen_test_layout_ggml_type_traits_t() {
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).from_float) as usize - ptr as usize },
-        8usize,
+        40usize,
         concat!(
             "Offset of field: ",
             stringify!(ggml_type_traits_t),
@@ -1743,7 +1787,7 @@ fn bindgen_test_layout_ggml_type_traits_t() {
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).from_float_reference) as usize - ptr as usize },
-        16usize,
+        48usize,
         concat!(
             "Offset of field: ",
             stringify!(ggml_type_traits_t),
@@ -1753,7 +1797,7 @@ fn bindgen_test_layout_ggml_type_traits_t() {
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).vec_dot) as usize - ptr as usize },
-        24usize,
+        56usize,
         concat!(
             "Offset of field: ",
             stringify!(ggml_type_traits_t),
@@ -1763,7 +1807,7 @@ fn bindgen_test_layout_ggml_type_traits_t() {
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).vec_dot_type) as usize - ptr as usize },
-        32usize,
+        64usize,
         concat!(
             "Offset of field: ",
             stringify!(ggml_type_traits_t),
@@ -2594,5 +2638,5 @@ extern "C" {
     pub fn ggml_cpu_has_gpublas() -> ::std::os::raw::c_int;
     pub fn ggml_cpu_has_sse3() -> ::std::os::raw::c_int;
     pub fn ggml_cpu_has_vsx() -> ::std::os::raw::c_int;
-    pub fn ggml_internal_get_type_traits(i: ggml_type) -> ggml_type_traits_t;
+    pub fn ggml_internal_get_type_traits(type_: ggml_type) -> ggml_type_traits_t;
 }
