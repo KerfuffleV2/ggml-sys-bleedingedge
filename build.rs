@@ -85,13 +85,14 @@ fn build_cmake() {
     if cfg!(feature = "cublas") {
         build.cuda(true);
     } else if cfg!(feature = "hipblas") {
+        println!("cargo:rerun-if-changed=ROCM_PATH");
         build.cpp(true);
     }
     build.compile("dummy");
 
     let rocm_path = if cfg!(feature = "hipblas") {
         Some(PathBuf::from(
-            option_env!("ROCM_PATH").unwrap_or("/opt/rocm"),
+            env::var("ROCM_PATH").unwrap_or_else(|_| String::from("/opt/rocm")),
         ))
     } else {
         None
@@ -137,12 +138,22 @@ fn build_cmake() {
     } else if cfg!(feature = "hipblas") {
         let rocm_path = rocm_path.as_ref().expect("Impossible: rocm_path not set!");
         println!(
-            "cargo:rustc-link-search-path={}",
+            "cargo:rustc-link-search={}",
             rocm_path.join("lib").to_string_lossy()
         );
         println!("cargo:rustc-link-lib=hipblas");
         println!("cargo:rustc-link-lib=amdhip64");
         println!("cargo:rustc-link-lib=rocblas");
+        let mut build = cc::Build::new();
+        build.cpp(true).file("dummy/dummy.c").object(PathBuf::from(
+            env::var("OUT_DIR")
+                .expect("OUT_DIR not set!"))
+                .join("build")
+                .join("CMakeFiles")
+                .join("ggml-rocm.dir")
+                .join("ggml-cuda.cu.o"),
+        );
+        build.compile("dummy");
     } else if cfg!(feature = "clblast") {
         println!("cargo:rustc-link-lib=clblast");
         println!(

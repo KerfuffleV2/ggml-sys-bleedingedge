@@ -36,7 +36,7 @@ Available features:
 - `use_cmake` - Builds and links against `libllama` using cmake.
 - `cublas` - Nvidia's CUDA BLAS implementation.
 - `clblast` - OpenCL BLAS.
-- `hipblas` - AMD's ROCM/HIP BLAS implementation. Set the `ROCM_PATH` environment variable to point at your ROCM installation. It defaults to `/opt/rocm`
+- `hipblas` - AMD's ROCM/HIP BLAS implementation. Set the `ROCM_PATH` environment variable to point at your ROCM installation. It defaults to `/opt/rocm`. ***Note***: Unless your GPU is natively supported by ROCM it's very likely you'll need to set the `HSA_OVERRIDE_GFX_VERSION` environment variable otherwise your app will immediately crash when initializing ROCM. For example on an RX 6600 `HSA_OVERRIDE_GFX_VERSION=10.3.0` works.
 - `openblas` - OpenBLAS.
 - `metal` - Metal support, only available on Mac.
 
