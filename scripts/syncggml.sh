@@ -16,7 +16,7 @@ if ! echo -n "${LATEST_GGML_RELEASE}!${OUR_GGML_RELEASE}" | grep -Eiq '^[.A-Z0-9
   exit 1
 fi
 if test "${LATEST_GGML_RELEASE}" = "${OUR_GGML_RELEASE}"; then
-echo 'new_release=false' >> $GITHUB_OUTPUT
+  echo 'new_release=false' >> $GITHUB_OUTPUT
   exit 0
 fi
 if test "${1:-}" = "only-check"; then
@@ -24,14 +24,16 @@ if test "${1:-}" = "only-check"; then
   exit 0
 fi
 echo "New release tag. Latest [${LATEST_GGML_RELEASE}], ours: [${OUR_GGML_RELEASE}]"
-git clone --depth 100 --single-branch https://github.com/ggerganov/llama.cpp ggml-repo && \
+git clone --depth 300 --single-branch https://github.com/ggerganov/llama.cpp ggml-repo && \
   ( cd ggml-repo && git checkout "$LATEST_GGML_RELEASE" )
-mkdir -p ggml-src/{pocs,tests,examples,scripts}
+mkdir -p ggml-src/{pocs,tests,examples,scripts,common}
 touch ggml-src/{pocs,tests,examples}/CMakeLists.txt
 cp ggml-repo/*.{c,cpp,h,m,metal,cu} ggml-repo/CMakeLists.txt ggml-src/
+cp ggml-repo/common/*.{cpp,h} ggml-repo/common/CMakeLists.txt ggml-src/common/
 cp ggml-repo/scripts/build-info.{cmake,h.in} ggml-src/scripts/
 git add \
   ggml-src/*.{c,cpp,h,m,metal,cu} \
+  ggml-src/common/*.* \
   ggml-src/scripts/build-info.* \
   ggml-src/CMakeLists.txt ggml-src/{tests,pocs,examples}/CMakeLists.txt
 
