@@ -36,6 +36,7 @@ Available features:
 - `use_cmake` - Builds and links against `libllama` using cmake.
 - `cublas` - Nvidia's CUDA BLAS implementation.
 - `clblast` - OpenCL BLAS.
+- `hipblas` - AMD's ROCM/HIP BLAS implementation. Set the `ROCM_PATH` environment variable to point at your ROCM installation. It defaults to `/opt/rocm`
 - `openblas` - OpenBLAS.
 - `metal` - Metal support, only available on Mac.
 

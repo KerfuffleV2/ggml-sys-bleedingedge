@@ -31,7 +31,7 @@ fn generate_bindings() {
         // Do not generate code for ggml's includes (stdlib)
         .allowlist_file(ggml_header_path.to_string_lossy());
     if cfg!(feature = "use_cmake") {
-        if cfg!(feature = "cublas") {
+        if cfg!(feature = "cublas") || cfg!(feature = "hipblas") {
             let hfn = PathBuf::from(GGML_SOURCE_DIR).join("ggml-cuda.h");
             let hfn = hfn.to_string_lossy();
             bbuilder = bbuilder.header(hfn.clone()).allowlist_file(hfn);
@@ -84,8 +84,18 @@ fn build_cmake() {
 
     if cfg!(feature = "cublas") {
         build.cuda(true);
+    } else if cfg!(feature = "hipblas") {
+        build.cpp(true);
     }
     build.compile("dummy");
+
+    let rocm_path = if cfg!(feature = "hipblas") {
+        Some(PathBuf::from(
+            option_env!("ROCM_PATH").unwrap_or("/opt/rocm"),
+        ))
+    } else {
+        None
+    };
 
     let mut cmbuild = cmake::Config::new("ggml-src");
     cmbuild.build_target("ggml_static");
@@ -94,6 +104,13 @@ fn build_cmake() {
     }
     if cfg!(feature = "cublas") {
         cmbuild.define("LLAMA_CUBLAS", "ON");
+    } else if cfg!(feature = "hipblas") {
+        let rocm_path = rocm_path.as_ref().expect("Impossible: rocm_path not set!");
+        let rocm_llvm_path = rocm_path.join("llvm").join("bin");
+        cmbuild.define("LLAMA_HIPBLAS", "ON");
+        cmbuild.define("CMAKE_PREFIX_PATH", rocm_path);
+        cmbuild.define("CMAKE_C_COMPILER", rocm_llvm_path.join("clang"));
+        cmbuild.define("CMAKE_CXX_COMPILER", rocm_llvm_path.join("clang++"));
     } else if cfg!(feature = "clblast") {
         cmbuild.define("LLAMA_CLBLAST", "ON");
     } else if cfg!(feature = "openblas") {
@@ -117,6 +134,15 @@ fn build_cmake() {
     let dst = cmbuild.build();
     if cfg!(feature = "cublas") {
         println!("cargo:rustc-link-lib=cublas");
+    } else if cfg!(feature = "hipblas") {
+        let rocm_path = rocm_path.as_ref().expect("Impossible: rocm_path not set!");
+        println!(
+            "cargo:rustc-link-search-path={}",
+            rocm_path.join("lib").to_string_lossy()
+        );
+        println!("cargo:rustc-link-lib=hipblas");
+        println!("cargo:rustc-link-lib=amdhip64");
+        println!("cargo:rustc-link-lib=rocblas");
     } else if cfg!(feature = "clblast") {
         println!("cargo:rustc-link-lib=clblast");
         println!(

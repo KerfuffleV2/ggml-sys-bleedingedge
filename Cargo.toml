@@ -17,6 +17,7 @@ cublas = ["use_cmake"]
 clblast = ["use_cmake"]
 openblas = ["use_cmake"]
 metal = ["use_cmake"]
+hipblas = ["use_cmake"]
 
 [lib]
 
