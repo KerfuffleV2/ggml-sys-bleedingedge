@@ -30,11 +30,11 @@ mkdir -p ggml-src/{pocs,tests,examples,scripts,common}
 touch ggml-src/{pocs,tests,examples}/CMakeLists.txt
 cp ggml-repo/*.{c,cpp,h,m,metal,cu} ggml-repo/CMakeLists.txt ggml-src/
 cp ggml-repo/common/*.{cpp,h} ggml-repo/common/CMakeLists.txt ggml-src/common/
-cp ggml-repo/scripts/build-info.{cmake,h.in} ggml-src/scripts/
+cp ggml-repo/scripts/build-info.{cmake,h.in} ggml-repo/scripts/LlamaConfig.cmake.in ggml-src/scripts/
 git add \
   ggml-src/*.{c,cpp,h,m,metal,cu} \
   ggml-src/common/*.* \
-  ggml-src/scripts/build-info.* \
+  ggml-src/scripts/build-info.* ggml-src/scripts/LlamaConfig.cmake.in \
   ggml-src/CMakeLists.txt ggml-src/{tests,pocs,examples}/CMakeLists.txt
 
 if test -z "`git status --untracked=no --porcelain`"; then
@@ -68,7 +68,9 @@ git config user.email github-actions@github.com
 ( echo -e "[auto] Sync version ${VERSION}\n\n== Relevant log messages from source repo:\n" ; \
   cd ggml-repo && \
   git log "${OUR_GGML_RELEASE}..${LATEST_GGML_RELEASE}" -- \
-    *.{c,cpp,h,m,metal,cu} CMakeLists.txt scripts/build-info.{cmake,h.in} 2>/dev/null || true \
+    *.{c,cpp,h,m,metal,cu} CMakeLists.txt \
+    scripts/build-info.{cmake,h.in} scripts/LlamaConfig.cmake.in \
+    2>/dev/null || true \
 ) | git commit -F -
 git push
 echo 'new_release=true' >> $GITHUB_OUTPUT
