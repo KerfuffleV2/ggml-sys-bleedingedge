@@ -2792,57 +2792,57 @@ extern "C" {
     ) -> *mut gguf_context;
     pub fn gguf_free(ctx: *mut gguf_context);
     pub fn gguf_type_name(type_: gguf_type) -> *const ::std::os::raw::c_char;
-    pub fn gguf_get_version(ctx: *mut gguf_context) -> ::std::os::raw::c_int;
-    pub fn gguf_get_alignment(ctx: *mut gguf_context) -> usize;
-    pub fn gguf_get_data_offset(ctx: *mut gguf_context) -> usize;
-    pub fn gguf_get_data(ctx: *mut gguf_context) -> *mut ::std::os::raw::c_void;
-    pub fn gguf_get_n_kv(ctx: *mut gguf_context) -> ::std::os::raw::c_int;
+    pub fn gguf_get_version(ctx: *const gguf_context) -> ::std::os::raw::c_int;
+    pub fn gguf_get_alignment(ctx: *const gguf_context) -> usize;
+    pub fn gguf_get_data_offset(ctx: *const gguf_context) -> usize;
+    pub fn gguf_get_data(ctx: *const gguf_context) -> *mut ::std::os::raw::c_void;
+    pub fn gguf_get_n_kv(ctx: *const gguf_context) -> ::std::os::raw::c_int;
     pub fn gguf_find_key(
-        ctx: *mut gguf_context,
+        ctx: *const gguf_context,
         key: *const ::std::os::raw::c_char,
     ) -> ::std::os::raw::c_int;
     pub fn gguf_get_key(
-        ctx: *mut gguf_context,
+        ctx: *const gguf_context,
         i: ::std::os::raw::c_int,
     ) -> *const ::std::os::raw::c_char;
-    pub fn gguf_get_kv_type(ctx: *mut gguf_context, i: ::std::os::raw::c_int) -> gguf_type;
-    pub fn gguf_get_arr_type(ctx: *mut gguf_context, i: ::std::os::raw::c_int) -> gguf_type;
-    pub fn gguf_get_val_u8(ctx: *mut gguf_context, i: ::std::os::raw::c_int) -> u8;
-    pub fn gguf_get_val_i8(ctx: *mut gguf_context, i: ::std::os::raw::c_int) -> i8;
-    pub fn gguf_get_val_u16(ctx: *mut gguf_context, i: ::std::os::raw::c_int) -> u16;
-    pub fn gguf_get_val_i16(ctx: *mut gguf_context, i: ::std::os::raw::c_int) -> i16;
-    pub fn gguf_get_val_u32(ctx: *mut gguf_context, i: ::std::os::raw::c_int) -> u32;
-    pub fn gguf_get_val_i32(ctx: *mut gguf_context, i: ::std::os::raw::c_int) -> i32;
-    pub fn gguf_get_val_f32(ctx: *mut gguf_context, i: ::std::os::raw::c_int) -> f32;
-    pub fn gguf_get_val_u64(ctx: *mut gguf_context, i: ::std::os::raw::c_int) -> u64;
-    pub fn gguf_get_val_i64(ctx: *mut gguf_context, i: ::std::os::raw::c_int) -> i64;
-    pub fn gguf_get_val_f64(ctx: *mut gguf_context, i: ::std::os::raw::c_int) -> f64;
-    pub fn gguf_get_val_bool(ctx: *mut gguf_context, i: ::std::os::raw::c_int) -> bool;
+    pub fn gguf_get_kv_type(ctx: *const gguf_context, i: ::std::os::raw::c_int) -> gguf_type;
+    pub fn gguf_get_arr_type(ctx: *const gguf_context, i: ::std::os::raw::c_int) -> gguf_type;
+    pub fn gguf_get_val_u8(ctx: *const gguf_context, i: ::std::os::raw::c_int) -> u8;
+    pub fn gguf_get_val_i8(ctx: *const gguf_context, i: ::std::os::raw::c_int) -> i8;
+    pub fn gguf_get_val_u16(ctx: *const gguf_context, i: ::std::os::raw::c_int) -> u16;
+    pub fn gguf_get_val_i16(ctx: *const gguf_context, i: ::std::os::raw::c_int) -> i16;
+    pub fn gguf_get_val_u32(ctx: *const gguf_context, i: ::std::os::raw::c_int) -> u32;
+    pub fn gguf_get_val_i32(ctx: *const gguf_context, i: ::std::os::raw::c_int) -> i32;
+    pub fn gguf_get_val_f32(ctx: *const gguf_context, i: ::std::os::raw::c_int) -> f32;
+    pub fn gguf_get_val_u64(ctx: *const gguf_context, i: ::std::os::raw::c_int) -> u64;
+    pub fn gguf_get_val_i64(ctx: *const gguf_context, i: ::std::os::raw::c_int) -> i64;
+    pub fn gguf_get_val_f64(ctx: *const gguf_context, i: ::std::os::raw::c_int) -> f64;
+    pub fn gguf_get_val_bool(ctx: *const gguf_context, i: ::std::os::raw::c_int) -> bool;
     pub fn gguf_get_val_str(
-        ctx: *mut gguf_context,
+        ctx: *const gguf_context,
         i: ::std::os::raw::c_int,
     ) -> *const ::std::os::raw::c_char;
     pub fn gguf_get_arr_n(
-        ctx: *mut gguf_context,
+        ctx: *const gguf_context,
         i: ::std::os::raw::c_int,
     ) -> ::std::os::raw::c_int;
     pub fn gguf_get_arr_data(
-        ctx: *mut gguf_context,
+        ctx: *const gguf_context,
         i: ::std::os::raw::c_int,
     ) -> *const ::std::os::raw::c_void;
     pub fn gguf_get_arr_str(
-        ctx: *mut gguf_context,
+        ctx: *const gguf_context,
         key_id: ::std::os::raw::c_int,
         i: ::std::os::raw::c_int,
     ) -> *const ::std::os::raw::c_char;
-    pub fn gguf_get_n_tensors(ctx: *mut gguf_context) -> ::std::os::raw::c_int;
+    pub fn gguf_get_n_tensors(ctx: *const gguf_context) -> ::std::os::raw::c_int;
     pub fn gguf_find_tensor(
-        ctx: *mut gguf_context,
+        ctx: *const gguf_context,
         name: *const ::std::os::raw::c_char,
     ) -> ::std::os::raw::c_int;
-    pub fn gguf_get_tensor_offset(ctx: *mut gguf_context, i: ::std::os::raw::c_int) -> usize;
+    pub fn gguf_get_tensor_offset(ctx: *const gguf_context, i: ::std::os::raw::c_int) -> usize;
     pub fn gguf_get_tensor_name(
-        ctx: *mut gguf_context,
+        ctx: *const gguf_context,
         i: ::std::os::raw::c_int,
     ) -> *mut ::std::os::raw::c_char;
     pub fn gguf_set_val_u8(ctx: *mut gguf_context, key: *const ::std::os::raw::c_char, val: u8);
@@ -2888,12 +2888,12 @@ extern "C" {
         size: usize,
     );
     pub fn gguf_write_to_file(
-        ctx: *mut gguf_context,
+        ctx: *const gguf_context,
         fname: *const ::std::os::raw::c_char,
         only_meta: bool,
     );
-    pub fn gguf_get_meta_size(ctx: *mut gguf_context) -> usize;
-    pub fn gguf_get_meta_data(ctx: *mut gguf_context, data: *mut ::std::os::raw::c_void);
+    pub fn gguf_get_meta_size(ctx: *const gguf_context) -> usize;
+    pub fn gguf_get_meta_data(ctx: *const gguf_context, data: *mut ::std::os::raw::c_void);
     pub fn ggml_cpu_has_avx() -> ::std::os::raw::c_int;
     pub fn ggml_cpu_has_avx2() -> ::std::os::raw::c_int;
     pub fn ggml_cpu_has_avx512() -> ::std::os::raw::c_int;
@@ -2902,6 +2902,7 @@ extern "C" {
     pub fn ggml_cpu_has_fma() -> ::std::os::raw::c_int;
     pub fn ggml_cpu_has_neon() -> ::std::os::raw::c_int;
     pub fn ggml_cpu_has_arm_fma() -> ::std::os::raw::c_int;
+    pub fn ggml_cpu_has_metal() -> ::std::os::raw::c_int;
     pub fn ggml_cpu_has_f16c() -> ::std::os::raw::c_int;
     pub fn ggml_cpu_has_fp16_va() -> ::std::os::raw::c_int;
     pub fn ggml_cpu_has_wasm_simd() -> ::std::os::raw::c_int;

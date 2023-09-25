@@ -20,8 +20,13 @@
 #define DIRECTORY_SEPARATOR '/'
 #endif // _WIN32
 
-#define die(msg)          do { fputs("error: " msg "\n", stderr);                  exit(1); } while (0)
-#define die_fmt(fmt, ...) do { fprintf(stderr, "error: " fmt "\n", ##__VA_ARGS__); exit(1); } while (0)
+#define die(msg)          do { fputs("error: " msg "\n", stderr);                exit(1); } while (0)
+#define die_fmt(fmt, ...) do { fprintf(stderr, "error: " fmt "\n", __VA_ARGS__); exit(1); } while (0)
+
+#define print_build_info() do {                                                             \
+    fprintf(stderr, "%s: build = %d (%s)\n", __func__, BUILD_NUMBER, BUILD_COMMIT);         \
+    fprintf(stderr, "%s: built with %s for %s\n", __func__, BUILD_COMPILER, BUILD_TARGET);  \
+} while(0)
 
 //
 // CLI argument parsing
@@ -43,8 +48,8 @@ struct gpt_params {
     float   tensor_split[LLAMA_MAX_DEVICES] = {0};  // how split tensors should be distributed across GPUs
     int32_t n_probs                         = 0;    // if greater than 0, output the probabilities of top n_probs tokens.
     int32_t n_beams                         = 0;    // if non-zero then use beam search of given width.
-    float   rope_freq_base                  = 10000.0f; // RoPE base frequency
-    float   rope_freq_scale                 = 1.0f;     // RoPE frequency scaling factor
+    float   rope_freq_base                  = 0.0f; // RoPE base frequency
+    float   rope_freq_scale                 = 0.0f; // RoPE frequency scaling factor
 
     // sampling parameters
     int32_t top_k             = 40;    // <= 0 to use vocab size
@@ -110,7 +115,6 @@ struct gpt_params {
     bool perplexity        = false; // compute perplexity over the prompt
     bool use_mmap          = true;  // use mmap for faster loads
     bool use_mlock         = false; // use mlock to keep model in memory
-    bool mem_test          = false; // compute maximum memory usage
     bool numa              = false; // attempt optimizations that help on some NUMA systems
     bool export_cgraph     = false; // export the computation graph
     bool verbose_prompt    = false; // print prompt tokens before generation
