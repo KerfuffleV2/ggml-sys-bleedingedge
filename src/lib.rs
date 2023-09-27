@@ -13,6 +13,7 @@ pub type ggml_ftype = ::std::os::raw::c_int;
 pub type ggml_op = ::std::os::raw::c_uint;
 pub type ggml_unary_op = ::std::os::raw::c_uint;
 pub type ggml_object_type = ::std::os::raw::c_uint;
+pub type ggml_log_level = ::std::os::raw::c_uint;
 pub type ggml_task_type = ::std::os::raw::c_uint;
 pub type ggml_op_pool = ::std::os::raw::c_uint;
 pub type ggml_unary_op_f32_t = ::std::option::Option<
@@ -78,6 +79,13 @@ pub type ggml_linesearch = ::std::os::raw::c_uint;
 pub type ggml_opt_result = ::std::os::raw::c_int;
 pub type ggml_opt_callback =
     ::std::option::Option<unsafe extern "C" fn(data: *mut ::std::os::raw::c_void, sched: *mut f32)>;
+pub type ggml_log_callback = ::std::option::Option<
+    unsafe extern "C" fn(
+        level: ggml_log_level,
+        text: *const ::std::os::raw::c_char,
+        user_data: *mut ::std::os::raw::c_void,
+    ),
+>;
 pub type gguf_type = ::std::os::raw::c_uint;
 pub type ggml_to_float_t = ::std::option::Option<
     unsafe extern "C" fn(x: *const ::std::os::raw::c_void, y: *mut f32, k: ::std::os::raw::c_int),
@@ -422,6 +430,9 @@ pub const ggml_unary_op_GGML_UNARY_OP_SILU: ggml_unary_op = 9;
 pub const ggml_object_type_GGML_OBJECT_TENSOR: ggml_object_type = 0;
 pub const ggml_object_type_GGML_OBJECT_GRAPH: ggml_object_type = 1;
 pub const ggml_object_type_GGML_OBJECT_WORK_BUFFER: ggml_object_type = 2;
+pub const ggml_log_level_GGML_LOG_LEVEL_ERROR: ggml_log_level = 2;
+pub const ggml_log_level_GGML_LOG_LEVEL_WARN: ggml_log_level = 3;
+pub const ggml_log_level_GGML_LOG_LEVEL_INFO: ggml_log_level = 4;
 pub const GGML_OBJECT_SIZE: usize = 32;
 pub const GGML_TENSOR_SIZE: usize = 304;
 pub const GGML_GRAPH_SIZE: usize = 164520;
