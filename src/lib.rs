@@ -2055,6 +2055,11 @@ extern "C" {
     pub fn ggml_new_f32(ctx: *mut ggml_context, value: f32) -> *mut ggml_tensor;
     pub fn ggml_dup_tensor(ctx: *mut ggml_context, src: *const ggml_tensor) -> *mut ggml_tensor;
     pub fn ggml_view_tensor(ctx: *mut ggml_context, src: *mut ggml_tensor) -> *mut ggml_tensor;
+    pub fn ggml_get_first_tensor(ctx: *mut ggml_context) -> *mut ggml_tensor;
+    pub fn ggml_get_next_tensor(
+        ctx: *mut ggml_context,
+        tensor: *mut ggml_tensor,
+    ) -> *mut ggml_tensor;
     pub fn ggml_get_tensor(
         ctx: *mut ggml_context,
         name: *const ::std::os::raw::c_char,
