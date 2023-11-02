@@ -1001,11 +1001,15 @@ void ggml_metal_graph_compute(
                         } break;
                     case GGML_OP_SOFT_MAX:
                         {
-                            const int nth = MIN(32, ne00);
+                            int nth = 32; // SIMD width
 
                             if (ne00%4 == 0) {
                                 [encoder setComputePipelineState:ctx->pipeline_soft_max_4];
                             } else {
+                                do {
+                                    nth *= 2;
+                                } while (nth <= ne00 && nth <= 1024);
+                                nth /= 2;
                                 [encoder setComputePipelineState:ctx->pipeline_soft_max];
                             }
                             [encoder setBuffer:id_src0 offset:offs_src0 atIndex:0];
@@ -1013,8 +1017,9 @@ void ggml_metal_graph_compute(
                             [encoder setBytes:&ne00 length:sizeof(ne00) atIndex:2];
                             [encoder setBytes:&ne01 length:sizeof(ne01) atIndex:3];
                             [encoder setBytes:&ne02 length:sizeof(ne02) atIndex:4];
+                            [encoder setThreadgroupMemoryLength:nth/32*sizeof(float) atIndex:0];
 
-                            [encoder dispatchThreadgroups:MTLSizeMake(ne01, ne02, ne03) threadsPerThreadgroup:MTLSizeMake(nth, 1, 1)];
+                            [encoder dispatchThreadgroups:MTLSizeMake(ne01*ne02*ne03, 1, 1) threadsPerThreadgroup:MTLSizeMake(nth, 1, 1)];
                         } break;
                     case GGML_OP_DIAG_MASK_INF:
                         {
@@ -1395,14 +1400,18 @@ void ggml_metal_graph_compute(
 
                             const int nth = MIN(1024, ne00);
 
-                            const int n_past = ((int32_t *) dst->op_params)[0];
-                            const int n_dims = ((int32_t *) dst->op_params)[1];
-                            const int mode   = ((int32_t *) dst->op_params)[2];
+                            const int n_past     = ((int32_t *) dst->op_params)[0];
+                            const int n_dims     = ((int32_t *) dst->op_params)[1];
+                            const int mode       = ((int32_t *) dst->op_params)[2];
+                            const int n_orig_ctx = ((int32_t *) dst->op_params)[3];
 
-                            float freq_base;
-                            float freq_scale;
-                            memcpy(&freq_base,  (int32_t *) dst->op_params + 4, sizeof(float));
-                            memcpy(&freq_scale, (int32_t *) dst->op_params + 5, sizeof(float));
+                            float freq_base, freq_scale, ext_factor, attn_factor, beta_fast, beta_slow;
+                            memcpy(&freq_base,   (int32_t *) dst->op_params +  5, sizeof(float));
+                            memcpy(&freq_scale,  (int32_t *) dst->op_params +  6, sizeof(float));
+                            memcpy(&ext_factor,  (int32_t *) dst->op_params +  7, sizeof(float));
+                            memcpy(&attn_factor, (int32_t *) dst->op_params +  8, sizeof(float));
+                            memcpy(&beta_fast,   (int32_t *) dst->op_params +  9, sizeof(float));
+                            memcpy(&beta_slow,   (int32_t *) dst->op_params + 10, sizeof(float));
 
                             switch (src0->type) {
                                 case GGML_TYPE_F32: [encoder setComputePipelineState:ctx->pipeline_rope_f32]; break;
@@ -1434,6 +1443,10 @@ void ggml_metal_graph_compute(
                             [encoder setBytes:&mode    length:sizeof(     int) atIndex:21];
                             [encoder setBytes:&freq_base  length:sizeof(float) atIndex:22];
                             [encoder setBytes:&freq_scale length:sizeof(float) atIndex:23];
+                            [encoder setBytes:&ext_factor  length:sizeof(float) atIndex:24];
+                            [encoder setBytes:&attn_factor length:sizeof(float) atIndex:25];
+                            [encoder setBytes:&beta_fast   length:sizeof(float) atIndex:26];
+                            [encoder setBytes:&beta_slow   length:sizeof(float) atIndex:27];
 
                             [encoder dispatchThreadgroups:MTLSizeMake(ne01, ne02, ne03) threadsPerThreadgroup:MTLSizeMake(nth, 1, 1)];
                         } break;
