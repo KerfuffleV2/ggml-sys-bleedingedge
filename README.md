@@ -31,7 +31,7 @@ There is now experimental support for compiling with BLAS.
 
 Available features:
 
-- `n_k_quants` - Disables building with k_quant quantizations (i.e. Q4_K)
+- `no_k_quants` - Disables building with k_quant quantizations (i.e. Q4_K)
 - `no_accelerate` - Only relevant on Mac, disables building with Accelerate.
 - `use_cmake` - Builds and links against `libllama` using cmake.
 - `cublas` - Nvidia's CUDA BLAS implementation.
@@ -39,6 +39,7 @@ Available features:
 - `hipblas` - AMD's ROCM/HIP BLAS implementation. Set the `ROCM_PATH` environment variable to point at your ROCM installation. It defaults to `/opt/rocm`. ***Note***: Unless your GPU is natively supported by ROCM it's very likely you'll need to set the `HSA_OVERRIDE_GFX_VERSION` environment variable otherwise your app will immediately crash when initializing ROCM. For example on an RX 6600 `HSA_OVERRIDE_GFX_VERSION=10.3.0` works.
 - `openblas` - OpenBLAS.
 - `metal` - Metal support, only available on Mac.
+- `llamacpp_api` - Include the `llama.cpp` C++ API in bindings.
 
 Enabling any of the BLAS features or `metal` implies `use_cmake`. You will need a working C++ compiler and cmake set up to build with this feature. Due to limitations in the llama.cpp cmake build system currently, it's necessary to build and link against `libllama` (which pulls in stuff like `libstdc++`) even though we only need GGML. Also, although we can build the library using cmake there's no simple way to know the necessary library search paths and libraries: we try to make a reasonable choice here but if you have libraries in unusual locations or multiple versions then weird stuff may happen.
 

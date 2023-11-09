@@ -24,21 +24,19 @@ if test "${1:-}" = "only-check"; then
   exit 0
 fi
 echo "New release tag. Latest [${LATEST_GGML_RELEASE}], ours: [${OUR_GGML_RELEASE}]"
-git clone --depth 300 --single-branch https://github.com/ggerganov/llama.cpp ggml-repo && \
-  ( cd ggml-repo && git checkout "$LATEST_GGML_RELEASE" )
-mkdir -p ggml-src/{pocs,tests,examples,scripts,common}
-touch ggml-src/{pocs,tests,examples}/CMakeLists.txt
-cp ggml-repo/*.{c,cpp,h,m,metal,cu} ggml-repo/CMakeLists.txt ggml-src/
-cp ggml-repo/common/*.{cpp,h} ggml-repo/common/CMakeLists.txt ggml-src/common/
-cp ggml-repo/scripts/build-info.{cmake,h.in} ggml-repo/scripts/LlamaConfig.cmake.in ggml-src/scripts/
-git add \
-  ggml-src/*.{c,cpp,h,m,metal,cu} \
-  ggml-src/common/*.* \
-  ggml-src/scripts/build-info.* ggml-src/scripts/LlamaConfig.cmake.in \
-  ggml-src/CMakeLists.txt ggml-src/{tests,pocs,examples}/CMakeLists.txt
+git submodule update --init && \
+  ( cd ggml-src && git checkout "$LATEST_GGML_RELEASE" )
 
-if test -z "`git status --untracked=no --porcelain`"; then
+( cd ggml-src && \
+  git log "${OUR_GGML_RELEASE}..${LATEST_GGML_RELEASE}" -- \
+    *.{c,cpp,h,m,metal,cu} CMakeLists.txt \
+    scripts/build-info.{cmake,h.in} scripts/LlamaConfig.cmake.in \
+    > ../relevant_changes.txt 2>/dev/null || true \
+)
+
+if ! test -s relevant_changes.txt; then
   # New release tag but no relevant changes, so nothing to do.
+  rf -f relevant_changes.txt
   exit 0
 fi
 
@@ -62,16 +60,13 @@ cargo test --features use_cmake
 echo "$VERSION" > ./VERSION.txt
 echo "$OUR_GGML_RELEASE" > ./ggml-tag-previous.txt
 echo "$LATEST_GGML_RELEASE" > ./ggml-tag-current.txt
-git add Cargo.toml VERSION.txt ggml-tag-current.txt ggml-tag-previous.txt src/lib.rs ggml-src/build-info.h
+git add Cargo.toml VERSION.txt ggml-tag-current.txt ggml-tag-previous.txt src/lib.rs
 git config user.name github-actions
 git config user.email github-actions@github.com
 ( echo -e "[auto] Sync version ${VERSION}\n\n== Relevant log messages from source repo:\n" ; \
-  cd ggml-repo && \
-  git log "${OUR_GGML_RELEASE}..${LATEST_GGML_RELEASE}" -- \
-    *.{c,cpp,h,m,metal,cu} CMakeLists.txt \
-    scripts/build-info.{cmake,h.in} scripts/LlamaConfig.cmake.in \
-    2>/dev/null || true \
+  cat relevant_changes.txt
 ) | git commit -F -
+rm -f relevant_changes.txt
 git push
 echo 'new_release=true' >> $GITHUB_OUTPUT
 echo "new_release_version=${VERSION}" >> $GITHUB_OUTPUT

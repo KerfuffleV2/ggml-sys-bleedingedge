@@ -46,6 +46,14 @@ fn generate_bindings() {
             let hfn = hfn.to_string_lossy();
             bbuilder = bbuilder.header(hfn.clone()).allowlist_file(hfn);
         }
+        if cfg!(feature = "llamacpp_api") {
+            let hfn = PathBuf::from(GGML_SOURCE_DIR).join("llama.h");
+            let hfn = hfn.to_string_lossy();
+            bbuilder = bbuilder
+                .header(hfn.clone())
+                .allowlist_file(hfn)
+                .clang_args(["-x", "c++", "-std=c++11"]);
+        }
     }
 
     let bindings = bbuilder.generate().expect("Unable to generate bindings");
@@ -145,9 +153,8 @@ fn build_cmake() {
         println!("cargo:rustc-link-lib=amdhip64");
         println!("cargo:rustc-link-lib=rocblas");
         let mut build = cc::Build::new();
-        build.cpp(true).file("dummy/dummy.c").object(PathBuf::from(
-            env::var("OUT_DIR")
-                .expect("OUT_DIR not set!"))
+        build.cpp(true).file("dummy/dummy.c").object(
+            PathBuf::from(env::var("OUT_DIR").expect("OUT_DIR not set!"))
                 .join("build")
                 .join("CMakeFiles")
                 .join("ggml-rocm.dir")
@@ -183,7 +190,7 @@ fn build_cmake() {
 }
 
 fn build_simple() {
-    if cfg!(feature = "cublas") || cfg!(feature = "clblast") {
+    if cfg!(feature = "cublas") || cfg!(feature = "clblast") || cfg!(feature = "hipblas") {
         panic!("Must build with feature use_cmake when enabling BLAS!");
     }
     generate_bindings();
@@ -192,9 +199,12 @@ fn build_simple() {
     let build = builder
         .files([
             PathBuf::from(GGML_SOURCE_DIR).join("ggml.c"),
+            PathBuf::from(GGML_SOURCE_DIR).join("ggml-alloc.c"),
+            PathBuf::from(GGML_SOURCE_DIR).join("ggml-backend.c"),
             #[cfg(not(feature = "no_k_quants"))]
-            PathBuf::from(GGML_SOURCE_DIR).join("k_quants.c"),
+            PathBuf::from(GGML_SOURCE_DIR).join("ggml-quants.c"),
         ])
+        .include(PathBuf::from(GGML_SOURCE_DIR))
         .include("include");
     #[cfg(not(feature = "no_k_quants"))]
     build.define("GGML_USE_K_QUANTS", None);
