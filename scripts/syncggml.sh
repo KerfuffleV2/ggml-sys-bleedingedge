@@ -51,11 +51,11 @@ if ! test -f src/lib.rs; then
 fi
 
 # Make sure it actually builds.
+cargo build --no-default-features
+cargo test --no-default-features
+cargo clean
 cargo build
 cargo test
-cargo clean
-cargo build --features use_cmake
-cargo test --features use_cmake
 
 echo "$VERSION" > ./VERSION.txt
 echo "$OUR_GGML_RELEASE" > ./ggml-tag-previous.txt

@@ -14,7 +14,8 @@ jobs:
       - name: Use latest release
         run: |
           git fetch --quiet --tags && \
-          git checkout "$(git describe --tags `git rev-list --tags='v*' --max-count=1`)"
+          git checkout "$(git describe --tags `git rev-list --tags='v*' --max-count=1`)" && \
+          ( git submodule update --init && cd ggml-src && git checkout "$(cat ../ggml-tag-current.txt)" )
       - uses: dtolnay/rust-toolchain@stable
       - uses: katyo/publish-crates@v2
         with:
