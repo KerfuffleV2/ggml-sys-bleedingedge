@@ -36,7 +36,7 @@ git submodule update --init && \
 
 if ! test -s relevant_changes.txt; then
   # New release tag but no relevant changes, so nothing to do.
-  rf -f relevant_changes.txt
+  rm -f relevant_changes.txt
   exit 0
 fi
 
