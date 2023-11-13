@@ -169,20 +169,26 @@ pub struct ggml_cplan {
     pub work_size: usize,
     pub work_data: *mut u8,
     pub n_threads: ::std::os::raw::c_int,
-    pub n_tasks: [::std::os::raw::c_int; 16384usize],
     pub abort_callback:
         ::std::option::Option<unsafe extern "C" fn(data: *mut ::std::os::raw::c_void) -> bool>,
     pub abort_callback_data: *mut ::std::os::raw::c_void,
 }
 #[repr(C)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+pub struct ggml_hash_set {
+    pub size: usize,
+    pub keys: *mut *mut ggml_tensor,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct ggml_cgraph {
+    pub size: ::std::os::raw::c_int,
     pub n_nodes: ::std::os::raw::c_int,
     pub n_leafs: ::std::os::raw::c_int,
-    pub nodes: [*mut ggml_tensor; 16384usize],
-    pub grads: [*mut ggml_tensor; 16384usize],
-    pub leafs: [*mut ggml_tensor; 16384usize],
-    pub visited_hash_table: [*mut ::std::os::raw::c_void; 32771usize],
+    pub nodes: *mut *mut ggml_tensor,
+    pub grads: *mut *mut ggml_tensor,
+    pub leafs: *mut *mut ggml_tensor,
+    pub visited_hash_table: ggml_hash_set,
     pub order: ggml_cgraph_eval_order,
     pub perf_runs: ::std::os::raw::c_int,
     pub perf_cycles: i64,
@@ -215,6 +221,7 @@ pub struct ggml_compute_params {
 #[derive(Debug, Copy, Clone, PartialOrd, PartialEq)]
 pub struct ggml_opt_params {
     pub type_: ggml_opt_type,
+    pub graph_size: usize,
     pub n_threads: ::std::os::raw::c_int,
     pub past: ::std::os::raw::c_int,
     pub delta: f32,
@@ -500,20 +507,19 @@ pub const GGML_FILE_VERSION: u32 = 1;
 pub const GGML_QNT_VERSION: u32 = 2;
 pub const GGML_QNT_VERSION_FACTOR: u32 = 1000;
 pub const GGML_MAX_DIMS: u32 = 4;
-pub const GGML_MAX_NODES: u32 = 16384;
 pub const GGML_MAX_PARAMS: u32 = 1024;
 pub const GGML_MAX_CONTEXTS: u32 = 64;
 pub const GGML_MAX_SRC: u32 = 6;
 pub const GGML_MAX_NAME: u32 = 64;
 pub const GGML_MAX_OP_PARAMS: u32 = 64;
 pub const GGML_DEFAULT_N_THREADS: u32 = 4;
+pub const GGML_DEFAULT_GRAPH_SIZE: u32 = 2048;
 pub const GGML_MEM_ALIGN: u32 = 16;
 pub const GGML_EXIT_SUCCESS: u32 = 0;
 pub const GGML_EXIT_ABORTED: u32 = 1;
 pub const GGUF_MAGIC: &[u8; 5] = b"GGUF\0";
 pub const GGUF_VERSION: u32 = 3;
 pub const GGUF_DEFAULT_ALIGNMENT: u32 = 32;
-pub const GGML_GRAPH_HASHTABLE_SIZE: u32 = 32771;
 pub const GGML_N_TASKS_MAX: i32 = -1;
 pub const LLAMA_MAX_DEVICES: u32 = 1;
 pub const LLAMA_DEFAULT_SEED: u32 = 4294967295;
@@ -600,36 +606,31 @@ pub const ggml_op_GGML_OP_ROPE: ggml_op = 40;
 pub const ggml_op_GGML_OP_ROPE_BACK: ggml_op = 41;
 pub const ggml_op_GGML_OP_ALIBI: ggml_op = 42;
 pub const ggml_op_GGML_OP_CLAMP: ggml_op = 43;
-pub const ggml_op_GGML_OP_CONV_1D: ggml_op = 44;
-pub const ggml_op_GGML_OP_CONV_1D_STAGE_0: ggml_op = 45;
-pub const ggml_op_GGML_OP_CONV_1D_STAGE_1: ggml_op = 46;
-pub const ggml_op_GGML_OP_CONV_TRANSPOSE_1D: ggml_op = 47;
-pub const ggml_op_GGML_OP_CONV_2D: ggml_op = 48;
-pub const ggml_op_GGML_OP_CONV_2D_STAGE_0: ggml_op = 49;
-pub const ggml_op_GGML_OP_CONV_2D_STAGE_1: ggml_op = 50;
-pub const ggml_op_GGML_OP_CONV_TRANSPOSE_2D: ggml_op = 51;
-pub const ggml_op_GGML_OP_POOL_1D: ggml_op = 52;
-pub const ggml_op_GGML_OP_POOL_2D: ggml_op = 53;
-pub const ggml_op_GGML_OP_UPSCALE: ggml_op = 54;
-pub const ggml_op_GGML_OP_FLASH_ATTN: ggml_op = 55;
-pub const ggml_op_GGML_OP_FLASH_FF: ggml_op = 56;
-pub const ggml_op_GGML_OP_FLASH_ATTN_BACK: ggml_op = 57;
-pub const ggml_op_GGML_OP_WIN_PART: ggml_op = 58;
-pub const ggml_op_GGML_OP_WIN_UNPART: ggml_op = 59;
-pub const ggml_op_GGML_OP_GET_REL_POS: ggml_op = 60;
-pub const ggml_op_GGML_OP_ADD_REL_POS: ggml_op = 61;
-pub const ggml_op_GGML_OP_UNARY: ggml_op = 62;
-pub const ggml_op_GGML_OP_MAP_UNARY: ggml_op = 63;
-pub const ggml_op_GGML_OP_MAP_BINARY: ggml_op = 64;
-pub const ggml_op_GGML_OP_MAP_CUSTOM1_F32: ggml_op = 65;
-pub const ggml_op_GGML_OP_MAP_CUSTOM2_F32: ggml_op = 66;
-pub const ggml_op_GGML_OP_MAP_CUSTOM3_F32: ggml_op = 67;
-pub const ggml_op_GGML_OP_MAP_CUSTOM1: ggml_op = 68;
-pub const ggml_op_GGML_OP_MAP_CUSTOM2: ggml_op = 69;
-pub const ggml_op_GGML_OP_MAP_CUSTOM3: ggml_op = 70;
-pub const ggml_op_GGML_OP_CROSS_ENTROPY_LOSS: ggml_op = 71;
-pub const ggml_op_GGML_OP_CROSS_ENTROPY_LOSS_BACK: ggml_op = 72;
-pub const ggml_op_GGML_OP_COUNT: ggml_op = 73;
+pub const ggml_op_GGML_OP_CONV_TRANSPOSE_1D: ggml_op = 44;
+pub const ggml_op_GGML_OP_IM2COL: ggml_op = 45;
+pub const ggml_op_GGML_OP_CONV_TRANSPOSE_2D: ggml_op = 46;
+pub const ggml_op_GGML_OP_POOL_1D: ggml_op = 47;
+pub const ggml_op_GGML_OP_POOL_2D: ggml_op = 48;
+pub const ggml_op_GGML_OP_UPSCALE: ggml_op = 49;
+pub const ggml_op_GGML_OP_FLASH_ATTN: ggml_op = 50;
+pub const ggml_op_GGML_OP_FLASH_FF: ggml_op = 51;
+pub const ggml_op_GGML_OP_FLASH_ATTN_BACK: ggml_op = 52;
+pub const ggml_op_GGML_OP_WIN_PART: ggml_op = 53;
+pub const ggml_op_GGML_OP_WIN_UNPART: ggml_op = 54;
+pub const ggml_op_GGML_OP_GET_REL_POS: ggml_op = 55;
+pub const ggml_op_GGML_OP_ADD_REL_POS: ggml_op = 56;
+pub const ggml_op_GGML_OP_UNARY: ggml_op = 57;
+pub const ggml_op_GGML_OP_MAP_UNARY: ggml_op = 58;
+pub const ggml_op_GGML_OP_MAP_BINARY: ggml_op = 59;
+pub const ggml_op_GGML_OP_MAP_CUSTOM1_F32: ggml_op = 60;
+pub const ggml_op_GGML_OP_MAP_CUSTOM2_F32: ggml_op = 61;
+pub const ggml_op_GGML_OP_MAP_CUSTOM3_F32: ggml_op = 62;
+pub const ggml_op_GGML_OP_MAP_CUSTOM1: ggml_op = 63;
+pub const ggml_op_GGML_OP_MAP_CUSTOM2: ggml_op = 64;
+pub const ggml_op_GGML_OP_MAP_CUSTOM3: ggml_op = 65;
+pub const ggml_op_GGML_OP_CROSS_ENTROPY_LOSS: ggml_op = 66;
+pub const ggml_op_GGML_OP_CROSS_ENTROPY_LOSS_BACK: ggml_op = 67;
+pub const ggml_op_GGML_OP_COUNT: ggml_op = 68;
 pub const ggml_unary_op_GGML_UNARY_OP_ABS: ggml_unary_op = 0;
 pub const ggml_unary_op_GGML_UNARY_OP_SGN: ggml_unary_op = 1;
 pub const ggml_unary_op_GGML_UNARY_OP_NEG: ggml_unary_op = 2;
@@ -640,6 +641,7 @@ pub const ggml_unary_op_GGML_UNARY_OP_RELU: ggml_unary_op = 6;
 pub const ggml_unary_op_GGML_UNARY_OP_GELU: ggml_unary_op = 7;
 pub const ggml_unary_op_GGML_UNARY_OP_GELU_QUICK: ggml_unary_op = 8;
 pub const ggml_unary_op_GGML_UNARY_OP_SILU: ggml_unary_op = 9;
+pub const ggml_unary_op_GGML_UNARY_OP_LEAKY: ggml_unary_op = 10;
 pub const ggml_object_type_GGML_OBJECT_TENSOR: ggml_object_type = 0;
 pub const ggml_object_type_GGML_OBJECT_GRAPH: ggml_object_type = 1;
 pub const ggml_object_type_GGML_OBJECT_WORK_BUFFER: ggml_object_type = 2;
@@ -651,7 +653,6 @@ pub const GGML_TENSOR_SIZE: usize = 352;
 pub const ggml_cgraph_eval_order_GGML_CGRAPH_EVAL_ORDER_LEFT_TO_RIGHT: ggml_cgraph_eval_order = 0;
 pub const ggml_cgraph_eval_order_GGML_CGRAPH_EVAL_ORDER_RIGHT_TO_LEFT: ggml_cgraph_eval_order = 1;
 pub const ggml_cgraph_eval_order_GGML_CGRAPH_EVAL_ORDER_COUNT: ggml_cgraph_eval_order = 2;
-pub const GGML_GRAPH_SIZE: usize = 655416;
 pub const ggml_task_type_GGML_TASK_INIT: ggml_task_type = 0;
 pub const ggml_task_type_GGML_TASK_COMPUTE: ggml_task_type = 1;
 pub const ggml_task_type_GGML_TASK_FINALIZE: ggml_task_type = 2;
@@ -1014,7 +1015,7 @@ fn bindgen_test_layout_ggml_cplan() {
     let ptr = UNINIT.as_ptr();
     assert_eq!(
         ::std::mem::size_of::<ggml_cplan>(),
-        65576usize,
+        40usize,
         concat!("Size of: ", stringify!(ggml_cplan))
     );
     assert_eq!(
@@ -1053,18 +1054,8 @@ fn bindgen_test_layout_ggml_cplan() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).n_tasks) as usize - ptr as usize },
-        20usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(ggml_cplan),
-            "::",
-            stringify!(n_tasks)
-        )
-    );
-    assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).abort_callback) as usize - ptr as usize },
-        65560usize,
+        24usize,
         concat!(
             "Offset of field: ",
             stringify!(ggml_cplan),
@@ -1074,7 +1065,7 @@ fn bindgen_test_layout_ggml_cplan() {
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).abort_callback_data) as usize - ptr as usize },
-        65568usize,
+        32usize,
         concat!(
             "Offset of field: ",
             stringify!(ggml_cplan),
@@ -1084,12 +1075,47 @@ fn bindgen_test_layout_ggml_cplan() {
     );
 }
 #[test]
+fn bindgen_test_layout_ggml_hash_set() {
+    const UNINIT: ::std::mem::MaybeUninit<ggml_hash_set> = ::std::mem::MaybeUninit::uninit();
+    let ptr = UNINIT.as_ptr();
+    assert_eq!(
+        ::std::mem::size_of::<ggml_hash_set>(),
+        16usize,
+        concat!("Size of: ", stringify!(ggml_hash_set))
+    );
+    assert_eq!(
+        ::std::mem::align_of::<ggml_hash_set>(),
+        8usize,
+        concat!("Alignment of ", stringify!(ggml_hash_set))
+    );
+    assert_eq!(
+        unsafe { ::std::ptr::addr_of!((*ptr).size) as usize - ptr as usize },
+        0usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(ggml_hash_set),
+            "::",
+            stringify!(size)
+        )
+    );
+    assert_eq!(
+        unsafe { ::std::ptr::addr_of!((*ptr).keys) as usize - ptr as usize },
+        8usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(ggml_hash_set),
+            "::",
+            stringify!(keys)
+        )
+    );
+}
+#[test]
 fn bindgen_test_layout_ggml_cgraph() {
     const UNINIT: ::std::mem::MaybeUninit<ggml_cgraph> = ::std::mem::MaybeUninit::uninit();
     let ptr = UNINIT.as_ptr();
     assert_eq!(
         ::std::mem::size_of::<ggml_cgraph>(),
-        655416usize,
+        80usize,
         concat!("Size of: ", stringify!(ggml_cgraph))
     );
     assert_eq!(
@@ -1098,8 +1124,18 @@ fn bindgen_test_layout_ggml_cgraph() {
         concat!("Alignment of ", stringify!(ggml_cgraph))
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).n_nodes) as usize - ptr as usize },
+        unsafe { ::std::ptr::addr_of!((*ptr).size) as usize - ptr as usize },
         0usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(ggml_cgraph),
+            "::",
+            stringify!(size)
+        )
+    );
+    assert_eq!(
+        unsafe { ::std::ptr::addr_of!((*ptr).n_nodes) as usize - ptr as usize },
+        4usize,
         concat!(
             "Offset of field: ",
             stringify!(ggml_cgraph),
@@ -1109,7 +1145,7 @@ fn bindgen_test_layout_ggml_cgraph() {
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).n_leafs) as usize - ptr as usize },
-        4usize,
+        8usize,
         concat!(
             "Offset of field: ",
             stringify!(ggml_cgraph),
@@ -1119,7 +1155,7 @@ fn bindgen_test_layout_ggml_cgraph() {
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).nodes) as usize - ptr as usize },
-        8usize,
+        16usize,
         concat!(
             "Offset of field: ",
             stringify!(ggml_cgraph),
@@ -1129,7 +1165,7 @@ fn bindgen_test_layout_ggml_cgraph() {
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).grads) as usize - ptr as usize },
-        131080usize,
+        24usize,
         concat!(
             "Offset of field: ",
             stringify!(ggml_cgraph),
@@ -1139,7 +1175,7 @@ fn bindgen_test_layout_ggml_cgraph() {
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).leafs) as usize - ptr as usize },
-        262152usize,
+        32usize,
         concat!(
             "Offset of field: ",
             stringify!(ggml_cgraph),
@@ -1149,7 +1185,7 @@ fn bindgen_test_layout_ggml_cgraph() {
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).visited_hash_table) as usize - ptr as usize },
-        393224usize,
+        40usize,
         concat!(
             "Offset of field: ",
             stringify!(ggml_cgraph),
@@ -1159,7 +1195,7 @@ fn bindgen_test_layout_ggml_cgraph() {
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).order) as usize - ptr as usize },
-        655392usize,
+        56usize,
         concat!(
             "Offset of field: ",
             stringify!(ggml_cgraph),
@@ -1169,7 +1205,7 @@ fn bindgen_test_layout_ggml_cgraph() {
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).perf_runs) as usize - ptr as usize },
-        655396usize,
+        60usize,
         concat!(
             "Offset of field: ",
             stringify!(ggml_cgraph),
@@ -1179,7 +1215,7 @@ fn bindgen_test_layout_ggml_cgraph() {
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).perf_cycles) as usize - ptr as usize },
-        655400usize,
+        64usize,
         concat!(
             "Offset of field: ",
             stringify!(ggml_cgraph),
@@ -1189,7 +1225,7 @@ fn bindgen_test_layout_ggml_cgraph() {
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).perf_time_us) as usize - ptr as usize },
-        655408usize,
+        72usize,
         concat!(
             "Offset of field: ",
             stringify!(ggml_cgraph),
@@ -1591,12 +1627,12 @@ fn bindgen_test_layout_ggml_opt_params() {
     let ptr = UNINIT.as_ptr();
     assert_eq!(
         ::std::mem::size_of::<ggml_opt_params>(),
-        108usize,
+        120usize,
         concat!("Size of: ", stringify!(ggml_opt_params))
     );
     assert_eq!(
         ::std::mem::align_of::<ggml_opt_params>(),
-        4usize,
+        8usize,
         concat!("Alignment of ", stringify!(ggml_opt_params))
     );
     assert_eq!(
@@ -1610,8 +1646,18 @@ fn bindgen_test_layout_ggml_opt_params() {
         )
     );
     assert_eq!(
+        unsafe { ::std::ptr::addr_of!((*ptr).graph_size) as usize - ptr as usize },
+        8usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(ggml_opt_params),
+            "::",
+            stringify!(graph_size)
+        )
+    );
+    assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).n_threads) as usize - ptr as usize },
-        4usize,
+        16usize,
         concat!(
             "Offset of field: ",
             stringify!(ggml_opt_params),
@@ -1621,7 +1667,7 @@ fn bindgen_test_layout_ggml_opt_params() {
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).past) as usize - ptr as usize },
-        8usize,
+        20usize,
         concat!(
             "Offset of field: ",
             stringify!(ggml_opt_params),
@@ -1631,7 +1677,7 @@ fn bindgen_test_layout_ggml_opt_params() {
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).delta) as usize - ptr as usize },
-        12usize,
+        24usize,
         concat!(
             "Offset of field: ",
             stringify!(ggml_opt_params),
@@ -1641,7 +1687,7 @@ fn bindgen_test_layout_ggml_opt_params() {
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).max_no_improvement) as usize - ptr as usize },
-        16usize,
+        28usize,
         concat!(
             "Offset of field: ",
             stringify!(ggml_opt_params),
@@ -1651,7 +1697,7 @@ fn bindgen_test_layout_ggml_opt_params() {
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).print_forward_graph) as usize - ptr as usize },
-        20usize,
+        32usize,
         concat!(
             "Offset of field: ",
             stringify!(ggml_opt_params),
@@ -1661,7 +1707,7 @@ fn bindgen_test_layout_ggml_opt_params() {
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).print_backward_graph) as usize - ptr as usize },
-        21usize,
+        33usize,
         concat!(
             "Offset of field: ",
             stringify!(ggml_opt_params),
@@ -1671,7 +1717,7 @@ fn bindgen_test_layout_ggml_opt_params() {
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).n_gradient_accumulation) as usize - ptr as usize },
-        24usize,
+        36usize,
         concat!(
             "Offset of field: ",
             stringify!(ggml_opt_params),
@@ -1681,7 +1727,7 @@ fn bindgen_test_layout_ggml_opt_params() {
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).adam) as usize - ptr as usize },
-        28usize,
+        40usize,
         concat!(
             "Offset of field: ",
             stringify!(ggml_opt_params),
@@ -1691,7 +1737,7 @@ fn bindgen_test_layout_ggml_opt_params() {
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).lbfgs) as usize - ptr as usize },
-        72usize,
+        84usize,
         concat!(
             "Offset of field: ",
             stringify!(ggml_opt_params),
@@ -1968,7 +2014,7 @@ fn bindgen_test_layout_ggml_opt_context() {
     let ptr = UNINIT.as_ptr();
     assert_eq!(
         ::std::mem::size_of::<ggml_opt_context>(),
-        296usize,
+        312usize,
         concat!("Size of: ", stringify!(ggml_opt_context))
     );
     assert_eq!(
@@ -1998,7 +2044,7 @@ fn bindgen_test_layout_ggml_opt_context() {
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).iter) as usize - ptr as usize },
-        116usize,
+        128usize,
         concat!(
             "Offset of field: ",
             stringify!(ggml_opt_context),
@@ -2008,7 +2054,7 @@ fn bindgen_test_layout_ggml_opt_context() {
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).nx) as usize - ptr as usize },
-        120usize,
+        136usize,
         concat!(
             "Offset of field: ",
             stringify!(ggml_opt_context),
@@ -2018,7 +2064,7 @@ fn bindgen_test_layout_ggml_opt_context() {
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).just_initialized) as usize - ptr as usize },
-        128usize,
+        144usize,
         concat!(
             "Offset of field: ",
             stringify!(ggml_opt_context),
@@ -2028,7 +2074,7 @@ fn bindgen_test_layout_ggml_opt_context() {
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).loss_before) as usize - ptr as usize },
-        132usize,
+        148usize,
         concat!(
             "Offset of field: ",
             stringify!(ggml_opt_context),
@@ -2038,7 +2084,7 @@ fn bindgen_test_layout_ggml_opt_context() {
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).loss_after) as usize - ptr as usize },
-        136usize,
+        152usize,
         concat!(
             "Offset of field: ",
             stringify!(ggml_opt_context),
@@ -2048,7 +2094,7 @@ fn bindgen_test_layout_ggml_opt_context() {
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).adam) as usize - ptr as usize },
-        144usize,
+        160usize,
         concat!(
             "Offset of field: ",
             stringify!(ggml_opt_context),
@@ -2058,7 +2104,7 @@ fn bindgen_test_layout_ggml_opt_context() {
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).lbfgs) as usize - ptr as usize },
-        192usize,
+        208usize,
         concat!(
             "Offset of field: ",
             stringify!(ggml_opt_context),
@@ -3335,6 +3381,7 @@ extern "C" {
     pub fn ggml_time_us() -> i64;
     pub fn ggml_cycles() -> i64;
     pub fn ggml_cycles_per_ms() -> i64;
+    pub fn ggml_print_backtrace();
     pub fn ggml_numa_init();
     pub fn ggml_is_numa() -> bool;
     pub fn ggml_print_object(obj: *const ggml_object);
@@ -3587,6 +3634,7 @@ extern "C" {
     pub fn ggml_elu(ctx: *mut ggml_context, a: *mut ggml_tensor) -> *mut ggml_tensor;
     pub fn ggml_elu_inplace(ctx: *mut ggml_context, a: *mut ggml_tensor) -> *mut ggml_tensor;
     pub fn ggml_relu(ctx: *mut ggml_context, a: *mut ggml_tensor) -> *mut ggml_tensor;
+    pub fn ggml_leaky(ctx: *mut ggml_context, a: *mut ggml_tensor) -> *mut ggml_tensor;
     pub fn ggml_relu_inplace(ctx: *mut ggml_context, a: *mut ggml_tensor) -> *mut ggml_tensor;
     pub fn ggml_gelu(ctx: *mut ggml_context, a: *mut ggml_tensor) -> *mut ggml_tensor;
     pub fn ggml_gelu_inplace(ctx: *mut ggml_context, a: *mut ggml_tensor) -> *mut ggml_tensor;
@@ -3939,6 +3987,18 @@ extern "C" {
         min: f32,
         max: f32,
     ) -> *mut ggml_tensor;
+    pub fn ggml_im2col(
+        ctx: *mut ggml_context,
+        a: *mut ggml_tensor,
+        b: *mut ggml_tensor,
+        s0: ::std::os::raw::c_int,
+        s1: ::std::os::raw::c_int,
+        p0: ::std::os::raw::c_int,
+        p1: ::std::os::raw::c_int,
+        d0: ::std::os::raw::c_int,
+        d1: ::std::os::raw::c_int,
+        is_2D: bool,
+    ) -> *mut ggml_tensor;
     pub fn ggml_conv_1d(
         ctx: *mut ggml_context,
         a: *mut ggml_tensor,
@@ -4005,8 +4065,8 @@ extern "C" {
         k1: ::std::os::raw::c_int,
         s0: ::std::os::raw::c_int,
         s1: ::std::os::raw::c_int,
-        p0: ::std::os::raw::c_int,
-        p1: ::std::os::raw::c_int,
+        p0: f32,
+        p1: f32,
     ) -> *mut ggml_tensor;
     pub fn ggml_upscale(
         ctx: *mut ggml_context,
@@ -4201,18 +4261,24 @@ extern "C" {
         gb: *mut ggml_cgraph,
         keep: bool,
     );
-    pub fn ggml_build_forward(tensor: *mut ggml_tensor) -> ggml_cgraph;
-    pub fn ggml_build_backward(
-        ctx: *mut ggml_context,
-        gf: *mut ggml_cgraph,
-        keep: bool,
-    ) -> ggml_cgraph;
     pub fn ggml_new_graph(ctx: *mut ggml_context) -> *mut ggml_cgraph;
-    pub fn ggml_build_forward_ctx(
+    pub fn ggml_new_graph_custom(
         ctx: *mut ggml_context,
-        tensor: *mut ggml_tensor,
+        size: usize,
+        grads: bool,
     ) -> *mut ggml_cgraph;
+    pub fn ggml_graph_dup(ctx: *mut ggml_context, cgraph: *mut ggml_cgraph) -> *mut ggml_cgraph;
+    pub fn ggml_graph_view(
+        ctx: *mut ggml_context,
+        cgraph: *mut ggml_cgraph,
+        i0: ::std::os::raw::c_int,
+        i1: ::std::os::raw::c_int,
+    ) -> *mut ggml_cgraph;
+    pub fn ggml_graph_cpy(src: *mut ggml_cgraph, dst: *mut ggml_cgraph);
+    pub fn ggml_graph_reset(cgraph: *mut ggml_cgraph);
+    pub fn ggml_graph_clear(cgraph: *mut ggml_cgraph);
     pub fn ggml_graph_overhead() -> usize;
+    pub fn ggml_graph_overhead_custom(size: usize, grads: bool) -> usize;
     pub fn ggml_graph_plan(
         cgraph: *mut ggml_cgraph,
         n_threads: ::std::os::raw::c_int,
@@ -4221,7 +4287,6 @@ extern "C" {
         cgraph: *mut ggml_cgraph,
         cplan: *mut ggml_cplan,
     ) -> ::std::os::raw::c_int;
-    pub fn ggml_graph_reset(cgraph: *mut ggml_cgraph);
     pub fn ggml_graph_compute_with_ctx(
         ctx: *mut ggml_context,
         cgraph: *mut ggml_cgraph,
@@ -4236,7 +4301,7 @@ extern "C" {
         fname: *const ::std::os::raw::c_char,
         ctx_data: *mut *mut ggml_context,
         ctx_eval: *mut *mut ggml_context,
-    ) -> ggml_cgraph;
+    ) -> *mut ggml_cgraph;
     pub fn ggml_graph_print(cgraph: *const ggml_cgraph);
     pub fn ggml_graph_dump_dot(
         gb: *const ggml_cgraph,
