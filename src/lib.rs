@@ -4457,6 +4457,10 @@ extern "C" {
         ctx: *const gguf_context,
         key_id: ::std::os::raw::c_int,
     ) -> *const ::std::os::raw::c_char;
+    pub fn gguf_get_val_data(
+        ctx: *const gguf_context,
+        key_id: ::std::os::raw::c_int,
+    ) -> *const ::std::os::raw::c_void;
     pub fn gguf_get_arr_n(
         ctx: *const gguf_context,
         key_id: ::std::os::raw::c_int,
@@ -4575,6 +4579,25 @@ extern "C" {
     pub fn llama_n_ctx_train(model: *const llama_model) -> ::std::os::raw::c_int;
     pub fn llama_n_embd(model: *const llama_model) -> ::std::os::raw::c_int;
     pub fn llama_rope_freq_scale_train(model: *const llama_model) -> f32;
+    pub fn llama_model_meta_val_str(
+        model: *const llama_model,
+        key: *const ::std::os::raw::c_char,
+        buf: *mut ::std::os::raw::c_char,
+        buf_size: usize,
+    ) -> ::std::os::raw::c_int;
+    pub fn llama_model_meta_count(model: *const llama_model) -> ::std::os::raw::c_int;
+    pub fn llama_model_meta_key_by_index(
+        model: *const llama_model,
+        i: ::std::os::raw::c_int,
+        buf: *mut ::std::os::raw::c_char,
+        buf_size: usize,
+    ) -> ::std::os::raw::c_int;
+    pub fn llama_model_meta_val_str_by_index(
+        model: *const llama_model,
+        i: ::std::os::raw::c_int,
+        buf: *mut ::std::os::raw::c_char,
+        buf_size: usize,
+    ) -> ::std::os::raw::c_int;
     pub fn llama_model_desc(
         model: *const llama_model,
         buf: *mut ::std::os::raw::c_char,
