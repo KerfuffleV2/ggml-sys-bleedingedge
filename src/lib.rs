@@ -4678,6 +4678,8 @@ extern "C" {
     pub fn llama_token_bos(model: *const llama_model) -> llama_token;
     pub fn llama_token_eos(model: *const llama_model) -> llama_token;
     pub fn llama_token_nl(model: *const llama_model) -> llama_token;
+    pub fn llama_add_bos_token(model: *const llama_model) -> ::std::os::raw::c_int;
+    pub fn llama_add_eos_token(model: *const llama_model) -> ::std::os::raw::c_int;
     pub fn llama_token_prefix(model: *const llama_model) -> llama_token;
     pub fn llama_token_middle(model: *const llama_model) -> llama_token;
     pub fn llama_token_suffix(model: *const llama_model) -> llama_token;
