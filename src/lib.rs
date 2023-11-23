@@ -482,6 +482,23 @@ pub struct llama_timings {
     pub n_eval: i32,
 }
 #[repr(C)]
+#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+pub struct llama_kv_cache_view_cell {
+    pub pos: llama_pos,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+pub struct llama_kv_cache_view {
+    pub n_cells: i32,
+    pub n_max_seq: i32,
+    pub token_count: i32,
+    pub used_cells: i32,
+    pub max_contiguous: i32,
+    pub max_contiguous_idx: i32,
+    pub cells: *mut llama_kv_cache_view_cell,
+    pub cells_sequences: *mut llama_seq_id,
+}
+#[repr(C)]
 #[derive(Debug, Copy, Clone, PartialOrd, PartialEq)]
 pub struct llama_beam_view {
     pub tokens: *const llama_token,
@@ -3262,6 +3279,127 @@ fn bindgen_test_layout_llama_timings() {
     );
 }
 #[test]
+fn bindgen_test_layout_llama_kv_cache_view_cell() {
+    const UNINIT: ::std::mem::MaybeUninit<llama_kv_cache_view_cell> =
+        ::std::mem::MaybeUninit::uninit();
+    let ptr = UNINIT.as_ptr();
+    assert_eq!(
+        ::std::mem::size_of::<llama_kv_cache_view_cell>(),
+        4usize,
+        concat!("Size of: ", stringify!(llama_kv_cache_view_cell))
+    );
+    assert_eq!(
+        ::std::mem::align_of::<llama_kv_cache_view_cell>(),
+        4usize,
+        concat!("Alignment of ", stringify!(llama_kv_cache_view_cell))
+    );
+    assert_eq!(
+        unsafe { ::std::ptr::addr_of!((*ptr).pos) as usize - ptr as usize },
+        0usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(llama_kv_cache_view_cell),
+            "::",
+            stringify!(pos)
+        )
+    );
+}
+#[test]
+fn bindgen_test_layout_llama_kv_cache_view() {
+    const UNINIT: ::std::mem::MaybeUninit<llama_kv_cache_view> = ::std::mem::MaybeUninit::uninit();
+    let ptr = UNINIT.as_ptr();
+    assert_eq!(
+        ::std::mem::size_of::<llama_kv_cache_view>(),
+        40usize,
+        concat!("Size of: ", stringify!(llama_kv_cache_view))
+    );
+    assert_eq!(
+        ::std::mem::align_of::<llama_kv_cache_view>(),
+        8usize,
+        concat!("Alignment of ", stringify!(llama_kv_cache_view))
+    );
+    assert_eq!(
+        unsafe { ::std::ptr::addr_of!((*ptr).n_cells) as usize - ptr as usize },
+        0usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(llama_kv_cache_view),
+            "::",
+            stringify!(n_cells)
+        )
+    );
+    assert_eq!(
+        unsafe { ::std::ptr::addr_of!((*ptr).n_max_seq) as usize - ptr as usize },
+        4usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(llama_kv_cache_view),
+            "::",
+            stringify!(n_max_seq)
+        )
+    );
+    assert_eq!(
+        unsafe { ::std::ptr::addr_of!((*ptr).token_count) as usize - ptr as usize },
+        8usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(llama_kv_cache_view),
+            "::",
+            stringify!(token_count)
+        )
+    );
+    assert_eq!(
+        unsafe { ::std::ptr::addr_of!((*ptr).used_cells) as usize - ptr as usize },
+        12usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(llama_kv_cache_view),
+            "::",
+            stringify!(used_cells)
+        )
+    );
+    assert_eq!(
+        unsafe { ::std::ptr::addr_of!((*ptr).max_contiguous) as usize - ptr as usize },
+        16usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(llama_kv_cache_view),
+            "::",
+            stringify!(max_contiguous)
+        )
+    );
+    assert_eq!(
+        unsafe { ::std::ptr::addr_of!((*ptr).max_contiguous_idx) as usize - ptr as usize },
+        20usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(llama_kv_cache_view),
+            "::",
+            stringify!(max_contiguous_idx)
+        )
+    );
+    assert_eq!(
+        unsafe { ::std::ptr::addr_of!((*ptr).cells) as usize - ptr as usize },
+        24usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(llama_kv_cache_view),
+            "::",
+            stringify!(cells)
+        )
+    );
+    assert_eq!(
+        unsafe { ::std::ptr::addr_of!((*ptr).cells_sequences) as usize - ptr as usize },
+        32usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(llama_kv_cache_view),
+            "::",
+            stringify!(cells_sequences)
+        )
+    );
+}
+#[test]
 fn bindgen_test_layout_llama_beam_view() {
     const UNINIT: ::std::mem::MaybeUninit<llama_beam_view> = ::std::mem::MaybeUninit::uninit();
     let ptr = UNINIT.as_ptr();
@@ -4628,7 +4766,14 @@ extern "C" {
         path_base_model: *const ::std::os::raw::c_char,
         n_threads: ::std::os::raw::c_int,
     ) -> ::std::os::raw::c_int;
+    pub fn llama_kv_cache_view_init(
+        ctx: *const llama_context,
+        n_max_seq: i32,
+    ) -> llama_kv_cache_view;
+    pub fn llama_kv_cache_view_free(view: *mut llama_kv_cache_view);
+    pub fn llama_kv_cache_view_update(ctx: *const llama_context, view: *mut llama_kv_cache_view);
     pub fn llama_get_kv_cache_token_count(ctx: *const llama_context) -> ::std::os::raw::c_int;
+    pub fn llama_get_kv_cache_used_cells(ctx: *const llama_context) -> ::std::os::raw::c_int;
     pub fn llama_kv_cache_clear(ctx: *mut llama_context);
     pub fn llama_kv_cache_seq_rm(
         ctx: *mut llama_context,
