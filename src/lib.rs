@@ -4023,6 +4023,12 @@ extern "C" {
     ) -> *mut ggml_tensor;
     pub fn ggml_soft_max(ctx: *mut ggml_context, a: *mut ggml_tensor) -> *mut ggml_tensor;
     pub fn ggml_soft_max_inplace(ctx: *mut ggml_context, a: *mut ggml_tensor) -> *mut ggml_tensor;
+    pub fn ggml_soft_max_ext(
+        ctx: *mut ggml_context,
+        a: *mut ggml_tensor,
+        mask: *mut ggml_tensor,
+        scale: f32,
+    ) -> *mut ggml_tensor;
     pub fn ggml_soft_max_back(
         ctx: *mut ggml_context,
         a: *mut ggml_tensor,
