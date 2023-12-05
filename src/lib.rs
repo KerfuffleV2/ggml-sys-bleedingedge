@@ -121,6 +121,7 @@ pub type llama_ftype = ::std::os::raw::c_uint;
 pub type llama_rope_scaling_type = ::std::os::raw::c_int;
 pub type llama_progress_callback =
     ::std::option::Option<unsafe extern "C" fn(progress: f32, ctx: *mut ::std::os::raw::c_void)>;
+pub type llama_model_kv_override_type = ::std::os::raw::c_uint;
 pub type llama_gretype = ::std::os::raw::c_uint;
 pub type llama_beam_search_callback_fn_t = ::std::option::Option<
     unsafe extern "C" fn(callback_data: *mut ::std::os::raw::c_void, arg1: llama_beams_state),
@@ -415,6 +416,13 @@ pub struct llama_batch {
     pub all_seq_id: llama_seq_id,
 }
 #[repr(C)]
+#[derive(Copy, Clone)]
+pub struct llama_model_kv_override {
+    pub key: [::std::os::raw::c_char; 128usize],
+    pub tag: llama_model_kv_override_type,
+    pub __bindgen_anon_1: llama_model_kv_override__bindgen_ty_1,
+}
+#[repr(C)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct llama_model_params {
     pub n_gpu_layers: i32,
@@ -422,6 +430,7 @@ pub struct llama_model_params {
     pub tensor_split: *const f32,
     pub progress_callback: llama_progress_callback,
     pub progress_callback_user_data: *mut ::std::os::raw::c_void,
+    pub kv_overrides: *const llama_model_kv_override,
     pub vocab_only: bool,
     pub use_mmap: bool,
     pub use_mlock: bool,
@@ -739,6 +748,9 @@ pub const llama_rope_scaling_type_LLAMA_ROPE_SCALING_NONE: llama_rope_scaling_ty
 pub const llama_rope_scaling_type_LLAMA_ROPE_SCALING_LINEAR: llama_rope_scaling_type = 1;
 pub const llama_rope_scaling_type_LLAMA_ROPE_SCALING_YARN: llama_rope_scaling_type = 2;
 pub const llama_rope_scaling_type_LLAMA_ROPE_SCALING_MAX_VALUE: llama_rope_scaling_type = 2;
+pub const llama_model_kv_override_type_LLAMA_KV_OVERRIDE_INT: llama_model_kv_override_type = 0;
+pub const llama_model_kv_override_type_LLAMA_KV_OVERRIDE_FLOAT: llama_model_kv_override_type = 1;
+pub const llama_model_kv_override_type_LLAMA_KV_OVERRIDE_BOOL: llama_model_kv_override_type = 2;
 pub const llama_gretype_LLAMA_GRETYPE_END: llama_gretype = 0;
 pub const llama_gretype_LLAMA_GRETYPE_ALT: llama_gretype = 1;
 pub const llama_gretype_LLAMA_GRETYPE_RULE_REF: llama_gretype = 2;
@@ -2782,12 +2794,100 @@ fn bindgen_test_layout_llama_batch() {
     );
 }
 #[test]
+fn bindgen_test_layout_llama_model_kv_override__bindgen_ty_1() {
+    const UNINIT: ::std::mem::MaybeUninit<llama_model_kv_override__bindgen_ty_1> =
+        ::std::mem::MaybeUninit::uninit();
+    let ptr = UNINIT.as_ptr();
+    assert_eq!(
+        ::std::mem::size_of::<llama_model_kv_override__bindgen_ty_1>(),
+        8usize,
+        concat!(
+            "Size of: ",
+            stringify!(llama_model_kv_override__bindgen_ty_1)
+        )
+    );
+    assert_eq!(
+        ::std::mem::align_of::<llama_model_kv_override__bindgen_ty_1>(),
+        8usize,
+        concat!(
+            "Alignment of ",
+            stringify!(llama_model_kv_override__bindgen_ty_1)
+        )
+    );
+    assert_eq!(
+        unsafe { ::std::ptr::addr_of!((*ptr).int_value) as usize - ptr as usize },
+        0usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(llama_model_kv_override__bindgen_ty_1),
+            "::",
+            stringify!(int_value)
+        )
+    );
+    assert_eq!(
+        unsafe { ::std::ptr::addr_of!((*ptr).float_value) as usize - ptr as usize },
+        0usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(llama_model_kv_override__bindgen_ty_1),
+            "::",
+            stringify!(float_value)
+        )
+    );
+    assert_eq!(
+        unsafe { ::std::ptr::addr_of!((*ptr).bool_value) as usize - ptr as usize },
+        0usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(llama_model_kv_override__bindgen_ty_1),
+            "::",
+            stringify!(bool_value)
+        )
+    );
+}
+#[test]
+fn bindgen_test_layout_llama_model_kv_override() {
+    const UNINIT: ::std::mem::MaybeUninit<llama_model_kv_override> =
+        ::std::mem::MaybeUninit::uninit();
+    let ptr = UNINIT.as_ptr();
+    assert_eq!(
+        ::std::mem::size_of::<llama_model_kv_override>(),
+        144usize,
+        concat!("Size of: ", stringify!(llama_model_kv_override))
+    );
+    assert_eq!(
+        ::std::mem::align_of::<llama_model_kv_override>(),
+        8usize,
+        concat!("Alignment of ", stringify!(llama_model_kv_override))
+    );
+    assert_eq!(
+        unsafe { ::std::ptr::addr_of!((*ptr).key) as usize - ptr as usize },
+        0usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(llama_model_kv_override),
+            "::",
+            stringify!(key)
+        )
+    );
+    assert_eq!(
+        unsafe { ::std::ptr::addr_of!((*ptr).tag) as usize - ptr as usize },
+        128usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(llama_model_kv_override),
+            "::",
+            stringify!(tag)
+        )
+    );
+}
+#[test]
 fn bindgen_test_layout_llama_model_params() {
     const UNINIT: ::std::mem::MaybeUninit<llama_model_params> = ::std::mem::MaybeUninit::uninit();
     let ptr = UNINIT.as_ptr();
     assert_eq!(
         ::std::mem::size_of::<llama_model_params>(),
-        40usize,
+        48usize,
         concat!("Size of: ", stringify!(llama_model_params))
     );
     assert_eq!(
@@ -2846,8 +2946,18 @@ fn bindgen_test_layout_llama_model_params() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).vocab_only) as usize - ptr as usize },
+        unsafe { ::std::ptr::addr_of!((*ptr).kv_overrides) as usize - ptr as usize },
         32usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(llama_model_params),
+            "::",
+            stringify!(kv_overrides)
+        )
+    );
+    assert_eq!(
+        unsafe { ::std::ptr::addr_of!((*ptr).vocab_only) as usize - ptr as usize },
+        40usize,
         concat!(
             "Offset of field: ",
             stringify!(llama_model_params),
@@ -2857,7 +2967,7 @@ fn bindgen_test_layout_llama_model_params() {
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).use_mmap) as usize - ptr as usize },
-        33usize,
+        41usize,
         concat!(
             "Offset of field: ",
             stringify!(llama_model_params),
@@ -2867,7 +2977,7 @@ fn bindgen_test_layout_llama_model_params() {
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).use_mlock) as usize - ptr as usize },
-        34usize,
+        42usize,
         concat!(
             "Offset of field: ",
             stringify!(llama_model_params),
@@ -3508,6 +3618,27 @@ fn bindgen_test_layout_llama_beams_state() {
             stringify!(last_call)
         )
     );
+}
+#[repr(C)]
+#[derive(Copy, Clone)]
+pub union llama_model_kv_override__bindgen_ty_1 {
+    pub int_value: i64,
+    pub float_value: f64,
+    pub bool_value: bool,
+}
+impl ::std::fmt::Debug for llama_model_kv_override__bindgen_ty_1 {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        write!(f, "llama_model_kv_override__bindgen_ty_1 {{ union }}")
+    }
+}
+impl ::std::fmt::Debug for llama_model_kv_override {
+    fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
+        write!(
+            f,
+            "llama_model_kv_override {{ key: {:?}, tag: {:?}, __bindgen_anon_1: {:?} }}",
+            self.key, self.tag, self.__bindgen_anon_1
+        )
+    }
 }
 extern "C" {
     pub fn ggml_fp16_to_fp32(x: ggml_fp16_t) -> f32;
