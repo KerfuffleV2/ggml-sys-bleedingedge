@@ -154,7 +154,7 @@ pub struct ggml_tensor {
     pub op_params: [i32; 16usize],
     pub is_param: bool,
     pub grad: *mut ggml_tensor,
-    pub src: [*mut ggml_tensor; 6usize],
+    pub src: [*mut ggml_tensor; 10usize],
     pub perf_runs: ::std::os::raw::c_int,
     pub perf_cycles: i64,
     pub perf_time_us: i64,
@@ -538,7 +538,7 @@ pub const GGML_QNT_VERSION_FACTOR: u32 = 1000;
 pub const GGML_MAX_DIMS: u32 = 4;
 pub const GGML_MAX_PARAMS: u32 = 2048;
 pub const GGML_MAX_CONTEXTS: u32 = 64;
-pub const GGML_MAX_SRC: u32 = 6;
+pub const GGML_MAX_SRC: u32 = 10;
 pub const GGML_MAX_NAME: u32 = 64;
 pub const GGML_MAX_OP_PARAMS: u32 = 64;
 pub const GGML_DEFAULT_N_THREADS: u32 = 4;
@@ -681,7 +681,7 @@ pub const ggml_log_level_GGML_LOG_LEVEL_ERROR: ggml_log_level = 2;
 pub const ggml_log_level_GGML_LOG_LEVEL_WARN: ggml_log_level = 3;
 pub const ggml_log_level_GGML_LOG_LEVEL_INFO: ggml_log_level = 4;
 pub const GGML_OBJECT_SIZE: usize = 32;
-pub const GGML_TENSOR_SIZE: usize = 352;
+pub const GGML_TENSOR_SIZE: usize = 384;
 pub const ggml_cgraph_eval_order_GGML_CGRAPH_EVAL_ORDER_LEFT_TO_RIGHT: ggml_cgraph_eval_order = 0;
 pub const ggml_cgraph_eval_order_GGML_CGRAPH_EVAL_ORDER_RIGHT_TO_LEFT: ggml_cgraph_eval_order = 1;
 pub const ggml_cgraph_eval_order_GGML_CGRAPH_EVAL_ORDER_COUNT: ggml_cgraph_eval_order = 2;
@@ -837,7 +837,7 @@ fn bindgen_test_layout_ggml_tensor() {
     let ptr = UNINIT.as_ptr();
     assert_eq!(
         ::std::mem::size_of::<ggml_tensor>(),
-        352usize,
+        384usize,
         concat!("Size of: ", stringify!(ggml_tensor))
     );
     assert_eq!(
@@ -957,7 +957,7 @@ fn bindgen_test_layout_ggml_tensor() {
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).perf_runs) as usize - ptr as usize },
-        216usize,
+        248usize,
         concat!(
             "Offset of field: ",
             stringify!(ggml_tensor),
@@ -967,7 +967,7 @@ fn bindgen_test_layout_ggml_tensor() {
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).perf_cycles) as usize - ptr as usize },
-        224usize,
+        256usize,
         concat!(
             "Offset of field: ",
             stringify!(ggml_tensor),
@@ -977,7 +977,7 @@ fn bindgen_test_layout_ggml_tensor() {
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).perf_time_us) as usize - ptr as usize },
-        232usize,
+        264usize,
         concat!(
             "Offset of field: ",
             stringify!(ggml_tensor),
@@ -987,7 +987,7 @@ fn bindgen_test_layout_ggml_tensor() {
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).view_src) as usize - ptr as usize },
-        240usize,
+        272usize,
         concat!(
             "Offset of field: ",
             stringify!(ggml_tensor),
@@ -997,7 +997,7 @@ fn bindgen_test_layout_ggml_tensor() {
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).view_offs) as usize - ptr as usize },
-        248usize,
+        280usize,
         concat!(
             "Offset of field: ",
             stringify!(ggml_tensor),
@@ -1007,7 +1007,7 @@ fn bindgen_test_layout_ggml_tensor() {
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).data) as usize - ptr as usize },
-        256usize,
+        288usize,
         concat!(
             "Offset of field: ",
             stringify!(ggml_tensor),
@@ -1017,7 +1017,7 @@ fn bindgen_test_layout_ggml_tensor() {
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).name) as usize - ptr as usize },
-        264usize,
+        296usize,
         concat!(
             "Offset of field: ",
             stringify!(ggml_tensor),
@@ -1027,7 +1027,7 @@ fn bindgen_test_layout_ggml_tensor() {
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).extra) as usize - ptr as usize },
-        328usize,
+        360usize,
         concat!(
             "Offset of field: ",
             stringify!(ggml_tensor),
@@ -1037,7 +1037,7 @@ fn bindgen_test_layout_ggml_tensor() {
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).padding) as usize - ptr as usize },
-        336usize,
+        368usize,
         concat!(
             "Offset of field: ",
             stringify!(ggml_tensor),
@@ -3983,7 +3983,8 @@ extern "C" {
     ) -> *mut ggml_tensor;
     pub fn ggml_mul_mat_id(
         ctx: *mut ggml_context,
-        as_: *mut *mut ggml_tensor,
+        as_: *const *mut ggml_tensor,
+        n_as: ::std::os::raw::c_int,
         ids: *mut ggml_tensor,
         id: ::std::os::raw::c_int,
         b: *mut ggml_tensor,
