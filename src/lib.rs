@@ -3677,10 +3677,6 @@ extern "C" {
     pub fn ggml_nrows(tensor: *const ggml_tensor) -> i64;
     pub fn ggml_nbytes(tensor: *const ggml_tensor) -> usize;
     pub fn ggml_nbytes_pad(tensor: *const ggml_tensor) -> usize;
-    pub fn ggml_nbytes_split(
-        tensor: *const ggml_tensor,
-        nrows_split: ::std::os::raw::c_int,
-    ) -> usize;
     pub fn ggml_blck_size(type_: ggml_type) -> ::std::os::raw::c_int;
     pub fn ggml_type_size(type_: ggml_type) -> usize;
     pub fn ggml_row_size(type_: ggml_type, ne: i64) -> usize;
