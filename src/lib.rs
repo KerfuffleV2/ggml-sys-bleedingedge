@@ -10,6 +10,7 @@ pub type __off_t = ::std::os::raw::c_long;
 pub type __off64_t = ::std::os::raw::c_long;
 pub type ggml_fp16_t = u16;
 pub type ggml_type = ::std::os::raw::c_uint;
+pub type ggml_prec = ::std::os::raw::c_uint;
 pub type ggml_backend_type = ::std::os::raw::c_uint;
 pub type ggml_ftype = ::std::os::raw::c_int;
 pub type ggml_op = ::std::os::raw::c_uint;
@@ -574,6 +575,8 @@ pub const ggml_type_GGML_TYPE_I8: ggml_type = 16;
 pub const ggml_type_GGML_TYPE_I16: ggml_type = 17;
 pub const ggml_type_GGML_TYPE_I32: ggml_type = 18;
 pub const ggml_type_GGML_TYPE_COUNT: ggml_type = 19;
+pub const ggml_prec_GGML_PREC_DEFAULT: ggml_prec = 0;
+pub const ggml_prec_GGML_PREC_F32: ggml_prec = 1;
 pub const ggml_backend_type_GGML_BACKEND_CPU: ggml_backend_type = 0;
 pub const ggml_backend_type_GGML_BACKEND_GPU: ggml_backend_type = 10;
 pub const ggml_backend_type_GGML_BACKEND_GPU_SPLIT: ggml_backend_type = 20;
@@ -3979,6 +3982,7 @@ extern "C" {
         a: *mut ggml_tensor,
         b: *mut ggml_tensor,
     ) -> *mut ggml_tensor;
+    pub fn ggml_mul_mat_set_prec(a: *mut ggml_tensor, prec: ggml_prec);
     pub fn ggml_mul_mat_id(
         ctx: *mut ggml_context,
         as_: *const *mut ggml_tensor,
