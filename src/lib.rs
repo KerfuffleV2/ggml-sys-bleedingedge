@@ -3748,9 +3748,9 @@ extern "C" {
     pub fn ggml_new_f32(ctx: *mut ggml_context, value: f32) -> *mut ggml_tensor;
     pub fn ggml_dup_tensor(ctx: *mut ggml_context, src: *const ggml_tensor) -> *mut ggml_tensor;
     pub fn ggml_view_tensor(ctx: *mut ggml_context, src: *mut ggml_tensor) -> *mut ggml_tensor;
-    pub fn ggml_get_first_tensor(ctx: *mut ggml_context) -> *mut ggml_tensor;
+    pub fn ggml_get_first_tensor(ctx: *const ggml_context) -> *mut ggml_tensor;
     pub fn ggml_get_next_tensor(
-        ctx: *mut ggml_context,
+        ctx: *const ggml_context,
         tensor: *mut ggml_tensor,
     ) -> *mut ggml_tensor;
     pub fn ggml_get_tensor(
@@ -3996,15 +3996,11 @@ extern "C" {
         a: *mut ggml_tensor,
         b: *mut ggml_tensor,
     ) -> *mut ggml_tensor;
-    pub fn ggml_scale(
-        ctx: *mut ggml_context,
-        a: *mut ggml_tensor,
-        b: *mut ggml_tensor,
-    ) -> *mut ggml_tensor;
+    pub fn ggml_scale(ctx: *mut ggml_context, a: *mut ggml_tensor, s: f32) -> *mut ggml_tensor;
     pub fn ggml_scale_inplace(
         ctx: *mut ggml_context,
         a: *mut ggml_tensor,
-        b: *mut ggml_tensor,
+        s: f32,
     ) -> *mut ggml_tensor;
     pub fn ggml_set(
         ctx: *mut ggml_context,
@@ -4816,6 +4812,7 @@ extern "C" {
         ctx: *const gguf_context,
         i: ::std::os::raw::c_int,
     ) -> *mut ::std::os::raw::c_char;
+    pub fn gguf_get_tensor_type(ctx: *const gguf_context, i: ::std::os::raw::c_int) -> ggml_type;
     pub fn gguf_set_val_u8(ctx: *mut gguf_context, key: *const ::std::os::raw::c_char, val: u8);
     pub fn gguf_set_val_i8(ctx: *mut gguf_context, key: *const ::std::os::raw::c_char, val: i8);
     pub fn gguf_set_val_u16(ctx: *mut gguf_context, key: *const ::std::os::raw::c_char, val: u16);
@@ -4905,7 +4902,8 @@ extern "C" {
     pub fn llama_mmap_supported() -> bool;
     pub fn llama_mlock_supported() -> bool;
     pub fn llama_get_model(ctx: *const llama_context) -> *const llama_model;
-    pub fn llama_n_ctx(ctx: *const llama_context) -> ::std::os::raw::c_int;
+    pub fn llama_n_ctx(ctx: *const llama_context) -> u32;
+    pub fn llama_n_batch(ctx: *const llama_context) -> u32;
     pub fn llama_vocab_type(model: *const llama_model) -> llama_vocab_type;
     pub fn llama_n_vocab(model: *const llama_model) -> ::std::os::raw::c_int;
     pub fn llama_n_ctx_train(model: *const llama_model) -> ::std::os::raw::c_int;
