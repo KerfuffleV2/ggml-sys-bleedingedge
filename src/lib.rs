@@ -121,8 +121,9 @@ pub type llama_vocab_type = ::std::os::raw::c_uint;
 pub type llama_token_type = ::std::os::raw::c_uint;
 pub type llama_ftype = ::std::os::raw::c_uint;
 pub type llama_rope_scaling_type = ::std::os::raw::c_int;
-pub type llama_progress_callback =
-    ::std::option::Option<unsafe extern "C" fn(progress: f32, ctx: *mut ::std::os::raw::c_void)>;
+pub type llama_progress_callback = ::std::option::Option<
+    unsafe extern "C" fn(progress: f32, ctx: *mut ::std::os::raw::c_void) -> bool,
+>;
 pub type llama_model_kv_override_type = ::std::os::raw::c_uint;
 pub type llama_gretype = ::std::os::raw::c_uint;
 pub type llama_beam_search_callback_fn_t = ::std::option::Option<
@@ -684,6 +685,7 @@ pub const ggml_object_type_GGML_OBJECT_WORK_BUFFER: ggml_object_type = 2;
 pub const ggml_log_level_GGML_LOG_LEVEL_ERROR: ggml_log_level = 2;
 pub const ggml_log_level_GGML_LOG_LEVEL_WARN: ggml_log_level = 3;
 pub const ggml_log_level_GGML_LOG_LEVEL_INFO: ggml_log_level = 4;
+pub const ggml_log_level_GGML_LOG_LEVEL_DEBUG: ggml_log_level = 5;
 pub const GGML_OBJECT_SIZE: usize = 32;
 pub const GGML_TENSOR_SIZE: usize = 368;
 pub const ggml_cgraph_eval_order_GGML_CGRAPH_EVAL_ORDER_LEFT_TO_RIGHT: ggml_cgraph_eval_order = 0;
