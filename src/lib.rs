@@ -4865,6 +4865,7 @@ extern "C" {
     pub fn gguf_get_meta_size(ctx: *const gguf_context) -> usize;
     pub fn gguf_get_meta_data(ctx: *const gguf_context, data: *mut ::std::os::raw::c_void);
     pub fn ggml_cpu_has_avx() -> ::std::os::raw::c_int;
+    pub fn ggml_cpu_has_avx_vnni() -> ::std::os::raw::c_int;
     pub fn ggml_cpu_has_avx2() -> ::std::os::raw::c_int;
     pub fn ggml_cpu_has_avx512() -> ::std::os::raw::c_int;
     pub fn ggml_cpu_has_avx512_vbmi() -> ::std::os::raw::c_int;
