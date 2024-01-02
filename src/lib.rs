@@ -463,7 +463,7 @@ pub struct llama_context_params {
 #[repr(C)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct llama_model_quantize_params {
-    pub nthread: ::std::os::raw::c_int,
+    pub nthread: i32,
     pub ftype: llama_ftype,
     pub allow_requantize: bool,
     pub quantize_output_tensor: bool,
@@ -4901,41 +4901,41 @@ extern "C" {
     ) -> *mut llama_context;
     pub fn llama_free(ctx: *mut llama_context);
     pub fn llama_time_us() -> i64;
-    pub fn llama_max_devices() -> ::std::os::raw::c_int;
+    pub fn llama_max_devices() -> i32;
     pub fn llama_mmap_supported() -> bool;
     pub fn llama_mlock_supported() -> bool;
     pub fn llama_get_model(ctx: *const llama_context) -> *const llama_model;
     pub fn llama_n_ctx(ctx: *const llama_context) -> u32;
     pub fn llama_n_batch(ctx: *const llama_context) -> u32;
     pub fn llama_vocab_type(model: *const llama_model) -> llama_vocab_type;
-    pub fn llama_n_vocab(model: *const llama_model) -> ::std::os::raw::c_int;
-    pub fn llama_n_ctx_train(model: *const llama_model) -> ::std::os::raw::c_int;
-    pub fn llama_n_embd(model: *const llama_model) -> ::std::os::raw::c_int;
+    pub fn llama_n_vocab(model: *const llama_model) -> i32;
+    pub fn llama_n_ctx_train(model: *const llama_model) -> i32;
+    pub fn llama_n_embd(model: *const llama_model) -> i32;
     pub fn llama_rope_freq_scale_train(model: *const llama_model) -> f32;
     pub fn llama_model_meta_val_str(
         model: *const llama_model,
         key: *const ::std::os::raw::c_char,
         buf: *mut ::std::os::raw::c_char,
         buf_size: usize,
-    ) -> ::std::os::raw::c_int;
-    pub fn llama_model_meta_count(model: *const llama_model) -> ::std::os::raw::c_int;
+    ) -> i32;
+    pub fn llama_model_meta_count(model: *const llama_model) -> i32;
     pub fn llama_model_meta_key_by_index(
         model: *const llama_model,
-        i: ::std::os::raw::c_int,
+        i: i32,
         buf: *mut ::std::os::raw::c_char,
         buf_size: usize,
-    ) -> ::std::os::raw::c_int;
+    ) -> i32;
     pub fn llama_model_meta_val_str_by_index(
         model: *const llama_model,
-        i: ::std::os::raw::c_int,
+        i: i32,
         buf: *mut ::std::os::raw::c_char,
         buf_size: usize,
-    ) -> ::std::os::raw::c_int;
+    ) -> i32;
     pub fn llama_model_desc(
         model: *const llama_model,
         buf: *mut ::std::os::raw::c_char,
         buf_size: usize,
-    ) -> ::std::os::raw::c_int;
+    ) -> i32;
     pub fn llama_model_size(model: *const llama_model) -> u64;
     pub fn llama_model_n_params(model: *const llama_model) -> u64;
     pub fn llama_get_model_tensor(
@@ -4946,29 +4946,29 @@ extern "C" {
         fname_inp: *const ::std::os::raw::c_char,
         fname_out: *const ::std::os::raw::c_char,
         params: *const llama_model_quantize_params,
-    ) -> ::std::os::raw::c_int;
+    ) -> u32;
     pub fn llama_apply_lora_from_file(
         ctx: *mut llama_context,
         path_lora: *const ::std::os::raw::c_char,
         scale: f32,
         path_base_model: *const ::std::os::raw::c_char,
-        n_threads: ::std::os::raw::c_int,
-    ) -> ::std::os::raw::c_int;
+        n_threads: i32,
+    ) -> i32;
     pub fn llama_model_apply_lora_from_file(
         model: *const llama_model,
         path_lora: *const ::std::os::raw::c_char,
         scale: f32,
         path_base_model: *const ::std::os::raw::c_char,
-        n_threads: ::std::os::raw::c_int,
-    ) -> ::std::os::raw::c_int;
+        n_threads: i32,
+    ) -> i32;
     pub fn llama_kv_cache_view_init(
         ctx: *const llama_context,
         n_max_seq: i32,
     ) -> llama_kv_cache_view;
     pub fn llama_kv_cache_view_free(view: *mut llama_kv_cache_view);
     pub fn llama_kv_cache_view_update(ctx: *const llama_context, view: *mut llama_kv_cache_view);
-    pub fn llama_get_kv_cache_token_count(ctx: *const llama_context) -> ::std::os::raw::c_int;
-    pub fn llama_get_kv_cache_used_cells(ctx: *const llama_context) -> ::std::os::raw::c_int;
+    pub fn llama_get_kv_cache_token_count(ctx: *const llama_context) -> i32;
+    pub fn llama_get_kv_cache_used_cells(ctx: *const llama_context) -> i32;
     pub fn llama_kv_cache_clear(ctx: *mut llama_context);
     pub fn llama_kv_cache_seq_rm(
         ctx: *mut llama_context,
@@ -5011,13 +5011,13 @@ extern "C" {
         ctx: *mut llama_context,
         tokens: *mut llama_token,
         n_tokens: i32,
-        n_past: ::std::os::raw::c_int,
+        n_past: i32,
     ) -> ::std::os::raw::c_int;
     pub fn llama_eval_embd(
         ctx: *mut llama_context,
         embd: *mut f32,
         n_tokens: i32,
-        n_past: ::std::os::raw::c_int,
+        n_past: i32,
     ) -> ::std::os::raw::c_int;
     pub fn llama_batch_get_one(
         tokens: *mut llama_token,
@@ -5027,7 +5027,7 @@ extern "C" {
     ) -> llama_batch;
     pub fn llama_batch_init(n_tokens: i32, embd: i32, n_seq_max: i32) -> llama_batch;
     pub fn llama_batch_free(batch: llama_batch);
-    pub fn llama_decode(ctx: *mut llama_context, batch: llama_batch) -> ::std::os::raw::c_int;
+    pub fn llama_decode(ctx: *mut llama_context, batch: llama_batch) -> i32;
     pub fn llama_set_n_threads(ctx: *mut llama_context, n_threads: u32, n_threads_batch: u32);
     pub fn llama_get_logits(ctx: *mut llama_context) -> *mut f32;
     pub fn llama_get_logits_ith(ctx: *mut llama_context, i: i32) -> *mut f32;
@@ -5041,8 +5041,8 @@ extern "C" {
     pub fn llama_token_bos(model: *const llama_model) -> llama_token;
     pub fn llama_token_eos(model: *const llama_model) -> llama_token;
     pub fn llama_token_nl(model: *const llama_model) -> llama_token;
-    pub fn llama_add_bos_token(model: *const llama_model) -> ::std::os::raw::c_int;
-    pub fn llama_add_eos_token(model: *const llama_model) -> ::std::os::raw::c_int;
+    pub fn llama_add_bos_token(model: *const llama_model) -> i32;
+    pub fn llama_add_eos_token(model: *const llama_model) -> i32;
     pub fn llama_token_prefix(model: *const llama_model) -> llama_token;
     pub fn llama_token_middle(model: *const llama_model) -> llama_token;
     pub fn llama_token_suffix(model: *const llama_model) -> llama_token;
@@ -5051,18 +5051,18 @@ extern "C" {
     pub fn llama_tokenize(
         model: *const llama_model,
         text: *const ::std::os::raw::c_char,
-        text_len: ::std::os::raw::c_int,
+        text_len: i32,
         tokens: *mut llama_token,
-        n_max_tokens: ::std::os::raw::c_int,
+        n_max_tokens: i32,
         add_bos: bool,
         special: bool,
-    ) -> ::std::os::raw::c_int;
+    ) -> i32;
     pub fn llama_token_to_piece(
         model: *const llama_model,
         token: llama_token,
         buf: *mut ::std::os::raw::c_char,
-        length: ::std::os::raw::c_int,
-    ) -> ::std::os::raw::c_int;
+        length: i32,
+    ) -> i32;
     pub fn llama_grammar_init(
         rules: *mut *const llama_grammar_element,
         n_rules: usize,
@@ -5094,7 +5094,7 @@ extern "C" {
     pub fn llama_sample_top_k(
         ctx: *mut llama_context,
         candidates: *mut llama_token_data_array,
-        k: ::std::os::raw::c_int,
+        k: i32,
         min_keep: usize,
     );
     #[doc = " @details Nucleus sampling described in academic paper \"The Curious Case of Neural Text Degeneration\" https://arxiv.org/abs/1904.09751"]
@@ -5147,7 +5147,7 @@ extern "C" {
         candidates: *mut llama_token_data_array,
         tau: f32,
         eta: f32,
-        m: ::std::os::raw::c_int,
+        m: i32,
         mu: *mut f32,
     ) -> llama_token;
     #[doc = " @details Mirostat 2.0 algorithm described in the paper https://arxiv.org/abs/2007.14966. Uses tokens instead of words.\n @param candidates A vector of `llama_token_data` containing the candidate tokens, their probabilities (p), and log-odds (logit) for the current position in the generated text.\n @param tau  The target cross-entropy (or surprise) value you want to achieve for the generated text. A higher value corresponds to more surprising or less predictable text, while a lower value corresponds to less surprising or more predictable text.\n @param eta The learning rate used to update `mu` based on the error between the target and observed surprisal of the sampled word. A larger learning rate will cause `mu` to be updated more quickly, while a smaller learning rate will result in slower updates.\n @param mu Maximum cross-entropy. This value is initialized to be twice the target cross-entropy (`2 * tau`) and is updated in the algorithm based on the error between the target and observed surprisal."]
@@ -5180,8 +5180,8 @@ extern "C" {
         callback: llama_beam_search_callback_fn_t,
         callback_data: *mut ::std::os::raw::c_void,
         n_beams: usize,
-        n_past: ::std::os::raw::c_int,
-        n_predict: ::std::os::raw::c_int,
+        n_past: i32,
+        n_predict: i32,
     );
     pub fn llama_get_timings(ctx: *mut llama_context) -> llama_timings;
     pub fn llama_print_timings(ctx: *mut llama_context);
