@@ -4991,6 +4991,13 @@ extern "C" {
         p1: llama_pos,
         delta: llama_pos,
     );
+    pub fn llama_kv_cache_seq_div(
+        ctx: *mut llama_context,
+        seq_id: llama_seq_id,
+        p0: llama_pos,
+        p1: llama_pos,
+        d: ::std::os::raw::c_int,
+    );
     pub fn llama_get_state_size(ctx: *const llama_context) -> usize;
     pub fn llama_copy_state_data(ctx: *mut llama_context, dst: *mut u8) -> usize;
     pub fn llama_set_state_data(ctx: *mut llama_context, src: *mut u8) -> usize;
