@@ -4056,13 +4056,7 @@ extern "C" {
         a: *mut ggml_tensor,
         b: *mut ggml_tensor,
     ) -> *mut ggml_tensor;
-    pub fn ggml_cpy_inplace(
-        ctx: *mut ggml_context,
-        a: *mut ggml_tensor,
-        b: *mut ggml_tensor,
-    ) -> *mut ggml_tensor;
     pub fn ggml_cont(ctx: *mut ggml_context, a: *mut ggml_tensor) -> *mut ggml_tensor;
-    pub fn ggml_cont_inplace(ctx: *mut ggml_context, a: *mut ggml_tensor) -> *mut ggml_tensor;
     pub fn ggml_cont_1d(ctx: *mut ggml_context, a: *mut ggml_tensor, ne0: i64) -> *mut ggml_tensor;
     pub fn ggml_cont_2d(
         ctx: *mut ggml_context,
