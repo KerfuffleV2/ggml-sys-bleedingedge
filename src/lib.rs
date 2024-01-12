@@ -573,10 +573,11 @@ pub const ggml_type_GGML_TYPE_Q5_K: ggml_type = 13;
 pub const ggml_type_GGML_TYPE_Q6_K: ggml_type = 14;
 pub const ggml_type_GGML_TYPE_Q8_K: ggml_type = 15;
 pub const ggml_type_GGML_TYPE_IQ2_XXS: ggml_type = 16;
-pub const ggml_type_GGML_TYPE_I8: ggml_type = 17;
-pub const ggml_type_GGML_TYPE_I16: ggml_type = 18;
-pub const ggml_type_GGML_TYPE_I32: ggml_type = 19;
-pub const ggml_type_GGML_TYPE_COUNT: ggml_type = 20;
+pub const ggml_type_GGML_TYPE_IQ2_XS: ggml_type = 17;
+pub const ggml_type_GGML_TYPE_I8: ggml_type = 18;
+pub const ggml_type_GGML_TYPE_I16: ggml_type = 19;
+pub const ggml_type_GGML_TYPE_I32: ggml_type = 20;
+pub const ggml_type_GGML_TYPE_COUNT: ggml_type = 21;
 pub const ggml_prec_GGML_PREC_DEFAULT: ggml_prec = 0;
 pub const ggml_prec_GGML_PREC_F32: ggml_prec = 1;
 pub const ggml_backend_type_GGML_BACKEND_CPU: ggml_backend_type = 0;
@@ -597,6 +598,7 @@ pub const ggml_ftype_GGML_FTYPE_MOSTLY_Q4_K: ggml_ftype = 12;
 pub const ggml_ftype_GGML_FTYPE_MOSTLY_Q5_K: ggml_ftype = 13;
 pub const ggml_ftype_GGML_FTYPE_MOSTLY_Q6_K: ggml_ftype = 14;
 pub const ggml_ftype_GGML_FTYPE_MOSTLY_IQ2_XXS: ggml_ftype = 15;
+pub const ggml_ftype_GGML_FTYPE_MOSTLY_IQ2_XS: ggml_ftype = 16;
 pub const ggml_op_GGML_OP_NONE: ggml_op = 0;
 pub const ggml_op_GGML_OP_DUP: ggml_op = 1;
 pub const ggml_op_GGML_OP_ADD: ggml_op = 2;
@@ -759,6 +761,8 @@ pub const llama_ftype_LLAMA_FTYPE_MOSTLY_Q5_K_S: llama_ftype = 16;
 pub const llama_ftype_LLAMA_FTYPE_MOSTLY_Q5_K_M: llama_ftype = 17;
 pub const llama_ftype_LLAMA_FTYPE_MOSTLY_Q6_K: llama_ftype = 18;
 pub const llama_ftype_LLAMA_FTYPE_MOSTLY_IQ2_XXS: llama_ftype = 19;
+pub const llama_ftype_LLAMA_FTYPE_MOSTLY_IQ2_XS: llama_ftype = 20;
+pub const llama_ftype_LLAMA_FTYPE_MOSTLY_Q2_K_S: llama_ftype = 21;
 pub const llama_ftype_LLAMA_FTYPE_GUESSED: llama_ftype = 1024;
 pub const llama_rope_scaling_type_LLAMA_ROPE_SCALING_UNSPECIFIED: llama_rope_scaling_type = -1;
 pub const llama_rope_scaling_type_LLAMA_ROPE_SCALING_NONE: llama_rope_scaling_type = 0;
@@ -4740,6 +4744,13 @@ extern "C" {
         hist: *mut i64,
     ) -> usize;
     pub fn ggml_quantize_iq2_xxs(
+        src: *const f32,
+        dst: *mut ::std::os::raw::c_void,
+        n: ::std::os::raw::c_int,
+        k: ::std::os::raw::c_int,
+        hist: *mut i64,
+    ) -> usize;
+    pub fn ggml_quantize_iq2_xs(
         src: *const f32,
         dst: *mut ::std::os::raw::c_void,
         n: ::std::os::raw::c_int,
