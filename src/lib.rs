@@ -97,6 +97,8 @@ pub type ggml_log_callback = ::std::option::Option<
         user_data: *mut ::std::os::raw::c_void,
     ),
 >;
+pub type ggml_collect_imatrix_t =
+    ::std::option::Option<unsafe extern "C" fn(src0: *const ggml_tensor, src1: *const ggml_tensor)>;
 pub type gguf_type = ::std::os::raw::c_uint;
 pub type ggml_to_float_t = ::std::option::Option<
     unsafe extern "C" fn(x: *const ::std::os::raw::c_void, y: *mut f32, k: ::std::os::raw::c_int),
@@ -4765,6 +4767,7 @@ extern "C" {
         n: ::std::os::raw::c_int,
         hist: *mut i64,
     ) -> usize;
+    pub fn ggml_set_imatrix_collection(imatrix_collect: ggml_collect_imatrix_t);
     pub fn gguf_init_empty() -> *mut gguf_context;
     pub fn gguf_init_from_file(
         fname: *const ::std::os::raw::c_char,
