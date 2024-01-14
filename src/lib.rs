@@ -473,6 +473,7 @@ pub struct llama_model_quantize_params {
     pub quantize_output_tensor: bool,
     pub only_copy: bool,
     pub pure_: bool,
+    pub imatrix: *mut ::std::os::raw::c_void,
 }
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
@@ -3226,12 +3227,12 @@ fn bindgen_test_layout_llama_model_quantize_params() {
     let ptr = UNINIT.as_ptr();
     assert_eq!(
         ::std::mem::size_of::<llama_model_quantize_params>(),
-        12usize,
+        24usize,
         concat!("Size of: ", stringify!(llama_model_quantize_params))
     );
     assert_eq!(
         ::std::mem::align_of::<llama_model_quantize_params>(),
-        4usize,
+        8usize,
         concat!("Alignment of ", stringify!(llama_model_quantize_params))
     );
     assert_eq!(
@@ -3292,6 +3293,16 @@ fn bindgen_test_layout_llama_model_quantize_params() {
             stringify!(llama_model_quantize_params),
             "::",
             stringify!(pure_)
+        )
+    );
+    assert_eq!(
+        unsafe { ::std::ptr::addr_of!((*ptr).imatrix) as usize - ptr as usize },
+        16usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(llama_model_quantize_params),
+            "::",
+            stringify!(imatrix)
         )
     );
 }
@@ -4765,28 +4776,18 @@ extern "C" {
         k: ::std::os::raw::c_int,
         hist: *mut i64,
     ) -> usize;
-    pub fn ggml_quantize_iq2_xxs(
-        src: *const f32,
-        dst: *mut ::std::os::raw::c_void,
-        n: ::std::os::raw::c_int,
-        k: ::std::os::raw::c_int,
-        hist: *mut i64,
-    ) -> usize;
-    pub fn ggml_quantize_iq2_xs(
-        src: *const f32,
-        dst: *mut ::std::os::raw::c_void,
-        n: ::std::os::raw::c_int,
-        k: ::std::os::raw::c_int,
-        hist: *mut i64,
-    ) -> usize;
     pub fn ggml_quantize_chunk(
         type_: ggml_type,
         src: *const f32,
         dst: *mut ::std::os::raw::c_void,
         start: ::std::os::raw::c_int,
-        n: ::std::os::raw::c_int,
+        nrows: ::std::os::raw::c_int,
+        n_per_row: ::std::os::raw::c_int,
         hist: *mut i64,
+        imatrix: *const f32,
     ) -> usize;
+    pub fn ggml_init_iq2_quantization(type_: ggml_type);
+    pub fn ggml_deinit_iq2_quantization(type_: ggml_type);
     pub fn ggml_set_imatrix_collection(imatrix_collect: ggml_collect_imatrix_t);
     pub fn gguf_init_empty() -> *mut gguf_context;
     pub fn gguf_init_from_file(
