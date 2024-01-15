@@ -5127,7 +5127,13 @@ extern "C" {
         penalty_freq: f32,
         penalty_present: f32,
     );
-    #[doc = " @details Apply classifier-free guidance to the logits as described in academic paper \"Stay on topic with Classifier-Free Guidance\" https://arxiv.org/abs/2306.17806\n @param candidates A vector of `llama_token_data` containing the candidate tokens, the logits must be directly extracted from the original generation context without being sorted.\n @params guidance_ctx A separate context from the same model. Other than a negative prompt at the beginning, it should have all generated and user input tokens copied from the main context.\n @params scale Guidance strength. 1.0f means no guidance. Higher values mean stronger guidance."]
+    #[doc = " @details Apply classifier-free guidance to the logits as described in academic paper \"Stay on topic with Classifier-Free Guidance\" https://arxiv.org/abs/2306.17806\n @param logits Logits extracted from the original generation context.\n @param logits_guidance Logits extracted from a separate context from the same model. Other than a negative prompt at the beginning, it should have all generated and user input tokens copied from the main context.\n @param scale Guidance strength. 1.0f means no guidance. Higher values mean stronger guidance."]
+    pub fn llama_sample_apply_guidance(
+        ctx: *mut llama_context,
+        logits: *mut f32,
+        logits_guidance: *mut f32,
+        scale: f32,
+    );
     pub fn llama_sample_classifier_free_guidance(
         ctx: *mut llama_context,
         candidates: *mut llama_token_data_array,
