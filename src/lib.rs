@@ -694,7 +694,9 @@ pub const ggml_unary_op_GGML_UNARY_OP_RELU: ggml_unary_op = 6;
 pub const ggml_unary_op_GGML_UNARY_OP_GELU: ggml_unary_op = 7;
 pub const ggml_unary_op_GGML_UNARY_OP_GELU_QUICK: ggml_unary_op = 8;
 pub const ggml_unary_op_GGML_UNARY_OP_SILU: ggml_unary_op = 9;
-pub const ggml_unary_op_GGML_UNARY_OP_COUNT: ggml_unary_op = 10;
+pub const ggml_unary_op_GGML_UNARY_OP_HARDSWISH: ggml_unary_op = 10;
+pub const ggml_unary_op_GGML_UNARY_OP_HARDSIGMOID: ggml_unary_op = 11;
+pub const ggml_unary_op_GGML_UNARY_OP_COUNT: ggml_unary_op = 12;
 pub const ggml_object_type_GGML_OBJECT_TENSOR: ggml_object_type = 0;
 pub const ggml_object_type_GGML_OBJECT_GRAPH: ggml_object_type = 1;
 pub const ggml_object_type_GGML_OBJECT_WORK_BUFFER: ggml_object_type = 2;
@@ -4013,6 +4015,8 @@ extern "C" {
         a: *mut ggml_tensor,
         b: *mut ggml_tensor,
     ) -> *mut ggml_tensor;
+    pub fn ggml_hardswish(ctx: *mut ggml_context, a: *mut ggml_tensor) -> *mut ggml_tensor;
+    pub fn ggml_hardsigmoid(ctx: *mut ggml_context, a: *mut ggml_tensor) -> *mut ggml_tensor;
     pub fn ggml_norm(ctx: *mut ggml_context, a: *mut ggml_tensor, eps: f32) -> *mut ggml_tensor;
     pub fn ggml_norm_inplace(
         ctx: *mut ggml_context,
@@ -4373,6 +4377,18 @@ extern "C" {
         d0: ::std::os::raw::c_int,
         d1: ::std::os::raw::c_int,
         is_2D: bool,
+    ) -> *mut ggml_tensor;
+    pub fn ggml_conv_depthwise_2d(
+        ctx: *mut ggml_context,
+        a: *mut ggml_tensor,
+        b: *mut ggml_tensor,
+        c: *mut ggml_tensor,
+        s0: ::std::os::raw::c_int,
+        s1: ::std::os::raw::c_int,
+        p0: ::std::os::raw::c_int,
+        p1: ::std::os::raw::c_int,
+        d0: ::std::os::raw::c_int,
+        d1: ::std::os::raw::c_int,
     ) -> *mut ggml_tensor;
     pub fn ggml_conv_1d(
         ctx: *mut ggml_context,
