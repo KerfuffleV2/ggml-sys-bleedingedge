@@ -97,8 +97,6 @@ pub type ggml_log_callback = ::std::option::Option<
         user_data: *mut ::std::os::raw::c_void,
     ),
 >;
-pub type ggml_collect_imatrix_t =
-    ::std::option::Option<unsafe extern "C" fn(src0: *const ggml_tensor, src1: *const ggml_tensor)>;
 pub type gguf_type = ::std::os::raw::c_uint;
 pub type ggml_to_float_t = ::std::option::Option<
     unsafe extern "C" fn(x: *const ::std::os::raw::c_void, y: *mut f32, k: ::std::os::raw::c_int),
@@ -113,6 +111,13 @@ pub type ggml_vec_dot_t = ::std::option::Option<
         x: *const ::std::os::raw::c_void,
         y: *const ::std::os::raw::c_void,
     ),
+>;
+pub type ggml_backend_sched_eval_callback = ::std::option::Option<
+    unsafe extern "C" fn(
+        t: *mut ggml_tensor,
+        ask: bool,
+        user_data: *mut ::std::os::raw::c_void,
+    ) -> bool,
 >;
 pub type FILE = _IO_FILE;
 pub type _IO_lock_t = ::std::os::raw::c_void;
@@ -336,6 +341,11 @@ pub struct ggml_type_traits_t {
 }
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
+pub struct ggml_backend_buffer {
+    _unused: [u8; 0],
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
 pub struct _IO_marker {
     _unused: [u8; 0],
 }
@@ -457,6 +467,8 @@ pub struct llama_context_params {
     pub yarn_beta_fast: f32,
     pub yarn_beta_slow: f32,
     pub yarn_orig_ctx: u32,
+    pub cb_eval: ggml_backend_sched_eval_callback,
+    pub cb_eval_user_data: *mut ::std::os::raw::c_void,
     pub type_k: ggml_type,
     pub type_v: ggml_type,
     pub mul_mat_q: bool,
@@ -531,11 +543,6 @@ pub struct llama_beams_state {
     pub n_beams: usize,
     pub common_prefix_length: usize,
     pub last_call: bool,
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
-pub struct ggml_backend_buffer {
-    pub _address: u8,
 }
 pub const GGML_FILE_MAGIC: u32 = 1734831468;
 pub const GGML_FILE_VERSION: u32 = 1;
@@ -768,6 +775,7 @@ pub const llama_ftype_LLAMA_FTYPE_MOSTLY_Q6_K: llama_ftype = 18;
 pub const llama_ftype_LLAMA_FTYPE_MOSTLY_IQ2_XXS: llama_ftype = 19;
 pub const llama_ftype_LLAMA_FTYPE_MOSTLY_IQ2_XS: llama_ftype = 20;
 pub const llama_ftype_LLAMA_FTYPE_MOSTLY_Q2_K_S: llama_ftype = 21;
+pub const llama_ftype_LLAMA_FTYPE_MOSTLY_Q3_K_XS: llama_ftype = 22;
 pub const llama_ftype_LLAMA_FTYPE_GUESSED: llama_ftype = 1024;
 pub const llama_rope_scaling_type_LLAMA_ROPE_SCALING_UNSPECIFIED: llama_rope_scaling_type = -1;
 pub const llama_rope_scaling_type_LLAMA_ROPE_SCALING_NONE: llama_rope_scaling_type = 0;
@@ -3021,12 +3029,12 @@ fn bindgen_test_layout_llama_context_params() {
     let ptr = UNINIT.as_ptr();
     assert_eq!(
         ::std::mem::size_of::<llama_context_params>(),
-        64usize,
+        88usize,
         concat!("Size of: ", stringify!(llama_context_params))
     );
     assert_eq!(
         ::std::mem::align_of::<llama_context_params>(),
-        4usize,
+        8usize,
         concat!("Alignment of ", stringify!(llama_context_params))
     );
     assert_eq!(
@@ -3160,8 +3168,28 @@ fn bindgen_test_layout_llama_context_params() {
         )
     );
     assert_eq!(
+        unsafe { ::std::ptr::addr_of!((*ptr).cb_eval) as usize - ptr as usize },
+        56usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(llama_context_params),
+            "::",
+            stringify!(cb_eval)
+        )
+    );
+    assert_eq!(
+        unsafe { ::std::ptr::addr_of!((*ptr).cb_eval_user_data) as usize - ptr as usize },
+        64usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(llama_context_params),
+            "::",
+            stringify!(cb_eval_user_data)
+        )
+    );
+    assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).type_k) as usize - ptr as usize },
-        52usize,
+        72usize,
         concat!(
             "Offset of field: ",
             stringify!(llama_context_params),
@@ -3171,7 +3199,7 @@ fn bindgen_test_layout_llama_context_params() {
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).type_v) as usize - ptr as usize },
-        56usize,
+        76usize,
         concat!(
             "Offset of field: ",
             stringify!(llama_context_params),
@@ -3181,7 +3209,7 @@ fn bindgen_test_layout_llama_context_params() {
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).mul_mat_q) as usize - ptr as usize },
-        60usize,
+        80usize,
         concat!(
             "Offset of field: ",
             stringify!(llama_context_params),
@@ -3191,7 +3219,7 @@ fn bindgen_test_layout_llama_context_params() {
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).logits_all) as usize - ptr as usize },
-        61usize,
+        81usize,
         concat!(
             "Offset of field: ",
             stringify!(llama_context_params),
@@ -3201,7 +3229,7 @@ fn bindgen_test_layout_llama_context_params() {
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).embedding) as usize - ptr as usize },
-        62usize,
+        82usize,
         concat!(
             "Offset of field: ",
             stringify!(llama_context_params),
@@ -3211,7 +3239,7 @@ fn bindgen_test_layout_llama_context_params() {
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).offload_kqv) as usize - ptr as usize },
-        63usize,
+        83usize,
         concat!(
             "Offset of field: ",
             stringify!(llama_context_params),
@@ -4706,6 +4734,8 @@ extern "C" {
         callback: ggml_opt_callback,
         callback_data: *mut ::std::os::raw::c_void,
     ) -> ggml_opt_result;
+    pub fn ggml_quantize_init(type_: ggml_type);
+    pub fn ggml_quantize_free();
     pub fn ggml_quantize_q4_0(
         src: *const f32,
         dst: *mut ::std::os::raw::c_void,
@@ -4776,6 +4806,7 @@ extern "C" {
         k: ::std::os::raw::c_int,
         hist: *mut i64,
     ) -> usize;
+    pub fn ggml_quantize_requires_imatrix(type_: ggml_type) -> bool;
     pub fn ggml_quantize_chunk(
         type_: ggml_type,
         src: *const f32,
@@ -4786,9 +4817,6 @@ extern "C" {
         hist: *mut i64,
         imatrix: *const f32,
     ) -> usize;
-    pub fn ggml_init_iq2_quantization(type_: ggml_type);
-    pub fn ggml_deinit_iq2_quantization(type_: ggml_type);
-    pub fn ggml_set_imatrix_collection(imatrix_collect: ggml_collect_imatrix_t);
     pub fn gguf_init_empty() -> *mut gguf_context;
     pub fn gguf_init_from_file(
         fname: *const ::std::os::raw::c_char,
