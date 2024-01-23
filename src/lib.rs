@@ -4382,7 +4382,6 @@ extern "C" {
         ctx: *mut ggml_context,
         a: *mut ggml_tensor,
         b: *mut ggml_tensor,
-        c: *mut ggml_tensor,
         s0: ::std::os::raw::c_int,
         s1: ::std::os::raw::c_int,
         p0: ::std::os::raw::c_int,
