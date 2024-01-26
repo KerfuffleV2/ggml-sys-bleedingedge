@@ -5220,6 +5220,14 @@ extern "C" {
         p: f32,
         min_keep: usize,
     );
+    #[doc = " @details Dynamic temperature implementation described in the paper https://arxiv.org/abs/2309.02772."]
+    pub fn llama_sample_entropy(
+        ctx: *mut llama_context,
+        candidates_p: *mut llama_token_data_array,
+        min_temp: f32,
+        max_temp: f32,
+        exponent_val: f32,
+    );
     pub fn llama_sample_temp(
         ctx: *mut llama_context,
         candidates: *mut llama_token_data_array,
