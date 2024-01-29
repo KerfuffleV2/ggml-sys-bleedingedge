@@ -7,7 +7,7 @@ const GGML_HEADER: &str = "ggml.h";
 
 fn generate_bindings() {
     let ggml_header_path = PathBuf::from(GGML_SOURCE_DIR).join(GGML_HEADER);
-    let librs_path = PathBuf::from("src").join("lib.rs");
+    let librs_path = PathBuf::from("src").join("bindings.rs");
 
     let mut bbuilder = bindgen::Builder::default()
         .derive_copy(true)
@@ -22,12 +22,6 @@ fn generate_bindings() {
         .enable_function_attribute_detection()
         .sort_semantically(true)
         .header(ggml_header_path.to_string_lossy())
-        // Suppress some warnings
-        .raw_line("#![allow(non_upper_case_globals)]")
-        .raw_line("#![allow(non_camel_case_types)]")
-        .raw_line("#![allow(non_snake_case)]")
-        .raw_line("#![allow(unused)]")
-        .raw_line("pub const GGMLSYS_VERSION: Option<&str> = option_env!(\"CARGO_PKG_VERSION\");")
         // Do not generate code for ggml's includes (stdlib)
         .allowlist_file(ggml_header_path.to_string_lossy());
     if cfg!(feature = "use_cmake") {
