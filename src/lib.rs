@@ -4962,9 +4962,11 @@ extern "C" {
     pub fn ggml_cpu_has_blas() -> ::std::os::raw::c_int;
     pub fn ggml_cpu_has_cublas() -> ::std::os::raw::c_int;
     pub fn ggml_cpu_has_clblast() -> ::std::os::raw::c_int;
+    pub fn ggml_cpu_has_vulkan() -> ::std::os::raw::c_int;
     pub fn ggml_cpu_has_gpublas() -> ::std::os::raw::c_int;
     pub fn ggml_cpu_has_sse3() -> ::std::os::raw::c_int;
     pub fn ggml_cpu_has_ssse3() -> ::std::os::raw::c_int;
+    pub fn ggml_cpu_has_sycl() -> ::std::os::raw::c_int;
     pub fn ggml_cpu_has_vsx() -> ::std::os::raw::c_int;
     pub fn ggml_internal_get_type_traits(type_: ggml_type) -> ggml_type_traits_t;
     pub fn llama_model_default_params() -> llama_model_params;
