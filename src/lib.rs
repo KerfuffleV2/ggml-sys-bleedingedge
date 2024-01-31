@@ -4966,6 +4966,7 @@ extern "C" {
     pub fn ggml_cpu_has_cublas() -> ::std::os::raw::c_int;
     pub fn ggml_cpu_has_clblast() -> ::std::os::raw::c_int;
     pub fn ggml_cpu_has_vulkan() -> ::std::os::raw::c_int;
+    pub fn ggml_cpu_has_kompute() -> ::std::os::raw::c_int;
     pub fn ggml_cpu_has_gpublas() -> ::std::os::raw::c_int;
     pub fn ggml_cpu_has_sse3() -> ::std::os::raw::c_int;
     pub fn ggml_cpu_has_ssse3() -> ::std::os::raw::c_int;
