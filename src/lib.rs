@@ -4380,6 +4380,7 @@ extern "C" {
         d0: ::std::os::raw::c_int,
         d1: ::std::os::raw::c_int,
         is_2D: bool,
+        dst_type: ggml_type,
     ) -> *mut ggml_tensor;
     pub fn ggml_conv_depthwise_2d(
         ctx: *mut ggml_context,
