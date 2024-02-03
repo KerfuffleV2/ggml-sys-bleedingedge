@@ -459,7 +459,7 @@ pub struct llama_context_params {
     pub n_batch: u32,
     pub n_threads: u32,
     pub n_threads_batch: u32,
-    pub rope_scaling_type: i8,
+    pub rope_scaling_type: i32,
     pub rope_freq_base: f32,
     pub rope_freq_scale: f32,
     pub yarn_ext_factor: f32,
