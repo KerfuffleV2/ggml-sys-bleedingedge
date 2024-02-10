@@ -17,6 +17,8 @@ pub type ggml_op = ::std::os::raw::c_uint;
 pub type ggml_unary_op = ::std::os::raw::c_uint;
 pub type ggml_object_type = ::std::os::raw::c_uint;
 pub type ggml_log_level = ::std::os::raw::c_uint;
+pub type ggml_abort_callback =
+    ::std::option::Option<unsafe extern "C" fn(data: *mut ::std::os::raw::c_void) -> bool>;
 pub type ggml_cgraph_eval_order = ::std::os::raw::c_uint;
 pub type ggml_task_type = ::std::os::raw::c_uint;
 pub type ggml_op_pool = ::std::os::raw::c_uint;
@@ -180,8 +182,7 @@ pub struct ggml_cplan {
     pub work_size: usize,
     pub work_data: *mut u8,
     pub n_threads: ::std::os::raw::c_int,
-    pub abort_callback:
-        ::std::option::Option<unsafe extern "C" fn(data: *mut ::std::os::raw::c_void) -> bool>,
+    pub abort_callback: ggml_abort_callback,
     pub abort_callback_data: *mut ::std::os::raw::c_void,
 }
 #[repr(C)]
