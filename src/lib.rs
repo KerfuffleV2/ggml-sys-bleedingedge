@@ -110,8 +110,12 @@ pub type ggml_vec_dot_t = ::std::option::Option<
     unsafe extern "C" fn(
         n: ::std::os::raw::c_int,
         s: *mut f32,
+        bs: usize,
         x: *const ::std::os::raw::c_void,
+        bx: usize,
         y: *const ::std::os::raw::c_void,
+        by: usize,
+        nrc: ::std::os::raw::c_int,
     ),
 >;
 pub type ggml_backend_sched_eval_callback = ::std::option::Option<
@@ -339,6 +343,7 @@ pub struct ggml_type_traits_t {
     pub from_float_reference: ggml_from_float_t,
     pub vec_dot: ggml_vec_dot_t,
     pub vec_dot_type: ggml_type,
+    pub nrows: i64,
 }
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
@@ -2215,7 +2220,7 @@ fn bindgen_test_layout_ggml_type_traits_t() {
     let ptr = UNINIT.as_ptr();
     assert_eq!(
         ::std::mem::size_of::<ggml_type_traits_t>(),
-        72usize,
+        80usize,
         concat!("Size of: ", stringify!(ggml_type_traits_t))
     );
     assert_eq!(
@@ -2311,6 +2316,16 @@ fn bindgen_test_layout_ggml_type_traits_t() {
             stringify!(ggml_type_traits_t),
             "::",
             stringify!(vec_dot_type)
+        )
+    );
+    assert_eq!(
+        unsafe { ::std::ptr::addr_of!((*ptr).nrows) as usize - ptr as usize },
+        72usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(ggml_type_traits_t),
+            "::",
+            stringify!(nrows)
         )
     );
 }
@@ -4973,6 +4988,7 @@ extern "C" {
     pub fn ggml_cpu_has_ssse3() -> ::std::os::raw::c_int;
     pub fn ggml_cpu_has_sycl() -> ::std::os::raw::c_int;
     pub fn ggml_cpu_has_vsx() -> ::std::os::raw::c_int;
+    pub fn ggml_cpu_has_matmul_int8() -> ::std::os::raw::c_int;
     pub fn ggml_internal_get_type_traits(type_: ggml_type) -> ggml_type_traits_t;
     pub fn llama_model_default_params() -> llama_model_params;
     pub fn llama_context_default_params() -> llama_context_params;
