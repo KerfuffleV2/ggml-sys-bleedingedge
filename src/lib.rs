@@ -17,6 +17,7 @@ pub type ggml_op = ::std::os::raw::c_uint;
 pub type ggml_unary_op = ::std::os::raw::c_uint;
 pub type ggml_object_type = ::std::os::raw::c_uint;
 pub type ggml_log_level = ::std::os::raw::c_uint;
+pub type ggml_tensor_flag = ::std::os::raw::c_uint;
 pub type ggml_abort_callback =
     ::std::option::Option<unsafe extern "C" fn(data: *mut ::std::os::raw::c_void) -> bool>;
 pub type ggml_cgraph_eval_order = ::std::os::raw::c_uint;
@@ -167,7 +168,7 @@ pub struct ggml_tensor {
     pub nb: [usize; 4usize],
     pub op: ggml_op,
     pub op_params: [i32; 16usize],
-    pub is_param: bool,
+    pub flags: i32,
     pub grad: *mut ggml_tensor,
     pub src: [*mut ggml_tensor; 10usize],
     pub perf_runs: ::std::os::raw::c_int,
@@ -344,11 +345,6 @@ pub struct ggml_type_traits_t {
     pub vec_dot: ggml_vec_dot_t,
     pub vec_dot_type: ggml_type,
     pub nrows: i64,
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone)]
-pub struct ggml_backend_buffer {
-    _unused: [u8; 0],
 }
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
@@ -550,6 +546,11 @@ pub struct llama_beams_state {
     pub common_prefix_length: usize,
     pub last_call: bool,
 }
+#[repr(C)]
+#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+pub struct ggml_backend_buffer {
+    pub _address: u8,
+}
 pub const GGML_FILE_MAGIC: u32 = 1734831468;
 pub const GGML_FILE_VERSION: u32 = 1;
 pub const GGML_QNT_VERSION: u32 = 2;
@@ -711,6 +712,9 @@ pub const ggml_log_level_GGML_LOG_LEVEL_ERROR: ggml_log_level = 2;
 pub const ggml_log_level_GGML_LOG_LEVEL_WARN: ggml_log_level = 3;
 pub const ggml_log_level_GGML_LOG_LEVEL_INFO: ggml_log_level = 4;
 pub const ggml_log_level_GGML_LOG_LEVEL_DEBUG: ggml_log_level = 5;
+pub const ggml_tensor_flag_GGML_TENSOR_FLAG_INPUT: ggml_tensor_flag = 1;
+pub const ggml_tensor_flag_GGML_TENSOR_FLAG_OUTPUT: ggml_tensor_flag = 2;
+pub const ggml_tensor_flag_GGML_TENSOR_FLAG_PARAM: ggml_tensor_flag = 4;
 pub const GGML_OBJECT_SIZE: usize = 32;
 pub const GGML_TENSOR_SIZE: usize = 368;
 pub const ggml_cgraph_eval_order_GGML_CGRAPH_EVAL_ORDER_LEFT_TO_RIGHT: ggml_cgraph_eval_order = 0;
@@ -956,13 +960,13 @@ fn bindgen_test_layout_ggml_tensor() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).is_param) as usize - ptr as usize },
+        unsafe { ::std::ptr::addr_of!((*ptr).flags) as usize - ptr as usize },
         148usize,
         concat!(
             "Offset of field: ",
             stringify!(ggml_tensor),
             "::",
-            stringify!(is_param)
+            stringify!(flags)
         )
     );
     assert_eq!(
@@ -4769,6 +4773,8 @@ extern "C" {
         callback: ggml_opt_callback,
         callback_data: *mut ::std::os::raw::c_void,
     ) -> ggml_opt_result;
+    pub fn ggml_set_input(tensor: *mut ggml_tensor);
+    pub fn ggml_set_output(tensor: *mut ggml_tensor);
     pub fn ggml_quantize_init(type_: ggml_type);
     pub fn ggml_quantize_free();
     pub fn ggml_quantize_q4_0(
