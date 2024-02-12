@@ -757,6 +757,7 @@ pub const gguf_type_GGUF_TYPE_FLOAT64: gguf_type = 12;
 pub const gguf_type_GGUF_TYPE_COUNT: gguf_type = 13;
 pub const llama_vocab_type_LLAMA_VOCAB_TYPE_SPM: llama_vocab_type = 0;
 pub const llama_vocab_type_LLAMA_VOCAB_TYPE_BPE: llama_vocab_type = 1;
+pub const llama_vocab_type_LLAMA_VOCAB_TYPE_WPM: llama_vocab_type = 2;
 pub const llama_token_type_LLAMA_TOKEN_TYPE_UNDEFINED: llama_token_type = 0;
 pub const llama_token_type_LLAMA_TOKEN_TYPE_NORMAL: llama_token_type = 1;
 pub const llama_token_type_LLAMA_TOKEN_TYPE_UNKNOWN: llama_token_type = 2;
