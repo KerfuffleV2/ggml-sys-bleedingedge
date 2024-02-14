@@ -477,6 +477,7 @@ pub struct llama_context_params {
     pub logits_all: bool,
     pub embedding: bool,
     pub offload_kqv: bool,
+    pub do_pooling: bool,
 }
 #[repr(C)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
@@ -3272,6 +3273,16 @@ fn bindgen_test_layout_llama_context_params() {
             stringify!(offload_kqv)
         )
     );
+    assert_eq!(
+        unsafe { ::std::ptr::addr_of!((*ptr).do_pooling) as usize - ptr as usize },
+        84usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(llama_context_params),
+            "::",
+            stringify!(do_pooling)
+        )
+    );
 }
 #[test]
 fn bindgen_test_layout_llama_model_quantize_params() {
@@ -5154,6 +5165,7 @@ extern "C" {
     pub fn llama_get_logits(ctx: *mut llama_context) -> *mut f32;
     pub fn llama_get_logits_ith(ctx: *mut llama_context, i: i32) -> *mut f32;
     pub fn llama_get_embeddings(ctx: *mut llama_context) -> *mut f32;
+    pub fn llama_get_embeddings_ith(ctx: *mut llama_context, i: i32) -> *mut f32;
     pub fn llama_token_get_text(
         model: *const llama_model,
         token: llama_token,
