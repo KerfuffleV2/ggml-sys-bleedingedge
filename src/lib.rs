@@ -22,6 +22,7 @@ pub type ggml_abort_callback =
     ::std::option::Option<unsafe extern "C" fn(data: *mut ::std::os::raw::c_void) -> bool>;
 pub type ggml_cgraph_eval_order = ::std::os::raw::c_uint;
 pub type ggml_task_type = ::std::os::raw::c_uint;
+pub type ggml_numa_strategy = ::std::os::raw::c_uint;
 pub type ggml_op_pool = ::std::os::raw::c_uint;
 pub type ggml_sort_order = ::std::os::raw::c_uint;
 pub type ggml_unary_op_f32_t = ::std::option::Option<
@@ -135,6 +136,7 @@ pub type llama_vocab_type = ::std::os::raw::c_uint;
 pub type llama_token_type = ::std::os::raw::c_uint;
 pub type llama_ftype = ::std::os::raw::c_uint;
 pub type llama_rope_scaling_type = ::std::os::raw::c_int;
+pub type llama_pooling_type = ::std::os::raw::c_uint;
 pub type llama_split_mode = ::std::os::raw::c_uint;
 pub type llama_progress_callback = ::std::option::Option<
     unsafe extern "C" fn(progress: f32, ctx: *mut ::std::os::raw::c_void) -> bool,
@@ -724,6 +726,12 @@ pub const ggml_cgraph_eval_order_GGML_CGRAPH_EVAL_ORDER_COUNT: ggml_cgraph_eval_
 pub const ggml_task_type_GGML_TASK_INIT: ggml_task_type = 0;
 pub const ggml_task_type_GGML_TASK_COMPUTE: ggml_task_type = 1;
 pub const ggml_task_type_GGML_TASK_FINALIZE: ggml_task_type = 2;
+pub const ggml_numa_strategy_GGML_NUMA_STRATEGY_DISABLED: ggml_numa_strategy = 0;
+pub const ggml_numa_strategy_GGML_NUMA_STRATEGY_DISTRIBUTE: ggml_numa_strategy = 1;
+pub const ggml_numa_strategy_GGML_NUMA_STRATEGY_ISOLATE: ggml_numa_strategy = 2;
+pub const ggml_numa_strategy_GGML_NUMA_STRATEGY_NUMACTL: ggml_numa_strategy = 3;
+pub const ggml_numa_strategy_GGML_NUMA_STRATEGY_MIRROR: ggml_numa_strategy = 4;
+pub const ggml_numa_strategy_GGML_NUMA_STRATEGY_COUNT: ggml_numa_strategy = 5;
 pub const ggml_op_pool_GGML_OP_POOL_MAX: ggml_op_pool = 0;
 pub const ggml_op_pool_GGML_OP_POOL_AVG: ggml_op_pool = 1;
 pub const ggml_op_pool_GGML_OP_POOL_COUNT: ggml_op_pool = 2;
@@ -798,6 +806,9 @@ pub const llama_rope_scaling_type_LLAMA_ROPE_SCALING_NONE: llama_rope_scaling_ty
 pub const llama_rope_scaling_type_LLAMA_ROPE_SCALING_LINEAR: llama_rope_scaling_type = 1;
 pub const llama_rope_scaling_type_LLAMA_ROPE_SCALING_YARN: llama_rope_scaling_type = 2;
 pub const llama_rope_scaling_type_LLAMA_ROPE_SCALING_MAX_VALUE: llama_rope_scaling_type = 2;
+pub const llama_pooling_type_LLAMA_POOLING_NONE: llama_pooling_type = 0;
+pub const llama_pooling_type_LLAMA_POOLING_MEAN: llama_pooling_type = 1;
+pub const llama_pooling_type_LLAMA_POOLING_CLS: llama_pooling_type = 2;
 pub const llama_split_mode_LLAMA_SPLIT_NONE: llama_split_mode = 0;
 pub const llama_split_mode_LLAMA_SPLIT_LAYER: llama_split_mode = 1;
 pub const llama_split_mode_LLAMA_SPLIT_ROW: llama_split_mode = 2;
@@ -3774,7 +3785,7 @@ extern "C" {
     pub fn ggml_cycles() -> i64;
     pub fn ggml_cycles_per_ms() -> i64;
     pub fn ggml_print_backtrace();
-    pub fn ggml_numa_init();
+    pub fn ggml_numa_init(numa: ggml_numa_strategy);
     pub fn ggml_is_numa() -> bool;
     pub fn ggml_print_object(obj: *const ggml_object);
     pub fn ggml_print_objects(ctx: *const ggml_context);
@@ -5011,7 +5022,8 @@ extern "C" {
     pub fn llama_model_default_params() -> llama_model_params;
     pub fn llama_context_default_params() -> llama_context_params;
     pub fn llama_model_quantize_default_params() -> llama_model_quantize_params;
-    pub fn llama_backend_init(numa: bool);
+    pub fn llama_backend_init();
+    pub fn llama_numa_init(numa: ggml_numa_strategy);
     pub fn llama_backend_free();
     pub fn llama_load_model_from_file(
         path_model: *const ::std::os::raw::c_char,
