@@ -518,6 +518,12 @@ pub struct llama_timings {
 }
 #[repr(C)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+pub struct llama_chat_message {
+    pub role: *const ::std::os::raw::c_char,
+    pub content: *const ::std::os::raw::c_char,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct llama_kv_cache_view_cell {
     pub pos: llama_pos,
 }
@@ -3526,6 +3532,41 @@ fn bindgen_test_layout_llama_timings() {
     );
 }
 #[test]
+fn bindgen_test_layout_llama_chat_message() {
+    const UNINIT: ::std::mem::MaybeUninit<llama_chat_message> = ::std::mem::MaybeUninit::uninit();
+    let ptr = UNINIT.as_ptr();
+    assert_eq!(
+        ::std::mem::size_of::<llama_chat_message>(),
+        16usize,
+        concat!("Size of: ", stringify!(llama_chat_message))
+    );
+    assert_eq!(
+        ::std::mem::align_of::<llama_chat_message>(),
+        8usize,
+        concat!("Alignment of ", stringify!(llama_chat_message))
+    );
+    assert_eq!(
+        unsafe { ::std::ptr::addr_of!((*ptr).role) as usize - ptr as usize },
+        0usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(llama_chat_message),
+            "::",
+            stringify!(role)
+        )
+    );
+    assert_eq!(
+        unsafe { ::std::ptr::addr_of!((*ptr).content) as usize - ptr as usize },
+        8usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(llama_chat_message),
+            "::",
+            stringify!(content)
+        )
+    );
+}
+#[test]
 fn bindgen_test_layout_llama_kv_cache_view_cell() {
     const UNINIT: ::std::mem::MaybeUninit<llama_kv_cache_view_cell> =
         ::std::mem::MaybeUninit::uninit();
@@ -5211,6 +5252,16 @@ extern "C" {
     pub fn llama_token_to_piece(
         model: *const llama_model,
         token: llama_token,
+        buf: *mut ::std::os::raw::c_char,
+        length: i32,
+    ) -> i32;
+    #[doc = " Apply chat template. Inspired by hf apply_chat_template() on python.\n Both \"model\" and \"custom_template\" are optional, but at least one is required. \"custom_template\" has higher precedence than \"model\"\n NOTE: This function only support some known jinja templates. It is not a jinja parser.\n @param tmpl A Jinja template to use for this chat. If this is nullptr, the model’s default chat template will be used instead.\n @param chat Pointer to a list of multiple llama_chat_message\n @param n_msg Number of llama_chat_message in this chat\n @param add_ass Whether to end the prompt with the token(s) that indicate the start of an assistant message.\n @param buf A buffer to hold the output formatted prompt. The recommended alloc size is 2 * (total number of characters of all messages)\n @param length The size of the allocated buffer\n @return The total number of bytes of the formatted prompt. If is it larger than the size of buffer, you may need to re-alloc it and then re-apply the template."]
+    pub fn llama_chat_apply_template(
+        model: *const llama_model,
+        tmpl: *const ::std::os::raw::c_char,
+        chat: *const llama_chat_message,
+        n_msg: usize,
+        add_ass: bool,
         buf: *mut ::std::os::raw::c_char,
         length: i32,
     ) -> i32;
