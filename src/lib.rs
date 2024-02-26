@@ -133,6 +133,7 @@ pub type llama_pos = i32;
 pub type llama_token = i32;
 pub type llama_seq_id = i32;
 pub type llama_vocab_type = ::std::os::raw::c_uint;
+pub type llama_rope_type = ::std::os::raw::c_int;
 pub type llama_token_type = ::std::os::raw::c_uint;
 pub type llama_ftype = ::std::os::raw::c_uint;
 pub type llama_rope_scaling_type = ::std::os::raw::c_int;
@@ -783,6 +784,10 @@ pub const gguf_type_GGUF_TYPE_COUNT: gguf_type = 13;
 pub const llama_vocab_type_LLAMA_VOCAB_TYPE_SPM: llama_vocab_type = 0;
 pub const llama_vocab_type_LLAMA_VOCAB_TYPE_BPE: llama_vocab_type = 1;
 pub const llama_vocab_type_LLAMA_VOCAB_TYPE_WPM: llama_vocab_type = 2;
+pub const llama_rope_type_LLAMA_ROPE_TYPE_NONE: llama_rope_type = -1;
+pub const llama_rope_type_LLAMA_ROPE_TYPE_NORM: llama_rope_type = 0;
+pub const llama_rope_type_LLAMA_ROPE_TYPE_NEOX: llama_rope_type = 2;
+pub const llama_rope_type_LLAMA_ROPE_TYPE_GLM: llama_rope_type = 4;
 pub const llama_token_type_LLAMA_TOKEN_TYPE_UNDEFINED: llama_token_type = 0;
 pub const llama_token_type_LLAMA_TOKEN_TYPE_NORMAL: llama_token_type = 1;
 pub const llama_token_type_LLAMA_TOKEN_TYPE_UNKNOWN: llama_token_type = 2;
@@ -5101,6 +5106,7 @@ extern "C" {
     pub fn llama_n_ctx(ctx: *const llama_context) -> u32;
     pub fn llama_n_batch(ctx: *const llama_context) -> u32;
     pub fn llama_vocab_type(model: *const llama_model) -> llama_vocab_type;
+    pub fn llama_rope_type(model: *const llama_model) -> llama_rope_type;
     pub fn llama_n_vocab(model: *const llama_model) -> i32;
     pub fn llama_n_ctx_train(model: *const llama_model) -> i32;
     pub fn llama_n_embd(model: *const llama_model) -> i32;
@@ -5177,7 +5183,7 @@ extern "C" {
         p1: llama_pos,
     );
     pub fn llama_kv_cache_seq_keep(ctx: *mut llama_context, seq_id: llama_seq_id);
-    pub fn llama_kv_cache_seq_shift(
+    pub fn llama_kv_cache_seq_add(
         ctx: *mut llama_context,
         seq_id: llama_seq_id,
         p0: llama_pos,
@@ -5191,6 +5197,9 @@ extern "C" {
         p1: llama_pos,
         d: ::std::os::raw::c_int,
     );
+    pub fn llama_kv_cache_seq_pos_max(ctx: *mut llama_context, seq_id: llama_seq_id) -> llama_pos;
+    pub fn llama_kv_cache_defrag(ctx: *mut llama_context);
+    pub fn llama_kv_cache_update(ctx: *mut llama_context);
     pub fn llama_get_state_size(ctx: *const llama_context) -> usize;
     pub fn llama_copy_state_data(ctx: *mut llama_context, dst: *mut u8) -> usize;
     pub fn llama_set_state_data(ctx: *mut llama_context, src: *mut u8) -> usize;
