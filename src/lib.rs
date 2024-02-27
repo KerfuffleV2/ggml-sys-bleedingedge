@@ -472,6 +472,7 @@ pub struct llama_context_params {
     pub yarn_beta_fast: f32,
     pub yarn_beta_slow: f32,
     pub yarn_orig_ctx: u32,
+    pub defrag_thold: f32,
     pub cb_eval: ggml_backend_sched_eval_callback,
     pub cb_eval_user_data: *mut ::std::os::raw::c_void,
     pub type_k: ggml_type,
@@ -607,10 +608,11 @@ pub const ggml_type_GGML_TYPE_IQ1_S: ggml_type = 19;
 pub const ggml_type_GGML_TYPE_IQ4_NL: ggml_type = 20;
 pub const ggml_type_GGML_TYPE_IQ3_S: ggml_type = 21;
 pub const ggml_type_GGML_TYPE_IQ2_S: ggml_type = 22;
-pub const ggml_type_GGML_TYPE_I8: ggml_type = 23;
-pub const ggml_type_GGML_TYPE_I16: ggml_type = 24;
-pub const ggml_type_GGML_TYPE_I32: ggml_type = 25;
-pub const ggml_type_GGML_TYPE_COUNT: ggml_type = 26;
+pub const ggml_type_GGML_TYPE_IQ4_XS: ggml_type = 23;
+pub const ggml_type_GGML_TYPE_I8: ggml_type = 24;
+pub const ggml_type_GGML_TYPE_I16: ggml_type = 25;
+pub const ggml_type_GGML_TYPE_I32: ggml_type = 26;
+pub const ggml_type_GGML_TYPE_COUNT: ggml_type = 27;
 pub const ggml_prec_GGML_PREC_DEFAULT: ggml_prec = 0;
 pub const ggml_prec_GGML_PREC_F32: ggml_prec = 1;
 pub const ggml_backend_type_GGML_BACKEND_TYPE_CPU: ggml_backend_type = 0;
@@ -637,6 +639,7 @@ pub const ggml_ftype_GGML_FTYPE_MOSTLY_IQ1_S: ggml_ftype = 18;
 pub const ggml_ftype_GGML_FTYPE_MOSTLY_IQ4_NL: ggml_ftype = 19;
 pub const ggml_ftype_GGML_FTYPE_MOSTLY_IQ3_S: ggml_ftype = 20;
 pub const ggml_ftype_GGML_FTYPE_MOSTLY_IQ2_S: ggml_ftype = 21;
+pub const ggml_ftype_GGML_FTYPE_MOSTLY_IQ4_XS: ggml_ftype = 22;
 pub const ggml_op_GGML_OP_NONE: ggml_op = 0;
 pub const ggml_op_GGML_OP_DUP: ggml_op = 1;
 pub const ggml_op_GGML_OP_ADD: ggml_op = 2;
@@ -825,6 +828,7 @@ pub const llama_ftype_LLAMA_FTYPE_MOSTLY_IQ3_S: llama_ftype = 26;
 pub const llama_ftype_LLAMA_FTYPE_MOSTLY_IQ3_M: llama_ftype = 27;
 pub const llama_ftype_LLAMA_FTYPE_MOSTLY_IQ2_S: llama_ftype = 28;
 pub const llama_ftype_LLAMA_FTYPE_MOSTLY_IQ2_M: llama_ftype = 29;
+pub const llama_ftype_LLAMA_FTYPE_MOSTLY_IQ4_XS: llama_ftype = 30;
 pub const llama_ftype_LLAMA_FTYPE_GUESSED: llama_ftype = 1024;
 pub const llama_rope_scaling_type_LLAMA_ROPE_SCALING_TYPE_UNSPECIFIED: llama_rope_scaling_type = -1;
 pub const llama_rope_scaling_type_LLAMA_ROPE_SCALING_TYPE_NONE: llama_rope_scaling_type = 0;
@@ -3229,6 +3233,16 @@ fn bindgen_test_layout_llama_context_params() {
             stringify!(llama_context_params),
             "::",
             stringify!(yarn_orig_ctx)
+        )
+    );
+    assert_eq!(
+        unsafe { ::std::ptr::addr_of!((*ptr).defrag_thold) as usize - ptr as usize },
+        52usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(llama_context_params),
+            "::",
+            stringify!(defrag_thold)
         )
     );
     assert_eq!(
