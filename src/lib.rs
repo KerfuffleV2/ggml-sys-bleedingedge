@@ -5214,7 +5214,7 @@ extern "C" {
     pub fn llama_kv_cache_update(ctx: *mut llama_context);
     pub fn llama_get_state_size(ctx: *const llama_context) -> usize;
     pub fn llama_copy_state_data(ctx: *mut llama_context, dst: *mut u8) -> usize;
-    pub fn llama_set_state_data(ctx: *mut llama_context, src: *mut u8) -> usize;
+    pub fn llama_set_state_data(ctx: *mut llama_context, src: *const u8) -> usize;
     pub fn llama_load_session_file(
         ctx: *mut llama_context,
         path_session: *const ::std::os::raw::c_char,
