@@ -23,6 +23,8 @@ pub type ggml_abort_callback =
 pub type ggml_cgraph_eval_order = ::std::os::raw::c_uint;
 pub type ggml_task_type = ::std::os::raw::c_uint;
 pub type ggml_numa_strategy = ::std::os::raw::c_uint;
+pub type ggml_guid = [u8; 16usize];
+pub type ggml_guid_t = *mut ggml_guid;
 pub type ggml_op_pool = ::std::os::raw::c_uint;
 pub type ggml_sort_order = ::std::os::raw::c_uint;
 pub type ggml_unary_op_f32_t = ::std::option::Option<
@@ -3855,6 +3857,7 @@ extern "C" {
     pub fn ggml_fp32_to_fp16(x: f32) -> ggml_fp16_t;
     pub fn ggml_fp16_to_fp32_row(x: *const ggml_fp16_t, y: *mut f32, n: ::std::os::raw::c_int);
     pub fn ggml_fp32_to_fp16_row(x: *const f32, y: *mut ggml_fp16_t, n: ::std::os::raw::c_int);
+    pub fn ggml_guid_matches(guid_a: ggml_guid_t, guid_b: ggml_guid_t) -> bool;
     pub fn ggml_time_init();
     pub fn ggml_time_ms() -> i64;
     pub fn ggml_time_us() -> i64;
@@ -5118,8 +5121,6 @@ extern "C" {
     pub fn llama_supports_mmap() -> bool;
     pub fn llama_supports_mlock() -> bool;
     pub fn llama_supports_gpu_offload() -> bool;
-    pub fn llama_mmap_supported() -> bool;
-    pub fn llama_mlock_supported() -> bool;
     pub fn llama_get_model(ctx: *const llama_context) -> *const llama_model;
     pub fn llama_n_ctx(ctx: *const llama_context) -> u32;
     pub fn llama_n_batch(ctx: *const llama_context) -> u32;
@@ -5164,13 +5165,6 @@ extern "C" {
         fname_out: *const ::std::os::raw::c_char,
         params: *const llama_model_quantize_params,
     ) -> u32;
-    pub fn llama_apply_lora_from_file(
-        ctx: *mut llama_context,
-        path_lora: *const ::std::os::raw::c_char,
-        scale: f32,
-        path_base_model: *const ::std::os::raw::c_char,
-        n_threads: i32,
-    ) -> i32;
     pub fn llama_model_apply_lora_from_file(
         model: *const llama_model,
         path_lora: *const ::std::os::raw::c_char,
@@ -5234,18 +5228,6 @@ extern "C" {
         tokens: *const llama_token,
         n_token_count: usize,
     ) -> bool;
-    pub fn llama_eval(
-        ctx: *mut llama_context,
-        tokens: *mut llama_token,
-        n_tokens: i32,
-        n_past: i32,
-    ) -> ::std::os::raw::c_int;
-    pub fn llama_eval_embd(
-        ctx: *mut llama_context,
-        embd: *mut f32,
-        n_tokens: i32,
-        n_past: i32,
-    ) -> ::std::os::raw::c_int;
     pub fn llama_batch_get_one(
         tokens: *mut llama_token,
         n_tokens: i32,
@@ -5326,12 +5308,6 @@ extern "C" {
         logits_guidance: *mut f32,
         scale: f32,
     );
-    pub fn llama_sample_classifier_free_guidance(
-        ctx: *mut llama_context,
-        candidates: *mut llama_token_data_array,
-        guidance_ctx: *mut llama_context,
-        scale: f32,
-    );
     #[doc = " @details Sorts candidate tokens by their logits in descending order and calculate probabilities based on logits."]
     pub fn llama_sample_softmax(ctx: *mut llama_context, candidates: *mut llama_token_data_array);
     #[doc = " @details Top-K sampling described in academic paper \"The Curious Case of Neural Text Degeneration\" https://arxiv.org/abs/1904.09751"]
@@ -5378,11 +5354,6 @@ extern "C" {
         exponent_val: f32,
     );
     pub fn llama_sample_temp(
-        ctx: *mut llama_context,
-        candidates: *mut llama_token_data_array,
-        temp: f32,
-    );
-    pub fn llama_sample_temperature(
         ctx: *mut llama_context,
         candidates: *mut llama_token_data_array,
         temp: f32,
