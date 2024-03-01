@@ -479,7 +479,6 @@ pub struct llama_context_params {
     pub cb_eval_user_data: *mut ::std::os::raw::c_void,
     pub type_k: ggml_type,
     pub type_v: ggml_type,
-    pub mul_mat_q: bool,
     pub logits_all: bool,
     pub embedding: bool,
     pub offload_kqv: bool,
@@ -3288,18 +3287,8 @@ fn bindgen_test_layout_llama_context_params() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).mul_mat_q) as usize - ptr as usize },
-        80usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(llama_context_params),
-            "::",
-            stringify!(mul_mat_q)
-        )
-    );
-    assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).logits_all) as usize - ptr as usize },
-        81usize,
+        80usize,
         concat!(
             "Offset of field: ",
             stringify!(llama_context_params),
@@ -3309,7 +3298,7 @@ fn bindgen_test_layout_llama_context_params() {
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).embedding) as usize - ptr as usize },
-        82usize,
+        81usize,
         concat!(
             "Offset of field: ",
             stringify!(llama_context_params),
@@ -3319,7 +3308,7 @@ fn bindgen_test_layout_llama_context_params() {
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).offload_kqv) as usize - ptr as usize },
-        83usize,
+        82usize,
         concat!(
             "Offset of field: ",
             stringify!(llama_context_params),
@@ -3329,7 +3318,7 @@ fn bindgen_test_layout_llama_context_params() {
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).do_pooling) as usize - ptr as usize },
-        84usize,
+        83usize,
         concat!(
             "Offset of field: ",
             stringify!(llama_context_params),
