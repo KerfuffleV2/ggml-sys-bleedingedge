@@ -139,7 +139,7 @@ pub type llama_rope_type = ::std::os::raw::c_int;
 pub type llama_token_type = ::std::os::raw::c_uint;
 pub type llama_ftype = ::std::os::raw::c_uint;
 pub type llama_rope_scaling_type = ::std::os::raw::c_int;
-pub type llama_pooling_type = ::std::os::raw::c_uint;
+pub type llama_pooling_type = ::std::os::raw::c_int;
 pub type llama_split_mode = ::std::os::raw::c_uint;
 pub type llama_progress_callback = ::std::option::Option<
     unsafe extern "C" fn(progress: f32, ctx: *mut ::std::os::raw::c_void) -> bool,
@@ -466,7 +466,8 @@ pub struct llama_context_params {
     pub n_batch: u32,
     pub n_threads: u32,
     pub n_threads_batch: u32,
-    pub rope_scaling_type: i32,
+    pub rope_scaling_type: llama_rope_scaling_type,
+    pub pooling_type: llama_pooling_type,
     pub rope_freq_base: f32,
     pub rope_freq_scale: f32,
     pub yarn_ext_factor: f32,
@@ -482,7 +483,6 @@ pub struct llama_context_params {
     pub logits_all: bool,
     pub embedding: bool,
     pub offload_kqv: bool,
-    pub do_pooling: bool,
     pub abort_callback: ggml_abort_callback,
     pub abort_callback_data: *mut ::std::os::raw::c_void,
 }
@@ -838,6 +838,7 @@ pub const llama_rope_scaling_type_LLAMA_ROPE_SCALING_TYPE_NONE: llama_rope_scali
 pub const llama_rope_scaling_type_LLAMA_ROPE_SCALING_TYPE_LINEAR: llama_rope_scaling_type = 1;
 pub const llama_rope_scaling_type_LLAMA_ROPE_SCALING_TYPE_YARN: llama_rope_scaling_type = 2;
 pub const llama_rope_scaling_type_LLAMA_ROPE_SCALING_TYPE_MAX_VALUE: llama_rope_scaling_type = 2;
+pub const llama_pooling_type_LLAMA_POOLING_TYPE_UNSPECIFIED: llama_pooling_type = -1;
 pub const llama_pooling_type_LLAMA_POOLING_TYPE_NONE: llama_pooling_type = 0;
 pub const llama_pooling_type_LLAMA_POOLING_TYPE_MEAN: llama_pooling_type = 1;
 pub const llama_pooling_type_LLAMA_POOLING_TYPE_CLS: llama_pooling_type = 2;
@@ -3100,7 +3101,7 @@ fn bindgen_test_layout_llama_context_params() {
     let ptr = UNINIT.as_ptr();
     assert_eq!(
         ::std::mem::size_of::<llama_context_params>(),
-        104usize,
+        112usize,
         concat!("Size of: ", stringify!(llama_context_params))
     );
     assert_eq!(
@@ -3169,8 +3170,18 @@ fn bindgen_test_layout_llama_context_params() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).rope_freq_base) as usize - ptr as usize },
+        unsafe { ::std::ptr::addr_of!((*ptr).pooling_type) as usize - ptr as usize },
         24usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(llama_context_params),
+            "::",
+            stringify!(pooling_type)
+        )
+    );
+    assert_eq!(
+        unsafe { ::std::ptr::addr_of!((*ptr).rope_freq_base) as usize - ptr as usize },
+        28usize,
         concat!(
             "Offset of field: ",
             stringify!(llama_context_params),
@@ -3180,7 +3191,7 @@ fn bindgen_test_layout_llama_context_params() {
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).rope_freq_scale) as usize - ptr as usize },
-        28usize,
+        32usize,
         concat!(
             "Offset of field: ",
             stringify!(llama_context_params),
@@ -3190,7 +3201,7 @@ fn bindgen_test_layout_llama_context_params() {
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).yarn_ext_factor) as usize - ptr as usize },
-        32usize,
+        36usize,
         concat!(
             "Offset of field: ",
             stringify!(llama_context_params),
@@ -3200,7 +3211,7 @@ fn bindgen_test_layout_llama_context_params() {
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).yarn_attn_factor) as usize - ptr as usize },
-        36usize,
+        40usize,
         concat!(
             "Offset of field: ",
             stringify!(llama_context_params),
@@ -3210,7 +3221,7 @@ fn bindgen_test_layout_llama_context_params() {
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).yarn_beta_fast) as usize - ptr as usize },
-        40usize,
+        44usize,
         concat!(
             "Offset of field: ",
             stringify!(llama_context_params),
@@ -3220,7 +3231,7 @@ fn bindgen_test_layout_llama_context_params() {
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).yarn_beta_slow) as usize - ptr as usize },
-        44usize,
+        48usize,
         concat!(
             "Offset of field: ",
             stringify!(llama_context_params),
@@ -3230,7 +3241,7 @@ fn bindgen_test_layout_llama_context_params() {
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).yarn_orig_ctx) as usize - ptr as usize },
-        48usize,
+        52usize,
         concat!(
             "Offset of field: ",
             stringify!(llama_context_params),
@@ -3240,7 +3251,7 @@ fn bindgen_test_layout_llama_context_params() {
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).defrag_thold) as usize - ptr as usize },
-        52usize,
+        56usize,
         concat!(
             "Offset of field: ",
             stringify!(llama_context_params),
@@ -3250,7 +3261,7 @@ fn bindgen_test_layout_llama_context_params() {
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).cb_eval) as usize - ptr as usize },
-        56usize,
+        64usize,
         concat!(
             "Offset of field: ",
             stringify!(llama_context_params),
@@ -3260,7 +3271,7 @@ fn bindgen_test_layout_llama_context_params() {
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).cb_eval_user_data) as usize - ptr as usize },
-        64usize,
+        72usize,
         concat!(
             "Offset of field: ",
             stringify!(llama_context_params),
@@ -3270,7 +3281,7 @@ fn bindgen_test_layout_llama_context_params() {
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).type_k) as usize - ptr as usize },
-        72usize,
+        80usize,
         concat!(
             "Offset of field: ",
             stringify!(llama_context_params),
@@ -3280,7 +3291,7 @@ fn bindgen_test_layout_llama_context_params() {
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).type_v) as usize - ptr as usize },
-        76usize,
+        84usize,
         concat!(
             "Offset of field: ",
             stringify!(llama_context_params),
@@ -3290,7 +3301,7 @@ fn bindgen_test_layout_llama_context_params() {
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).logits_all) as usize - ptr as usize },
-        80usize,
+        88usize,
         concat!(
             "Offset of field: ",
             stringify!(llama_context_params),
@@ -3300,7 +3311,7 @@ fn bindgen_test_layout_llama_context_params() {
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).embedding) as usize - ptr as usize },
-        81usize,
+        89usize,
         concat!(
             "Offset of field: ",
             stringify!(llama_context_params),
@@ -3310,7 +3321,7 @@ fn bindgen_test_layout_llama_context_params() {
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).offload_kqv) as usize - ptr as usize },
-        82usize,
+        90usize,
         concat!(
             "Offset of field: ",
             stringify!(llama_context_params),
@@ -3319,18 +3330,8 @@ fn bindgen_test_layout_llama_context_params() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).do_pooling) as usize - ptr as usize },
-        83usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(llama_context_params),
-            "::",
-            stringify!(do_pooling)
-        )
-    );
-    assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).abort_callback) as usize - ptr as usize },
-        88usize,
+        96usize,
         concat!(
             "Offset of field: ",
             stringify!(llama_context_params),
@@ -3340,7 +3341,7 @@ fn bindgen_test_layout_llama_context_params() {
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).abort_callback_data) as usize - ptr as usize },
-        96usize,
+        104usize,
         concat!(
             "Offset of field: ",
             stringify!(llama_context_params),
