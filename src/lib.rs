@@ -483,6 +483,8 @@ pub struct llama_context_params {
     pub embedding: bool,
     pub offload_kqv: bool,
     pub do_pooling: bool,
+    pub abort_callback: ggml_abort_callback,
+    pub abort_callback_data: *mut ::std::os::raw::c_void,
 }
 #[repr(C)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
@@ -3098,7 +3100,7 @@ fn bindgen_test_layout_llama_context_params() {
     let ptr = UNINIT.as_ptr();
     assert_eq!(
         ::std::mem::size_of::<llama_context_params>(),
-        88usize,
+        104usize,
         concat!("Size of: ", stringify!(llama_context_params))
     );
     assert_eq!(
@@ -3324,6 +3326,26 @@ fn bindgen_test_layout_llama_context_params() {
             stringify!(llama_context_params),
             "::",
             stringify!(do_pooling)
+        )
+    );
+    assert_eq!(
+        unsafe { ::std::ptr::addr_of!((*ptr).abort_callback) as usize - ptr as usize },
+        88usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(llama_context_params),
+            "::",
+            stringify!(abort_callback)
+        )
+    );
+    assert_eq!(
+        unsafe { ::std::ptr::addr_of!((*ptr).abort_callback_data) as usize - ptr as usize },
+        96usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(llama_context_params),
+            "::",
+            stringify!(abort_callback_data)
         )
     );
 }
@@ -5227,6 +5249,11 @@ extern "C" {
     pub fn llama_batch_free(batch: llama_batch);
     pub fn llama_decode(ctx: *mut llama_context, batch: llama_batch) -> i32;
     pub fn llama_set_n_threads(ctx: *mut llama_context, n_threads: u32, n_threads_batch: u32);
+    pub fn llama_set_abort_callback(
+        ctx: *mut llama_context,
+        abort_callback: ggml_abort_callback,
+        abort_callback_data: *mut ::std::os::raw::c_void,
+    );
     pub fn llama_get_logits(ctx: *mut llama_context) -> *mut f32;
     pub fn llama_get_logits_ith(ctx: *mut llama_context, i: i32) -> *mut f32;
     pub fn llama_get_embeddings(ctx: *mut llama_context) -> *mut f32;
