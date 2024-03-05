@@ -8,6 +8,7 @@ pub const GGMLSYS_VERSION: Option<&str> = option_env!("CARGO_PKG_VERSION");
 
 pub type __off_t = ::std::os::raw::c_long;
 pub type __off64_t = ::std::os::raw::c_long;
+pub type ggml_status = ::std::os::raw::c_int;
 pub type ggml_fp16_t = u16;
 pub type ggml_type = ::std::os::raw::c_uint;
 pub type ggml_prec = ::std::os::raw::c_uint;
@@ -481,7 +482,7 @@ pub struct llama_context_params {
     pub type_k: ggml_type,
     pub type_v: ggml_type,
     pub logits_all: bool,
-    pub embedding: bool,
+    pub embeddings: bool,
     pub offload_kqv: bool,
     pub abort_callback: ggml_abort_callback,
     pub abort_callback_data: *mut ::std::os::raw::c_void,
@@ -590,6 +591,10 @@ pub const LLAMA_FILE_MAGIC_GGLA: u32 = 1734831201;
 pub const LLAMA_FILE_MAGIC_GGSN: u32 = 1734833006;
 pub const LLAMA_SESSION_MAGIC: u32 = 1734833006;
 pub const LLAMA_SESSION_VERSION: u32 = 4;
+pub const ggml_status_GGML_STATUS_ALLOC_FAILED: ggml_status = -2;
+pub const ggml_status_GGML_STATUS_FAILED: ggml_status = -1;
+pub const ggml_status_GGML_STATUS_SUCCESS: ggml_status = 0;
+pub const ggml_status_GGML_STATUS_ABORTED: ggml_status = 1;
 pub const ggml_type_GGML_TYPE_F32: ggml_type = 0;
 pub const ggml_type_GGML_TYPE_F16: ggml_type = 1;
 pub const ggml_type_GGML_TYPE_Q4_0: ggml_type = 2;
@@ -3312,13 +3317,13 @@ fn bindgen_test_layout_llama_context_params() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).embedding) as usize - ptr as usize },
+        unsafe { ::std::ptr::addr_of!((*ptr).embeddings) as usize - ptr as usize },
         89usize,
         concat!(
             "Offset of field: ",
             stringify!(llama_context_params),
             "::",
-            stringify!(embedding)
+            stringify!(embeddings)
         )
     );
     assert_eq!(
@@ -3867,6 +3872,7 @@ impl ::std::fmt::Debug for llama_model_kv_override {
     }
 }
 extern "C" {
+    pub fn ggml_status_to_string(status: ggml_status) -> *const ::std::os::raw::c_char;
     pub fn ggml_fp16_to_fp32(x: ggml_fp16_t) -> f32;
     pub fn ggml_fp32_to_fp16(x: f32) -> ggml_fp16_t;
     pub fn ggml_fp16_to_fp32_row(x: *const ggml_fp16_t, y: *mut f32, n: ::std::os::raw::c_int);
@@ -4843,15 +4849,12 @@ extern "C" {
         cgraph: *const ggml_cgraph,
         n_threads: ::std::os::raw::c_int,
     ) -> ggml_cplan;
-    pub fn ggml_graph_compute(
-        cgraph: *mut ggml_cgraph,
-        cplan: *mut ggml_cplan,
-    ) -> ::std::os::raw::c_int;
+    pub fn ggml_graph_compute(cgraph: *mut ggml_cgraph, cplan: *mut ggml_cplan) -> ggml_status;
     pub fn ggml_graph_compute_with_ctx(
         ctx: *mut ggml_context,
         cgraph: *mut ggml_cgraph,
         n_threads: ::std::os::raw::c_int,
-    );
+    ) -> ggml_status;
     pub fn ggml_graph_get_tensor(
         cgraph: *mut ggml_cgraph,
         name: *const ::std::os::raw::c_char,
@@ -5273,6 +5276,7 @@ extern "C" {
     pub fn llama_get_logits_ith(ctx: *mut llama_context, i: i32) -> *mut f32;
     pub fn llama_get_embeddings(ctx: *mut llama_context) -> *mut f32;
     pub fn llama_get_embeddings_ith(ctx: *mut llama_context, i: i32) -> *mut f32;
+    pub fn llama_get_embeddings_seq(ctx: *mut llama_context, seq_id: llama_seq_id) -> *mut f32;
     pub fn llama_token_get_text(
         model: *const llama_model,
         token: llama_token,
