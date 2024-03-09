@@ -465,6 +465,7 @@ pub struct llama_context_params {
     pub seed: u32,
     pub n_ctx: u32,
     pub n_batch: u32,
+    pub n_parallel: u32,
     pub n_threads: u32,
     pub n_threads_batch: u32,
     pub rope_scaling_type: llama_rope_scaling_type,
@@ -707,22 +708,24 @@ pub const ggml_op_GGML_OP_LEAKY_RELU: ggml_op = 55;
 pub const ggml_op_GGML_OP_FLASH_ATTN: ggml_op = 56;
 pub const ggml_op_GGML_OP_FLASH_FF: ggml_op = 57;
 pub const ggml_op_GGML_OP_FLASH_ATTN_BACK: ggml_op = 58;
-pub const ggml_op_GGML_OP_WIN_PART: ggml_op = 59;
-pub const ggml_op_GGML_OP_WIN_UNPART: ggml_op = 60;
-pub const ggml_op_GGML_OP_GET_REL_POS: ggml_op = 61;
-pub const ggml_op_GGML_OP_ADD_REL_POS: ggml_op = 62;
-pub const ggml_op_GGML_OP_UNARY: ggml_op = 63;
-pub const ggml_op_GGML_OP_MAP_UNARY: ggml_op = 64;
-pub const ggml_op_GGML_OP_MAP_BINARY: ggml_op = 65;
-pub const ggml_op_GGML_OP_MAP_CUSTOM1_F32: ggml_op = 66;
-pub const ggml_op_GGML_OP_MAP_CUSTOM2_F32: ggml_op = 67;
-pub const ggml_op_GGML_OP_MAP_CUSTOM3_F32: ggml_op = 68;
-pub const ggml_op_GGML_OP_MAP_CUSTOM1: ggml_op = 69;
-pub const ggml_op_GGML_OP_MAP_CUSTOM2: ggml_op = 70;
-pub const ggml_op_GGML_OP_MAP_CUSTOM3: ggml_op = 71;
-pub const ggml_op_GGML_OP_CROSS_ENTROPY_LOSS: ggml_op = 72;
-pub const ggml_op_GGML_OP_CROSS_ENTROPY_LOSS_BACK: ggml_op = 73;
-pub const ggml_op_GGML_OP_COUNT: ggml_op = 74;
+pub const ggml_op_GGML_OP_SSM_CONV: ggml_op = 59;
+pub const ggml_op_GGML_OP_SSM_SCAN: ggml_op = 60;
+pub const ggml_op_GGML_OP_WIN_PART: ggml_op = 61;
+pub const ggml_op_GGML_OP_WIN_UNPART: ggml_op = 62;
+pub const ggml_op_GGML_OP_GET_REL_POS: ggml_op = 63;
+pub const ggml_op_GGML_OP_ADD_REL_POS: ggml_op = 64;
+pub const ggml_op_GGML_OP_UNARY: ggml_op = 65;
+pub const ggml_op_GGML_OP_MAP_UNARY: ggml_op = 66;
+pub const ggml_op_GGML_OP_MAP_BINARY: ggml_op = 67;
+pub const ggml_op_GGML_OP_MAP_CUSTOM1_F32: ggml_op = 68;
+pub const ggml_op_GGML_OP_MAP_CUSTOM2_F32: ggml_op = 69;
+pub const ggml_op_GGML_OP_MAP_CUSTOM3_F32: ggml_op = 70;
+pub const ggml_op_GGML_OP_MAP_CUSTOM1: ggml_op = 71;
+pub const ggml_op_GGML_OP_MAP_CUSTOM2: ggml_op = 72;
+pub const ggml_op_GGML_OP_MAP_CUSTOM3: ggml_op = 73;
+pub const ggml_op_GGML_OP_CROSS_ENTROPY_LOSS: ggml_op = 74;
+pub const ggml_op_GGML_OP_CROSS_ENTROPY_LOSS_BACK: ggml_op = 75;
+pub const ggml_op_GGML_OP_COUNT: ggml_op = 76;
 pub const ggml_unary_op_GGML_UNARY_OP_ABS: ggml_unary_op = 0;
 pub const ggml_unary_op_GGML_UNARY_OP_SGN: ggml_unary_op = 1;
 pub const ggml_unary_op_GGML_UNARY_OP_NEG: ggml_unary_op = 2;
@@ -3147,8 +3150,18 @@ fn bindgen_test_layout_llama_context_params() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).n_threads) as usize - ptr as usize },
+        unsafe { ::std::ptr::addr_of!((*ptr).n_parallel) as usize - ptr as usize },
         12usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(llama_context_params),
+            "::",
+            stringify!(n_parallel)
+        )
+    );
+    assert_eq!(
+        unsafe { ::std::ptr::addr_of!((*ptr).n_threads) as usize - ptr as usize },
+        16usize,
         concat!(
             "Offset of field: ",
             stringify!(llama_context_params),
@@ -3158,7 +3171,7 @@ fn bindgen_test_layout_llama_context_params() {
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).n_threads_batch) as usize - ptr as usize },
-        16usize,
+        20usize,
         concat!(
             "Offset of field: ",
             stringify!(llama_context_params),
@@ -3168,7 +3181,7 @@ fn bindgen_test_layout_llama_context_params() {
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).rope_scaling_type) as usize - ptr as usize },
-        20usize,
+        24usize,
         concat!(
             "Offset of field: ",
             stringify!(llama_context_params),
@@ -3178,7 +3191,7 @@ fn bindgen_test_layout_llama_context_params() {
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).pooling_type) as usize - ptr as usize },
-        24usize,
+        28usize,
         concat!(
             "Offset of field: ",
             stringify!(llama_context_params),
@@ -3188,7 +3201,7 @@ fn bindgen_test_layout_llama_context_params() {
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).rope_freq_base) as usize - ptr as usize },
-        28usize,
+        32usize,
         concat!(
             "Offset of field: ",
             stringify!(llama_context_params),
@@ -3198,7 +3211,7 @@ fn bindgen_test_layout_llama_context_params() {
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).rope_freq_scale) as usize - ptr as usize },
-        32usize,
+        36usize,
         concat!(
             "Offset of field: ",
             stringify!(llama_context_params),
@@ -3208,7 +3221,7 @@ fn bindgen_test_layout_llama_context_params() {
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).yarn_ext_factor) as usize - ptr as usize },
-        36usize,
+        40usize,
         concat!(
             "Offset of field: ",
             stringify!(llama_context_params),
@@ -3218,7 +3231,7 @@ fn bindgen_test_layout_llama_context_params() {
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).yarn_attn_factor) as usize - ptr as usize },
-        40usize,
+        44usize,
         concat!(
             "Offset of field: ",
             stringify!(llama_context_params),
@@ -3228,7 +3241,7 @@ fn bindgen_test_layout_llama_context_params() {
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).yarn_beta_fast) as usize - ptr as usize },
-        44usize,
+        48usize,
         concat!(
             "Offset of field: ",
             stringify!(llama_context_params),
@@ -3238,7 +3251,7 @@ fn bindgen_test_layout_llama_context_params() {
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).yarn_beta_slow) as usize - ptr as usize },
-        48usize,
+        52usize,
         concat!(
             "Offset of field: ",
             stringify!(llama_context_params),
@@ -3248,7 +3261,7 @@ fn bindgen_test_layout_llama_context_params() {
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).yarn_orig_ctx) as usize - ptr as usize },
-        52usize,
+        56usize,
         concat!(
             "Offset of field: ",
             stringify!(llama_context_params),
@@ -3258,7 +3271,7 @@ fn bindgen_test_layout_llama_context_params() {
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).defrag_thold) as usize - ptr as usize },
-        56usize,
+        60usize,
         concat!(
             "Offset of field: ",
             stringify!(llama_context_params),
@@ -4663,6 +4676,23 @@ extern "C" {
         c0: *mut ggml_tensor,
         c1: *mut ggml_tensor,
     ) -> *mut ggml_tensor;
+    pub fn ggml_ssm_conv(
+        ctx: *mut ggml_context,
+        s: *mut ggml_tensor,
+        x: *mut ggml_tensor,
+        c: *mut ggml_tensor,
+        sq: *mut ggml_tensor,
+    ) -> *mut ggml_tensor;
+    pub fn ggml_ssm_scan(
+        ctx: *mut ggml_context,
+        s: *mut ggml_tensor,
+        x: *mut ggml_tensor,
+        dt: *mut ggml_tensor,
+        A: *mut ggml_tensor,
+        B: *mut ggml_tensor,
+        C: *mut ggml_tensor,
+        sq: *mut ggml_tensor,
+    ) -> *mut ggml_tensor;
     pub fn ggml_win_part(
         ctx: *mut ggml_context,
         a: *mut ggml_tensor,
@@ -5153,6 +5183,7 @@ extern "C" {
     pub fn llama_get_model(ctx: *const llama_context) -> *const llama_model;
     pub fn llama_n_ctx(ctx: *const llama_context) -> u32;
     pub fn llama_n_batch(ctx: *const llama_context) -> u32;
+    pub fn llama_n_max_seq(ctx: *const llama_context) -> u32;
     pub fn llama_vocab_type(model: *const llama_model) -> llama_vocab_type;
     pub fn llama_rope_type(model: *const llama_model) -> llama_rope_type;
     pub fn llama_n_vocab(model: *const llama_model) -> i32;
@@ -5215,7 +5246,7 @@ extern "C" {
         seq_id: llama_seq_id,
         p0: llama_pos,
         p1: llama_pos,
-    );
+    ) -> bool;
     pub fn llama_kv_cache_seq_cp(
         ctx: *mut llama_context,
         seq_id_src: llama_seq_id,
