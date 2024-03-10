@@ -4939,76 +4939,6 @@ extern "C" {
     pub fn ggml_set_output(tensor: *mut ggml_tensor);
     pub fn ggml_quantize_init(type_: ggml_type);
     pub fn ggml_quantize_free();
-    pub fn ggml_quantize_q4_0(
-        src: *const f32,
-        dst: *mut ::std::os::raw::c_void,
-        n: ::std::os::raw::c_int,
-        k: ::std::os::raw::c_int,
-        hist: *mut i64,
-    ) -> usize;
-    pub fn ggml_quantize_q4_1(
-        src: *const f32,
-        dst: *mut ::std::os::raw::c_void,
-        n: ::std::os::raw::c_int,
-        k: ::std::os::raw::c_int,
-        hist: *mut i64,
-    ) -> usize;
-    pub fn ggml_quantize_q5_0(
-        src: *const f32,
-        dst: *mut ::std::os::raw::c_void,
-        n: ::std::os::raw::c_int,
-        k: ::std::os::raw::c_int,
-        hist: *mut i64,
-    ) -> usize;
-    pub fn ggml_quantize_q5_1(
-        src: *const f32,
-        dst: *mut ::std::os::raw::c_void,
-        n: ::std::os::raw::c_int,
-        k: ::std::os::raw::c_int,
-        hist: *mut i64,
-    ) -> usize;
-    pub fn ggml_quantize_q8_0(
-        src: *const f32,
-        dst: *mut ::std::os::raw::c_void,
-        n: ::std::os::raw::c_int,
-        k: ::std::os::raw::c_int,
-        hist: *mut i64,
-    ) -> usize;
-    pub fn ggml_quantize_q2_K(
-        src: *const f32,
-        dst: *mut ::std::os::raw::c_void,
-        n: ::std::os::raw::c_int,
-        k: ::std::os::raw::c_int,
-        hist: *mut i64,
-    ) -> usize;
-    pub fn ggml_quantize_q3_K(
-        src: *const f32,
-        dst: *mut ::std::os::raw::c_void,
-        n: ::std::os::raw::c_int,
-        k: ::std::os::raw::c_int,
-        hist: *mut i64,
-    ) -> usize;
-    pub fn ggml_quantize_q4_K(
-        src: *const f32,
-        dst: *mut ::std::os::raw::c_void,
-        n: ::std::os::raw::c_int,
-        k: ::std::os::raw::c_int,
-        hist: *mut i64,
-    ) -> usize;
-    pub fn ggml_quantize_q5_K(
-        src: *const f32,
-        dst: *mut ::std::os::raw::c_void,
-        n: ::std::os::raw::c_int,
-        k: ::std::os::raw::c_int,
-        hist: *mut i64,
-    ) -> usize;
-    pub fn ggml_quantize_q6_K(
-        src: *const f32,
-        dst: *mut ::std::os::raw::c_void,
-        n: ::std::os::raw::c_int,
-        k: ::std::os::raw::c_int,
-        hist: *mut i64,
-    ) -> usize;
     pub fn ggml_quantize_requires_imatrix(type_: ggml_type) -> bool;
     pub fn ggml_quantize_chunk(
         type_: ggml_type,
@@ -5017,7 +4947,6 @@ extern "C" {
         start: ::std::os::raw::c_int,
         nrows: ::std::os::raw::c_int,
         n_per_row: ::std::os::raw::c_int,
-        hist: *mut i64,
         imatrix: *const f32,
     ) -> usize;
     pub fn gguf_init_empty() -> *mut gguf_context;
