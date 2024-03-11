@@ -5227,6 +5227,7 @@ extern "C" {
     pub fn llama_batch_free(batch: llama_batch);
     pub fn llama_decode(ctx: *mut llama_context, batch: llama_batch) -> i32;
     pub fn llama_set_n_threads(ctx: *mut llama_context, n_threads: u32, n_threads_batch: u32);
+    pub fn llama_set_causal_attn(ctx: *mut llama_context, causal_attn: bool);
     pub fn llama_set_abort_callback(
         ctx: *mut llama_context,
         abort_callback: ggml_abort_callback,
