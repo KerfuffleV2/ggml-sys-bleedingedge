@@ -465,7 +465,7 @@ pub struct llama_context_params {
     pub seed: u32,
     pub n_ctx: u32,
     pub n_batch: u32,
-    pub n_parallel: u32,
+    pub n_seq_max: u32,
     pub n_threads: u32,
     pub n_threads_batch: u32,
     pub rope_scaling_type: llama_rope_scaling_type,
@@ -538,7 +538,7 @@ pub struct llama_kv_cache_view_cell {
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct llama_kv_cache_view {
     pub n_cells: i32,
-    pub n_max_seq: i32,
+    pub n_seq_max: i32,
     pub token_count: i32,
     pub used_cells: i32,
     pub max_contiguous: i32,
@@ -3150,13 +3150,13 @@ fn bindgen_test_layout_llama_context_params() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).n_parallel) as usize - ptr as usize },
+        unsafe { ::std::ptr::addr_of!((*ptr).n_seq_max) as usize - ptr as usize },
         12usize,
         concat!(
             "Offset of field: ",
             stringify!(llama_context_params),
             "::",
-            stringify!(n_parallel)
+            stringify!(n_seq_max)
         )
     );
     assert_eq!(
@@ -3683,13 +3683,13 @@ fn bindgen_test_layout_llama_kv_cache_view() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).n_max_seq) as usize - ptr as usize },
+        unsafe { ::std::ptr::addr_of!((*ptr).n_seq_max) as usize - ptr as usize },
         4usize,
         concat!(
             "Offset of field: ",
             stringify!(llama_kv_cache_view),
             "::",
-            stringify!(n_max_seq)
+            stringify!(n_seq_max)
         )
     );
     assert_eq!(
@@ -5112,7 +5112,7 @@ extern "C" {
     pub fn llama_get_model(ctx: *const llama_context) -> *const llama_model;
     pub fn llama_n_ctx(ctx: *const llama_context) -> u32;
     pub fn llama_n_batch(ctx: *const llama_context) -> u32;
-    pub fn llama_n_max_seq(ctx: *const llama_context) -> u32;
+    pub fn llama_n_seq_max(ctx: *const llama_context) -> u32;
     pub fn llama_vocab_type(model: *const llama_model) -> llama_vocab_type;
     pub fn llama_rope_type(model: *const llama_model) -> llama_rope_type;
     pub fn llama_n_vocab(model: *const llama_model) -> i32;
@@ -5163,7 +5163,7 @@ extern "C" {
     ) -> i32;
     pub fn llama_kv_cache_view_init(
         ctx: *const llama_context,
-        n_max_seq: i32,
+        n_seq_max: i32,
     ) -> llama_kv_cache_view;
     pub fn llama_kv_cache_view_free(view: *mut llama_kv_cache_view);
     pub fn llama_kv_cache_view_update(ctx: *const llama_context, view: *mut llama_kv_cache_view);
@@ -5253,13 +5253,13 @@ extern "C" {
     pub fn llama_token_middle(model: *const llama_model) -> llama_token;
     pub fn llama_token_suffix(model: *const llama_model) -> llama_token;
     pub fn llama_token_eot(model: *const llama_model) -> llama_token;
-    #[doc = " @details Convert the provided text into tokens.\n @param tokens The tokens pointer must be large enough to hold the resulting tokens.\n @return Returns the number of tokens on success, no more than n_max_tokens\n @return Returns a negative number on failure - the number of tokens that would have been returned\n @param special Allow tokenizing special and/or control tokens which otherwise are not exposed and treated as plaintext.\n                Does not insert a leading space."]
+    #[doc = " @details Convert the provided text into tokens.\n @param tokens The tokens pointer must be large enough to hold the resulting tokens.\n @return Returns the number of tokens on success, no more than n_tokens_max\n @return Returns a negative number on failure - the number of tokens that would have been returned\n @param special Allow tokenizing special and/or control tokens which otherwise are not exposed and treated as plaintext.\n                Does not insert a leading space."]
     pub fn llama_tokenize(
         model: *const llama_model,
         text: *const ::std::os::raw::c_char,
         text_len: i32,
         tokens: *mut llama_token,
-        n_max_tokens: i32,
+        n_tokens_max: i32,
         add_bos: bool,
         special: bool,
     ) -> i32;
