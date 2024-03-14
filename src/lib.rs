@@ -465,6 +465,7 @@ pub struct llama_context_params {
     pub seed: u32,
     pub n_ctx: u32,
     pub n_batch: u32,
+    pub n_ubatch: u32,
     pub n_seq_max: u32,
     pub n_threads: u32,
     pub n_threads_batch: u32,
@@ -3111,7 +3112,7 @@ fn bindgen_test_layout_llama_context_params() {
     let ptr = UNINIT.as_ptr();
     assert_eq!(
         ::std::mem::size_of::<llama_context_params>(),
-        112usize,
+        120usize,
         concat!("Size of: ", stringify!(llama_context_params))
     );
     assert_eq!(
@@ -3150,8 +3151,18 @@ fn bindgen_test_layout_llama_context_params() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).n_seq_max) as usize - ptr as usize },
+        unsafe { ::std::ptr::addr_of!((*ptr).n_ubatch) as usize - ptr as usize },
         12usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(llama_context_params),
+            "::",
+            stringify!(n_ubatch)
+        )
+    );
+    assert_eq!(
+        unsafe { ::std::ptr::addr_of!((*ptr).n_seq_max) as usize - ptr as usize },
+        16usize,
         concat!(
             "Offset of field: ",
             stringify!(llama_context_params),
@@ -3161,7 +3172,7 @@ fn bindgen_test_layout_llama_context_params() {
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).n_threads) as usize - ptr as usize },
-        16usize,
+        20usize,
         concat!(
             "Offset of field: ",
             stringify!(llama_context_params),
@@ -3171,7 +3182,7 @@ fn bindgen_test_layout_llama_context_params() {
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).n_threads_batch) as usize - ptr as usize },
-        20usize,
+        24usize,
         concat!(
             "Offset of field: ",
             stringify!(llama_context_params),
@@ -3181,7 +3192,7 @@ fn bindgen_test_layout_llama_context_params() {
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).rope_scaling_type) as usize - ptr as usize },
-        24usize,
+        28usize,
         concat!(
             "Offset of field: ",
             stringify!(llama_context_params),
@@ -3191,7 +3202,7 @@ fn bindgen_test_layout_llama_context_params() {
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).pooling_type) as usize - ptr as usize },
-        28usize,
+        32usize,
         concat!(
             "Offset of field: ",
             stringify!(llama_context_params),
@@ -3201,7 +3212,7 @@ fn bindgen_test_layout_llama_context_params() {
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).rope_freq_base) as usize - ptr as usize },
-        32usize,
+        36usize,
         concat!(
             "Offset of field: ",
             stringify!(llama_context_params),
@@ -3211,7 +3222,7 @@ fn bindgen_test_layout_llama_context_params() {
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).rope_freq_scale) as usize - ptr as usize },
-        36usize,
+        40usize,
         concat!(
             "Offset of field: ",
             stringify!(llama_context_params),
@@ -3221,7 +3232,7 @@ fn bindgen_test_layout_llama_context_params() {
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).yarn_ext_factor) as usize - ptr as usize },
-        40usize,
+        44usize,
         concat!(
             "Offset of field: ",
             stringify!(llama_context_params),
@@ -3231,7 +3242,7 @@ fn bindgen_test_layout_llama_context_params() {
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).yarn_attn_factor) as usize - ptr as usize },
-        44usize,
+        48usize,
         concat!(
             "Offset of field: ",
             stringify!(llama_context_params),
@@ -3241,7 +3252,7 @@ fn bindgen_test_layout_llama_context_params() {
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).yarn_beta_fast) as usize - ptr as usize },
-        48usize,
+        52usize,
         concat!(
             "Offset of field: ",
             stringify!(llama_context_params),
@@ -3251,7 +3262,7 @@ fn bindgen_test_layout_llama_context_params() {
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).yarn_beta_slow) as usize - ptr as usize },
-        52usize,
+        56usize,
         concat!(
             "Offset of field: ",
             stringify!(llama_context_params),
@@ -3261,7 +3272,7 @@ fn bindgen_test_layout_llama_context_params() {
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).yarn_orig_ctx) as usize - ptr as usize },
-        56usize,
+        60usize,
         concat!(
             "Offset of field: ",
             stringify!(llama_context_params),
@@ -3271,7 +3282,7 @@ fn bindgen_test_layout_llama_context_params() {
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).defrag_thold) as usize - ptr as usize },
-        60usize,
+        64usize,
         concat!(
             "Offset of field: ",
             stringify!(llama_context_params),
@@ -3281,7 +3292,7 @@ fn bindgen_test_layout_llama_context_params() {
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).cb_eval) as usize - ptr as usize },
-        64usize,
+        72usize,
         concat!(
             "Offset of field: ",
             stringify!(llama_context_params),
@@ -3291,7 +3302,7 @@ fn bindgen_test_layout_llama_context_params() {
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).cb_eval_user_data) as usize - ptr as usize },
-        72usize,
+        80usize,
         concat!(
             "Offset of field: ",
             stringify!(llama_context_params),
@@ -3301,7 +3312,7 @@ fn bindgen_test_layout_llama_context_params() {
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).type_k) as usize - ptr as usize },
-        80usize,
+        88usize,
         concat!(
             "Offset of field: ",
             stringify!(llama_context_params),
@@ -3311,7 +3322,7 @@ fn bindgen_test_layout_llama_context_params() {
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).type_v) as usize - ptr as usize },
-        84usize,
+        92usize,
         concat!(
             "Offset of field: ",
             stringify!(llama_context_params),
@@ -3321,7 +3332,7 @@ fn bindgen_test_layout_llama_context_params() {
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).logits_all) as usize - ptr as usize },
-        88usize,
+        96usize,
         concat!(
             "Offset of field: ",
             stringify!(llama_context_params),
@@ -3331,7 +3342,7 @@ fn bindgen_test_layout_llama_context_params() {
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).embeddings) as usize - ptr as usize },
-        89usize,
+        97usize,
         concat!(
             "Offset of field: ",
             stringify!(llama_context_params),
@@ -3341,7 +3352,7 @@ fn bindgen_test_layout_llama_context_params() {
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).offload_kqv) as usize - ptr as usize },
-        90usize,
+        98usize,
         concat!(
             "Offset of field: ",
             stringify!(llama_context_params),
@@ -3351,7 +3362,7 @@ fn bindgen_test_layout_llama_context_params() {
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).abort_callback) as usize - ptr as usize },
-        96usize,
+        104usize,
         concat!(
             "Offset of field: ",
             stringify!(llama_context_params),
@@ -3361,7 +3372,7 @@ fn bindgen_test_layout_llama_context_params() {
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).abort_callback_data) as usize - ptr as usize },
-        104usize,
+        112usize,
         concat!(
             "Offset of field: ",
             stringify!(llama_context_params),
@@ -5112,6 +5123,7 @@ extern "C" {
     pub fn llama_get_model(ctx: *const llama_context) -> *const llama_model;
     pub fn llama_n_ctx(ctx: *const llama_context) -> u32;
     pub fn llama_n_batch(ctx: *const llama_context) -> u32;
+    pub fn llama_n_ubatch(ctx: *const llama_context) -> u32;
     pub fn llama_n_seq_max(ctx: *const llama_context) -> u32;
     pub fn llama_vocab_type(model: *const llama_model) -> llama_vocab_type;
     pub fn llama_rope_type(model: *const llama_model) -> llama_rope_type;
@@ -5233,6 +5245,7 @@ extern "C" {
         abort_callback: ggml_abort_callback,
         abort_callback_data: *mut ::std::os::raw::c_void,
     );
+    pub fn llama_synchronize(ctx: *mut llama_context);
     pub fn llama_get_logits(ctx: *mut llama_context) -> *mut f32;
     pub fn llama_get_logits_ith(ctx: *mut llama_context, i: i32) -> *mut f32;
     pub fn llama_get_embeddings(ctx: *mut llama_context) -> *mut f32;
