@@ -5133,6 +5133,7 @@ extern "C" {
     pub fn llama_n_vocab(model: *const llama_model) -> i32;
     pub fn llama_n_ctx_train(model: *const llama_model) -> i32;
     pub fn llama_n_embd(model: *const llama_model) -> i32;
+    pub fn llama_n_layer(model: *const llama_model) -> i32;
     pub fn llama_rope_freq_scale_train(model: *const llama_model) -> f32;
     pub fn llama_model_meta_val_str(
         model: *const llama_model,
@@ -5175,6 +5176,14 @@ extern "C" {
         scale: f32,
         path_base_model: *const ::std::os::raw::c_char,
         n_threads: i32,
+    ) -> i32;
+    pub fn llama_control_vector_apply(
+        lctx: *mut llama_context,
+        data: *const f32,
+        len: usize,
+        n_embd: i32,
+        il_start: i32,
+        il_end: i32,
     ) -> i32;
     pub fn llama_kv_cache_view_init(
         ctx: *const llama_context,
