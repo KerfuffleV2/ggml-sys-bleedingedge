@@ -494,6 +494,8 @@ pub struct llama_context_params {
 pub struct llama_model_quantize_params {
     pub nthread: i32,
     pub ftype: llama_ftype,
+    pub output_tensor_type: ggml_type,
+    pub token_embedding_type: ggml_type,
     pub allow_requantize: bool,
     pub quantize_output_tensor: bool,
     pub only_copy: bool,
@@ -3391,7 +3393,7 @@ fn bindgen_test_layout_llama_model_quantize_params() {
     let ptr = UNINIT.as_ptr();
     assert_eq!(
         ::std::mem::size_of::<llama_model_quantize_params>(),
-        24usize,
+        32usize,
         concat!("Size of: ", stringify!(llama_model_quantize_params))
     );
     assert_eq!(
@@ -3420,8 +3422,28 @@ fn bindgen_test_layout_llama_model_quantize_params() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).allow_requantize) as usize - ptr as usize },
+        unsafe { ::std::ptr::addr_of!((*ptr).output_tensor_type) as usize - ptr as usize },
         8usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(llama_model_quantize_params),
+            "::",
+            stringify!(output_tensor_type)
+        )
+    );
+    assert_eq!(
+        unsafe { ::std::ptr::addr_of!((*ptr).token_embedding_type) as usize - ptr as usize },
+        12usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(llama_model_quantize_params),
+            "::",
+            stringify!(token_embedding_type)
+        )
+    );
+    assert_eq!(
+        unsafe { ::std::ptr::addr_of!((*ptr).allow_requantize) as usize - ptr as usize },
+        16usize,
         concat!(
             "Offset of field: ",
             stringify!(llama_model_quantize_params),
@@ -3431,7 +3453,7 @@ fn bindgen_test_layout_llama_model_quantize_params() {
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).quantize_output_tensor) as usize - ptr as usize },
-        9usize,
+        17usize,
         concat!(
             "Offset of field: ",
             stringify!(llama_model_quantize_params),
@@ -3441,7 +3463,7 @@ fn bindgen_test_layout_llama_model_quantize_params() {
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).only_copy) as usize - ptr as usize },
-        10usize,
+        18usize,
         concat!(
             "Offset of field: ",
             stringify!(llama_model_quantize_params),
@@ -3451,7 +3473,7 @@ fn bindgen_test_layout_llama_model_quantize_params() {
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).pure_) as usize - ptr as usize },
-        11usize,
+        19usize,
         concat!(
             "Offset of field: ",
             stringify!(llama_model_quantize_params),
@@ -3461,7 +3483,7 @@ fn bindgen_test_layout_llama_model_quantize_params() {
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).imatrix) as usize - ptr as usize },
-        16usize,
+        24usize,
         concat!(
             "Offset of field: ",
             stringify!(llama_model_quantize_params),
@@ -5427,6 +5449,22 @@ extern "C" {
         n_past: i32,
         n_predict: i32,
     );
+    #[doc = " @details Build a split GGUF final path for this chunk.\n          llama_split_path(split_path, sizeof(split_path), \"/models/ggml-model-q4_0\", 2, 4) => split_path = \"/models/ggml-model-q4_0-00002-of-00004.gguf\""]
+    pub fn llama_split_path(
+        split_path: *mut ::std::os::raw::c_char,
+        maxlen: usize,
+        path_prefix: *const ::std::os::raw::c_char,
+        split_no: ::std::os::raw::c_int,
+        split_count: ::std::os::raw::c_int,
+    ) -> ::std::os::raw::c_int;
+    #[doc = " @details Extract the path prefix from the split_path if and only if the split_no and split_count match.\n          llama_split_prefix(split_prefix, 64, \"/models/ggml-model-q4_0-00002-of-00004.gguf\", 2, 4) => split_prefix = \"/models/ggml-model-q4_0\""]
+    pub fn llama_split_prefix(
+        split_prefix: *mut ::std::os::raw::c_char,
+        maxlen: usize,
+        split_path: *const ::std::os::raw::c_char,
+        split_no: ::std::os::raw::c_int,
+        split_count: ::std::os::raw::c_int,
+    ) -> ::std::os::raw::c_int;
     pub fn llama_get_timings(ctx: *mut llama_context) -> llama_timings;
     pub fn llama_print_timings(ctx: *mut llama_context);
     pub fn llama_reset_timings(ctx: *mut llama_context);
