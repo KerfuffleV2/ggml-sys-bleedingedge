@@ -5117,7 +5117,7 @@ extern "C" {
     pub fn ggml_cpu_has_fp16_va() -> ::std::os::raw::c_int;
     pub fn ggml_cpu_has_wasm_simd() -> ::std::os::raw::c_int;
     pub fn ggml_cpu_has_blas() -> ::std::os::raw::c_int;
-    pub fn ggml_cpu_has_cublas() -> ::std::os::raw::c_int;
+    pub fn ggml_cpu_has_cuda() -> ::std::os::raw::c_int;
     pub fn ggml_cpu_has_clblast() -> ::std::os::raw::c_int;
     pub fn ggml_cpu_has_vulkan() -> ::std::os::raw::c_int;
     pub fn ggml_cpu_has_kompute() -> ::std::os::raw::c_int;
