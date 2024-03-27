@@ -501,6 +501,7 @@ pub struct llama_model_quantize_params {
     pub only_copy: bool,
     pub pure_: bool,
     pub imatrix: *mut ::std::os::raw::c_void,
+    pub kv_overrides: *mut ::std::os::raw::c_void,
 }
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
@@ -594,7 +595,7 @@ pub const LLAMA_MAX_RNG_STATE: u32 = 65536;
 pub const LLAMA_FILE_MAGIC_GGLA: u32 = 1734831201;
 pub const LLAMA_FILE_MAGIC_GGSN: u32 = 1734833006;
 pub const LLAMA_SESSION_MAGIC: u32 = 1734833006;
-pub const LLAMA_SESSION_VERSION: u32 = 4;
+pub const LLAMA_SESSION_VERSION: u32 = 5;
 pub const ggml_status_GGML_STATUS_ALLOC_FAILED: ggml_status = -2;
 pub const ggml_status_GGML_STATUS_FAILED: ggml_status = -1;
 pub const ggml_status_GGML_STATUS_SUCCESS: ggml_status = 0;
@@ -626,7 +627,8 @@ pub const ggml_type_GGML_TYPE_I16: ggml_type = 25;
 pub const ggml_type_GGML_TYPE_I32: ggml_type = 26;
 pub const ggml_type_GGML_TYPE_I64: ggml_type = 27;
 pub const ggml_type_GGML_TYPE_F64: ggml_type = 28;
-pub const ggml_type_GGML_TYPE_COUNT: ggml_type = 29;
+pub const ggml_type_GGML_TYPE_IQ1_M: ggml_type = 29;
+pub const ggml_type_GGML_TYPE_COUNT: ggml_type = 30;
 pub const ggml_prec_GGML_PREC_DEFAULT: ggml_prec = 0;
 pub const ggml_prec_GGML_PREC_F32: ggml_prec = 1;
 pub const ggml_backend_type_GGML_BACKEND_TYPE_CPU: ggml_backend_type = 0;
@@ -654,6 +656,7 @@ pub const ggml_ftype_GGML_FTYPE_MOSTLY_IQ4_NL: ggml_ftype = 19;
 pub const ggml_ftype_GGML_FTYPE_MOSTLY_IQ3_S: ggml_ftype = 20;
 pub const ggml_ftype_GGML_FTYPE_MOSTLY_IQ2_S: ggml_ftype = 21;
 pub const ggml_ftype_GGML_FTYPE_MOSTLY_IQ4_XS: ggml_ftype = 22;
+pub const ggml_ftype_GGML_FTYPE_MOSTLY_IQ1_M: ggml_ftype = 23;
 pub const ggml_op_GGML_OP_NONE: ggml_op = 0;
 pub const ggml_op_GGML_OP_DUP: ggml_op = 1;
 pub const ggml_op_GGML_OP_ADD: ggml_op = 2;
@@ -848,6 +851,7 @@ pub const llama_ftype_LLAMA_FTYPE_MOSTLY_IQ3_M: llama_ftype = 27;
 pub const llama_ftype_LLAMA_FTYPE_MOSTLY_IQ2_S: llama_ftype = 28;
 pub const llama_ftype_LLAMA_FTYPE_MOSTLY_IQ2_M: llama_ftype = 29;
 pub const llama_ftype_LLAMA_FTYPE_MOSTLY_IQ4_XS: llama_ftype = 30;
+pub const llama_ftype_LLAMA_FTYPE_MOSTLY_IQ1_M: llama_ftype = 31;
 pub const llama_ftype_LLAMA_FTYPE_GUESSED: llama_ftype = 1024;
 pub const llama_rope_scaling_type_LLAMA_ROPE_SCALING_TYPE_UNSPECIFIED: llama_rope_scaling_type = -1;
 pub const llama_rope_scaling_type_LLAMA_ROPE_SCALING_TYPE_NONE: llama_rope_scaling_type = 0;
@@ -3393,7 +3397,7 @@ fn bindgen_test_layout_llama_model_quantize_params() {
     let ptr = UNINIT.as_ptr();
     assert_eq!(
         ::std::mem::size_of::<llama_model_quantize_params>(),
-        32usize,
+        40usize,
         concat!("Size of: ", stringify!(llama_model_quantize_params))
     );
     assert_eq!(
@@ -3489,6 +3493,16 @@ fn bindgen_test_layout_llama_model_quantize_params() {
             stringify!(llama_model_quantize_params),
             "::",
             stringify!(imatrix)
+        )
+    );
+    assert_eq!(
+        unsafe { ::std::ptr::addr_of!((*ptr).kv_overrides) as usize - ptr as usize },
+        32usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(llama_model_quantize_params),
+            "::",
+            stringify!(kv_overrides)
         )
     );
 }
@@ -3960,6 +3974,7 @@ extern "C" {
     pub fn ggml_is_transposed(tensor: *const ggml_tensor) -> bool;
     pub fn ggml_is_contiguous(tensor: *const ggml_tensor) -> bool;
     pub fn ggml_is_permuted(tensor: *const ggml_tensor) -> bool;
+    pub fn ggml_is_empty(tensor: *const ggml_tensor) -> bool;
     pub fn ggml_is_scalar(tensor: *const ggml_tensor) -> bool;
     pub fn ggml_is_vector(tensor: *const ggml_tensor) -> bool;
     pub fn ggml_is_matrix(tensor: *const ggml_tensor) -> bool;
