@@ -594,8 +594,11 @@ pub const LLAMA_DEFAULT_SEED: u32 = 4294967295;
 pub const LLAMA_MAX_RNG_STATE: u32 = 65536;
 pub const LLAMA_FILE_MAGIC_GGLA: u32 = 1734831201;
 pub const LLAMA_FILE_MAGIC_GGSN: u32 = 1734833006;
+pub const LLAMA_FILE_MAGIC_GGSQ: u32 = 1734833009;
 pub const LLAMA_SESSION_MAGIC: u32 = 1734833006;
 pub const LLAMA_SESSION_VERSION: u32 = 5;
+pub const LLAMA_STATE_SEQ_MAGIC: u32 = 1734833009;
+pub const LLAMA_STATE_SEQ_VERSION: u32 = 1;
 pub const ggml_status_GGML_STATUS_ALLOC_FAILED: ggml_status = -2;
 pub const ggml_status_GGML_STATUS_FAILED: ggml_status = -1;
 pub const ggml_status_GGML_STATUS_SUCCESS: ggml_status = 0;
@@ -5265,9 +5268,19 @@ extern "C" {
     pub fn llama_kv_cache_seq_pos_max(ctx: *mut llama_context, seq_id: llama_seq_id) -> llama_pos;
     pub fn llama_kv_cache_defrag(ctx: *mut llama_context);
     pub fn llama_kv_cache_update(ctx: *mut llama_context);
+    pub fn llama_state_get_size(ctx: *const llama_context) -> usize;
     pub fn llama_get_state_size(ctx: *const llama_context) -> usize;
+    pub fn llama_state_get_data(ctx: *mut llama_context, dst: *mut u8) -> usize;
     pub fn llama_copy_state_data(ctx: *mut llama_context, dst: *mut u8) -> usize;
+    pub fn llama_state_set_data(ctx: *mut llama_context, src: *const u8) -> usize;
     pub fn llama_set_state_data(ctx: *mut llama_context, src: *const u8) -> usize;
+    pub fn llama_state_load_file(
+        ctx: *mut llama_context,
+        path_session: *const ::std::os::raw::c_char,
+        tokens_out: *mut llama_token,
+        n_token_capacity: usize,
+        n_token_count_out: *mut usize,
+    ) -> bool;
     pub fn llama_load_session_file(
         ctx: *mut llama_context,
         path_session: *const ::std::os::raw::c_char,
@@ -5275,12 +5288,44 @@ extern "C" {
         n_token_capacity: usize,
         n_token_count_out: *mut usize,
     ) -> bool;
+    pub fn llama_state_save_file(
+        ctx: *mut llama_context,
+        path_session: *const ::std::os::raw::c_char,
+        tokens: *const llama_token,
+        n_token_count: usize,
+    ) -> bool;
     pub fn llama_save_session_file(
         ctx: *mut llama_context,
         path_session: *const ::std::os::raw::c_char,
         tokens: *const llama_token,
         n_token_count: usize,
     ) -> bool;
+    pub fn llama_state_seq_get_size(ctx: *mut llama_context, seq_id: llama_seq_id) -> usize;
+    pub fn llama_state_seq_get_data(
+        ctx: *mut llama_context,
+        dst: *mut u8,
+        seq_id: llama_seq_id,
+    ) -> usize;
+    pub fn llama_state_seq_set_data(
+        ctx: *mut llama_context,
+        src: *const u8,
+        dest_seq_id: llama_seq_id,
+    ) -> usize;
+    pub fn llama_state_seq_save_file(
+        ctx: *mut llama_context,
+        filepath: *const ::std::os::raw::c_char,
+        seq_id: llama_seq_id,
+        tokens: *const llama_token,
+        n_token_count: usize,
+    ) -> usize;
+    pub fn llama_state_seq_load_file(
+        ctx: *mut llama_context,
+        filepath: *const ::std::os::raw::c_char,
+        dest_seq_id: llama_seq_id,
+        tokens_out: *mut llama_token,
+        n_token_capacity: usize,
+        n_token_count_out: *mut usize,
+    ) -> usize;
     pub fn llama_batch_get_one(
         tokens: *mut llama_token,
         n_tokens: i32,
