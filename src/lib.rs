@@ -108,10 +108,10 @@ pub type ggml_log_callback = ::std::option::Option<
 >;
 pub type gguf_type = ::std::os::raw::c_uint;
 pub type ggml_to_float_t = ::std::option::Option<
-    unsafe extern "C" fn(x: *const ::std::os::raw::c_void, y: *mut f32, k: ::std::os::raw::c_int),
+    unsafe extern "C" fn(x: *const ::std::os::raw::c_void, y: *mut f32, k: i64),
 >;
 pub type ggml_from_float_t = ::std::option::Option<
-    unsafe extern "C" fn(x: *const f32, y: *mut ::std::os::raw::c_void, k: ::std::os::raw::c_int),
+    unsafe extern "C" fn(x: *const f32, y: *mut ::std::os::raw::c_void, k: i64),
 >;
 pub type ggml_vec_dot_t = ::std::option::Option<
     unsafe extern "C" fn(
@@ -3941,8 +3941,8 @@ extern "C" {
     pub fn ggml_status_to_string(status: ggml_status) -> *const ::std::os::raw::c_char;
     pub fn ggml_fp16_to_fp32(x: ggml_fp16_t) -> f32;
     pub fn ggml_fp32_to_fp16(x: f32) -> ggml_fp16_t;
-    pub fn ggml_fp16_to_fp32_row(x: *const ggml_fp16_t, y: *mut f32, n: ::std::os::raw::c_int);
-    pub fn ggml_fp32_to_fp16_row(x: *const f32, y: *mut ggml_fp16_t, n: ::std::os::raw::c_int);
+    pub fn ggml_fp16_to_fp32_row(x: *const ggml_fp16_t, y: *mut f32, n: i64);
+    pub fn ggml_fp32_to_fp16_row(x: *const f32, y: *mut ggml_fp16_t, n: i64);
     pub fn ggml_guid_matches(guid_a: ggml_guid_t, guid_b: ggml_guid_t) -> bool;
     pub fn ggml_time_init();
     pub fn ggml_time_ms() -> i64;
@@ -5001,9 +5001,9 @@ extern "C" {
         type_: ggml_type,
         src: *const f32,
         dst: *mut ::std::os::raw::c_void,
-        start: ::std::os::raw::c_int,
-        nrows: ::std::os::raw::c_int,
-        n_per_row: ::std::os::raw::c_int,
+        start: i64,
+        nrows: i64,
+        n_per_row: i64,
         imatrix: *const f32,
     ) -> usize;
     pub fn gguf_init_empty() -> *mut gguf_context;
