@@ -5356,6 +5356,8 @@ extern "C" {
     pub fn llama_token_get_type(model: *const llama_model, token: llama_token) -> llama_token_type;
     pub fn llama_token_bos(model: *const llama_model) -> llama_token;
     pub fn llama_token_eos(model: *const llama_model) -> llama_token;
+    pub fn llama_token_cls(model: *const llama_model) -> llama_token;
+    pub fn llama_token_sep(model: *const llama_model) -> llama_token;
     pub fn llama_token_nl(model: *const llama_model) -> llama_token;
     pub fn llama_add_bos_token(model: *const llama_model) -> i32;
     pub fn llama_add_eos_token(model: *const llama_model) -> i32;
@@ -5363,15 +5365,15 @@ extern "C" {
     pub fn llama_token_middle(model: *const llama_model) -> llama_token;
     pub fn llama_token_suffix(model: *const llama_model) -> llama_token;
     pub fn llama_token_eot(model: *const llama_model) -> llama_token;
-    #[doc = " @details Convert the provided text into tokens.\n @param tokens The tokens pointer must be large enough to hold the resulting tokens.\n @return Returns the number of tokens on success, no more than n_tokens_max\n @return Returns a negative number on failure - the number of tokens that would have been returned\n @param special Allow tokenizing special and/or control tokens which otherwise are not exposed and treated as plaintext.\n                Does not insert a leading space."]
+    #[doc = " @details Convert the provided text into tokens.\n @param tokens The tokens pointer must be large enough to hold the resulting tokens.\n @return Returns the number of tokens on success, no more than n_tokens_max\n @return Returns a negative number on failure - the number of tokens that would have been returned\n @param parse_special Allow tokenizing special and/or control tokens which otherwise are not exposed and treated\n                      as plaintext. Does not insert a leading space."]
     pub fn llama_tokenize(
         model: *const llama_model,
         text: *const ::std::os::raw::c_char,
         text_len: i32,
         tokens: *mut llama_token,
         n_tokens_max: i32,
-        add_bos: bool,
-        special: bool,
+        add_special: bool,
+        parse_special: bool,
     ) -> i32;
     pub fn llama_token_to_piece(
         model: *const llama_model,
