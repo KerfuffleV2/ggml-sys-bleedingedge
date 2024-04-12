@@ -5071,6 +5071,7 @@ extern "C" {
         i: ::std::os::raw::c_int,
     ) -> *mut ::std::os::raw::c_char;
     pub fn gguf_get_tensor_type(ctx: *const gguf_context, i: ::std::os::raw::c_int) -> ggml_type;
+    pub fn gguf_remove_key(ctx: *mut gguf_context, key: *const ::std::os::raw::c_char);
     pub fn gguf_set_val_u8(ctx: *mut gguf_context, key: *const ::std::os::raw::c_char, val: u8);
     pub fn gguf_set_val_i8(ctx: *mut gguf_context, key: *const ::std::os::raw::c_char, val: i8);
     pub fn gguf_set_val_u16(ctx: *mut gguf_context, key: *const ::std::os::raw::c_char, val: u16);
