@@ -4270,9 +4270,8 @@ extern "C" {
     pub fn ggml_mul_mat_id(
         ctx: *mut ggml_context,
         as_: *mut ggml_tensor,
-        ids: *mut ggml_tensor,
-        id: ::std::os::raw::c_int,
         b: *mut ggml_tensor,
+        ids: *mut ggml_tensor,
     ) -> *mut ggml_tensor;
     pub fn ggml_out_prod(
         ctx: *mut ggml_context,
