@@ -5354,6 +5354,7 @@ extern "C" {
     ) -> *const ::std::os::raw::c_char;
     pub fn llama_token_get_score(model: *const llama_model, token: llama_token) -> f32;
     pub fn llama_token_get_type(model: *const llama_model, token: llama_token) -> llama_token_type;
+    pub fn llama_token_is_eog(model: *const llama_model, token: llama_token) -> bool;
     pub fn llama_token_bos(model: *const llama_model) -> llama_token;
     pub fn llama_token_eos(model: *const llama_model) -> llama_token;
     pub fn llama_token_cls(model: *const llama_model) -> llama_token;
