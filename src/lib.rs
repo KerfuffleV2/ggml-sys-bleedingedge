@@ -5381,6 +5381,7 @@ extern "C" {
         token: llama_token,
         buf: *mut ::std::os::raw::c_char,
         length: i32,
+        special: bool,
     ) -> i32;
     #[doc = " Apply chat template. Inspired by hf apply_chat_template() on python.\n Both \"model\" and \"custom_template\" are optional, but at least one is required. \"custom_template\" has higher precedence than \"model\"\n NOTE: This function does not use a jinja parser. It only support a pre-defined list of template. See more: https://github.com/ggerganov/llama.cpp/wiki/Templates-supported-by-llama_chat_apply_template\n @param tmpl A Jinja template to use for this chat. If this is nullptr, the model’s default chat template will be used instead.\n @param chat Pointer to a list of multiple llama_chat_message\n @param n_msg Number of llama_chat_message in this chat\n @param add_ass Whether to end the prompt with the token(s) that indicate the start of an assistant message.\n @param buf A buffer to hold the output formatted prompt. The recommended alloc size is 2 * (total number of characters of all messages)\n @param length The size of the allocated buffer\n @return The total number of bytes of the formatted prompt. If is it larger than the size of buffer, you may need to re-alloc it and then re-apply the template."]
     pub fn llama_chat_apply_template(
