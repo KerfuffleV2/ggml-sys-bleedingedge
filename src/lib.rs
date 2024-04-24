@@ -5171,6 +5171,7 @@ extern "C" {
     pub fn llama_n_batch(ctx: *const llama_context) -> u32;
     pub fn llama_n_ubatch(ctx: *const llama_context) -> u32;
     pub fn llama_n_seq_max(ctx: *const llama_context) -> u32;
+    pub fn llama_pooling_type(ctx: *const llama_context) -> llama_pooling_type;
     pub fn llama_vocab_type(model: *const llama_model) -> llama_vocab_type;
     pub fn llama_rope_type(model: *const llama_model) -> llama_rope_type;
     pub fn llama_n_vocab(model: *const llama_model) -> i32;
@@ -5496,7 +5497,7 @@ extern "C" {
         ctx: *mut llama_context,
         candidates: *mut llama_token_data_array,
     ) -> llama_token;
-    #[doc = " @details Randomly selects a token from the candidates based on their probabilities."]
+    #[doc = " @details Randomly selects a token from the candidates based on their probabilities using the RNG of ctx."]
     pub fn llama_sample_token(
         ctx: *mut llama_context,
         candidates: *mut llama_token_data_array,
