@@ -500,6 +500,7 @@ pub struct llama_model_quantize_params {
     pub quantize_output_tensor: bool,
     pub only_copy: bool,
     pub pure_: bool,
+    pub keep_split: bool,
     pub imatrix: *mut ::std::os::raw::c_void,
     pub kv_overrides: *mut ::std::os::raw::c_void,
 }
@@ -3486,6 +3487,16 @@ fn bindgen_test_layout_llama_model_quantize_params() {
             stringify!(llama_model_quantize_params),
             "::",
             stringify!(pure_)
+        )
+    );
+    assert_eq!(
+        unsafe { ::std::ptr::addr_of!((*ptr).keep_split) as usize - ptr as usize },
+        20usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(llama_model_quantize_params),
+            "::",
+            stringify!(keep_split)
         )
     );
     assert_eq!(
