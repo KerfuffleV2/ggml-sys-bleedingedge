@@ -458,6 +458,7 @@ pub struct llama_model_params {
     pub vocab_only: bool,
     pub use_mmap: bool,
     pub use_mlock: bool,
+    pub check_tensors: bool,
 }
 #[repr(C)]
 #[derive(Debug, Copy, Clone, PartialOrd, PartialEq)]
@@ -3118,6 +3119,16 @@ fn bindgen_test_layout_llama_model_params() {
             stringify!(use_mlock)
         )
     );
+    assert_eq!(
+        unsafe { ::std::ptr::addr_of!((*ptr).check_tensors) as usize - ptr as usize },
+        51usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(llama_model_params),
+            "::",
+            stringify!(check_tensors)
+        )
+    );
 }
 #[test]
 fn bindgen_test_layout_llama_context_params() {
@@ -3996,6 +4007,11 @@ extern "C" {
     pub fn ggml_n_dims(tensor: *const ggml_tensor) -> ::std::os::raw::c_int;
     pub fn ggml_are_same_shape(t0: *const ggml_tensor, t1: *const ggml_tensor) -> bool;
     pub fn ggml_tensor_overhead() -> usize;
+    pub fn ggml_validate_row_data(
+        type_: ggml_type,
+        data: *const ::std::os::raw::c_void,
+        nbytes: usize,
+    ) -> bool;
     pub fn ggml_init(params: ggml_init_params) -> *mut ggml_context;
     pub fn ggml_free(ctx: *mut ggml_context);
     pub fn ggml_used_mem(ctx: *const ggml_context) -> usize;
