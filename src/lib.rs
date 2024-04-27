@@ -441,8 +441,8 @@ pub struct llama_batch {
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub struct llama_model_kv_override {
-    pub key: [::std::os::raw::c_char; 128usize],
     pub tag: llama_model_kv_override_type,
+    pub key: [::std::os::raw::c_char; 128usize],
     pub __bindgen_anon_1: llama_model_kv_override__bindgen_ty_1,
 }
 #[repr(C)]
@@ -875,6 +875,7 @@ pub const llama_model_kv_override_type_LLAMA_KV_OVERRIDE_TYPE_FLOAT: llama_model
     1;
 pub const llama_model_kv_override_type_LLAMA_KV_OVERRIDE_TYPE_BOOL: llama_model_kv_override_type =
     2;
+pub const llama_model_kv_override_type_LLAMA_KV_OVERRIDE_TYPE_STR: llama_model_kv_override_type = 3;
 pub const llama_gretype_LLAMA_GRETYPE_END: llama_gretype = 0;
 pub const llama_gretype_LLAMA_GRETYPE_ALT: llama_gretype = 1;
 pub const llama_gretype_LLAMA_GRETYPE_RULE_REF: llama_gretype = 2;
@@ -2924,7 +2925,7 @@ fn bindgen_test_layout_llama_model_kv_override__bindgen_ty_1() {
     let ptr = UNINIT.as_ptr();
     assert_eq!(
         ::std::mem::size_of::<llama_model_kv_override__bindgen_ty_1>(),
-        8usize,
+        128usize,
         concat!(
             "Size of: ",
             stringify!(llama_model_kv_override__bindgen_ty_1)
@@ -2939,33 +2940,43 @@ fn bindgen_test_layout_llama_model_kv_override__bindgen_ty_1() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).int_value) as usize - ptr as usize },
+        unsafe { ::std::ptr::addr_of!((*ptr).val_i64) as usize - ptr as usize },
         0usize,
         concat!(
             "Offset of field: ",
             stringify!(llama_model_kv_override__bindgen_ty_1),
             "::",
-            stringify!(int_value)
+            stringify!(val_i64)
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).float_value) as usize - ptr as usize },
+        unsafe { ::std::ptr::addr_of!((*ptr).val_f64) as usize - ptr as usize },
         0usize,
         concat!(
             "Offset of field: ",
             stringify!(llama_model_kv_override__bindgen_ty_1),
             "::",
-            stringify!(float_value)
+            stringify!(val_f64)
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).bool_value) as usize - ptr as usize },
+        unsafe { ::std::ptr::addr_of!((*ptr).val_bool) as usize - ptr as usize },
         0usize,
         concat!(
             "Offset of field: ",
             stringify!(llama_model_kv_override__bindgen_ty_1),
             "::",
-            stringify!(bool_value)
+            stringify!(val_bool)
+        )
+    );
+    assert_eq!(
+        unsafe { ::std::ptr::addr_of!((*ptr).val_str) as usize - ptr as usize },
+        0usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(llama_model_kv_override__bindgen_ty_1),
+            "::",
+            stringify!(val_str)
         )
     );
 }
@@ -2976,7 +2987,7 @@ fn bindgen_test_layout_llama_model_kv_override() {
     let ptr = UNINIT.as_ptr();
     assert_eq!(
         ::std::mem::size_of::<llama_model_kv_override>(),
-        144usize,
+        264usize,
         concat!("Size of: ", stringify!(llama_model_kv_override))
     );
     assert_eq!(
@@ -2985,23 +2996,23 @@ fn bindgen_test_layout_llama_model_kv_override() {
         concat!("Alignment of ", stringify!(llama_model_kv_override))
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).key) as usize - ptr as usize },
+        unsafe { ::std::ptr::addr_of!((*ptr).tag) as usize - ptr as usize },
         0usize,
         concat!(
             "Offset of field: ",
             stringify!(llama_model_kv_override),
             "::",
-            stringify!(key)
+            stringify!(tag)
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).tag) as usize - ptr as usize },
-        128usize,
+        unsafe { ::std::ptr::addr_of!((*ptr).key) as usize - ptr as usize },
+        4usize,
         concat!(
             "Offset of field: ",
             stringify!(llama_model_kv_override),
             "::",
-            stringify!(tag)
+            stringify!(key)
         )
     );
 }
@@ -3941,9 +3952,10 @@ fn bindgen_test_layout_llama_beams_state() {
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub union llama_model_kv_override__bindgen_ty_1 {
-    pub int_value: i64,
-    pub float_value: f64,
-    pub bool_value: bool,
+    pub val_i64: i64,
+    pub val_f64: f64,
+    pub val_bool: bool,
+    pub val_str: [::std::os::raw::c_char; 128usize],
 }
 impl ::std::fmt::Debug for llama_model_kv_override__bindgen_ty_1 {
     fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
@@ -3954,8 +3966,8 @@ impl ::std::fmt::Debug for llama_model_kv_override {
     fn fmt(&self, f: &mut ::std::fmt::Formatter<'_>) -> ::std::fmt::Result {
         write!(
             f,
-            "llama_model_kv_override {{ key: {:?}, tag: {:?}, __bindgen_anon_1: {:?} }}",
-            self.key, self.tag, self.__bindgen_anon_1
+            "llama_model_kv_override {{ tag: {:?}, key: {:?}, __bindgen_anon_1: {:?} }}",
+            self.tag, self.key, self.__bindgen_anon_1
         )
     }
 }
