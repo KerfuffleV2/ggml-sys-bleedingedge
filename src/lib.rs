@@ -488,6 +488,7 @@ pub struct llama_context_params {
     pub logits_all: bool,
     pub embeddings: bool,
     pub offload_kqv: bool,
+    pub flash_attn: bool,
     pub abort_callback: ggml_abort_callback,
     pub abort_callback_data: *mut ::std::os::raw::c_void,
 }
@@ -592,6 +593,7 @@ pub const GGML_EXIT_ABORTED: u32 = 1;
 pub const GGUF_MAGIC: &[u8; 5] = b"GGUF\0";
 pub const GGUF_VERSION: u32 = 3;
 pub const GGUF_DEFAULT_ALIGNMENT: u32 = 32;
+pub const GGML_KQ_MASK_PAD: u32 = 32;
 pub const GGML_N_TASKS_MAX: i32 = -1;
 pub const LLAMA_DEFAULT_SEED: u32 = 4294967295;
 pub const LLAMA_MAX_RNG_STATE: u32 = 65536;
@@ -599,7 +601,7 @@ pub const LLAMA_FILE_MAGIC_GGLA: u32 = 1734831201;
 pub const LLAMA_FILE_MAGIC_GGSN: u32 = 1734833006;
 pub const LLAMA_FILE_MAGIC_GGSQ: u32 = 1734833009;
 pub const LLAMA_SESSION_MAGIC: u32 = 1734833006;
-pub const LLAMA_SESSION_VERSION: u32 = 5;
+pub const LLAMA_SESSION_VERSION: u32 = 6;
 pub const LLAMA_STATE_SEQ_MAGIC: u32 = 1734833009;
 pub const LLAMA_STATE_SEQ_VERSION: u32 = 1;
 pub const ggml_status_GGML_STATUS_ALLOC_FAILED: ggml_status = -2;
@@ -720,26 +722,27 @@ pub const ggml_op_GGML_OP_TIMESTEP_EMBEDDING: ggml_op = 53;
 pub const ggml_op_GGML_OP_ARGSORT: ggml_op = 54;
 pub const ggml_op_GGML_OP_LEAKY_RELU: ggml_op = 55;
 pub const ggml_op_GGML_OP_FLASH_ATTN: ggml_op = 56;
-pub const ggml_op_GGML_OP_FLASH_FF: ggml_op = 57;
-pub const ggml_op_GGML_OP_FLASH_ATTN_BACK: ggml_op = 58;
-pub const ggml_op_GGML_OP_SSM_CONV: ggml_op = 59;
-pub const ggml_op_GGML_OP_SSM_SCAN: ggml_op = 60;
-pub const ggml_op_GGML_OP_WIN_PART: ggml_op = 61;
-pub const ggml_op_GGML_OP_WIN_UNPART: ggml_op = 62;
-pub const ggml_op_GGML_OP_GET_REL_POS: ggml_op = 63;
-pub const ggml_op_GGML_OP_ADD_REL_POS: ggml_op = 64;
-pub const ggml_op_GGML_OP_UNARY: ggml_op = 65;
-pub const ggml_op_GGML_OP_MAP_UNARY: ggml_op = 66;
-pub const ggml_op_GGML_OP_MAP_BINARY: ggml_op = 67;
-pub const ggml_op_GGML_OP_MAP_CUSTOM1_F32: ggml_op = 68;
-pub const ggml_op_GGML_OP_MAP_CUSTOM2_F32: ggml_op = 69;
-pub const ggml_op_GGML_OP_MAP_CUSTOM3_F32: ggml_op = 70;
-pub const ggml_op_GGML_OP_MAP_CUSTOM1: ggml_op = 71;
-pub const ggml_op_GGML_OP_MAP_CUSTOM2: ggml_op = 72;
-pub const ggml_op_GGML_OP_MAP_CUSTOM3: ggml_op = 73;
-pub const ggml_op_GGML_OP_CROSS_ENTROPY_LOSS: ggml_op = 74;
-pub const ggml_op_GGML_OP_CROSS_ENTROPY_LOSS_BACK: ggml_op = 75;
-pub const ggml_op_GGML_OP_COUNT: ggml_op = 76;
+pub const ggml_op_GGML_OP_FLASH_ATTN_EXT: ggml_op = 57;
+pub const ggml_op_GGML_OP_FLASH_FF: ggml_op = 58;
+pub const ggml_op_GGML_OP_FLASH_ATTN_BACK: ggml_op = 59;
+pub const ggml_op_GGML_OP_SSM_CONV: ggml_op = 60;
+pub const ggml_op_GGML_OP_SSM_SCAN: ggml_op = 61;
+pub const ggml_op_GGML_OP_WIN_PART: ggml_op = 62;
+pub const ggml_op_GGML_OP_WIN_UNPART: ggml_op = 63;
+pub const ggml_op_GGML_OP_GET_REL_POS: ggml_op = 64;
+pub const ggml_op_GGML_OP_ADD_REL_POS: ggml_op = 65;
+pub const ggml_op_GGML_OP_UNARY: ggml_op = 66;
+pub const ggml_op_GGML_OP_MAP_UNARY: ggml_op = 67;
+pub const ggml_op_GGML_OP_MAP_BINARY: ggml_op = 68;
+pub const ggml_op_GGML_OP_MAP_CUSTOM1_F32: ggml_op = 69;
+pub const ggml_op_GGML_OP_MAP_CUSTOM2_F32: ggml_op = 70;
+pub const ggml_op_GGML_OP_MAP_CUSTOM3_F32: ggml_op = 71;
+pub const ggml_op_GGML_OP_MAP_CUSTOM1: ggml_op = 72;
+pub const ggml_op_GGML_OP_MAP_CUSTOM2: ggml_op = 73;
+pub const ggml_op_GGML_OP_MAP_CUSTOM3: ggml_op = 74;
+pub const ggml_op_GGML_OP_CROSS_ENTROPY_LOSS: ggml_op = 75;
+pub const ggml_op_GGML_OP_CROSS_ENTROPY_LOSS_BACK: ggml_op = 76;
+pub const ggml_op_GGML_OP_COUNT: ggml_op = 77;
 pub const ggml_unary_op_GGML_UNARY_OP_ABS: ggml_unary_op = 0;
 pub const ggml_unary_op_GGML_UNARY_OP_SGN: ggml_unary_op = 1;
 pub const ggml_unary_op_GGML_UNARY_OP_NEG: ggml_unary_op = 2;
@@ -3405,6 +3408,16 @@ fn bindgen_test_layout_llama_context_params() {
         )
     );
     assert_eq!(
+        unsafe { ::std::ptr::addr_of!((*ptr).flash_attn) as usize - ptr as usize },
+        99usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(llama_context_params),
+            "::",
+            stringify!(flash_attn)
+        )
+    );
+    assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).abort_callback) as usize - ptr as usize },
         104usize,
         concat!(
@@ -4764,6 +4777,15 @@ extern "C" {
         v: *mut ggml_tensor,
         masked: bool,
     ) -> *mut ggml_tensor;
+    pub fn ggml_flash_attn_ext(
+        ctx: *mut ggml_context,
+        q: *mut ggml_tensor,
+        k: *mut ggml_tensor,
+        v: *mut ggml_tensor,
+        mask: *mut ggml_tensor,
+        scale: f32,
+    ) -> *mut ggml_tensor;
+    pub fn ggml_flash_attn_ext_set_prec(a: *mut ggml_tensor, prec: ggml_prec);
     pub fn ggml_flash_attn_back(
         ctx: *mut ggml_context,
         q: *mut ggml_tensor,
