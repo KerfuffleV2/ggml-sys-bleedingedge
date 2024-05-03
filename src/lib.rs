@@ -144,7 +144,7 @@ pub type llama_rope_scaling_type = ::std::os::raw::c_int;
 pub type llama_pooling_type = ::std::os::raw::c_int;
 pub type llama_split_mode = ::std::os::raw::c_uint;
 pub type llama_progress_callback = ::std::option::Option<
-    unsafe extern "C" fn(progress: f32, ctx: *mut ::std::os::raw::c_void) -> bool,
+    unsafe extern "C" fn(progress: f32, user_data: *mut ::std::os::raw::c_void) -> bool,
 >;
 pub type llama_model_kv_override_type = ::std::os::raw::c_uint;
 pub type llama_gretype = ::std::os::raw::c_uint;
