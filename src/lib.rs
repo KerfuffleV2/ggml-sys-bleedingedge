@@ -200,6 +200,11 @@ pub struct _IO_FILE {
     pub _unused2: [::std::os::raw::c_char; 20usize],
 }
 #[repr(C)]
+#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
+pub struct ggml_bf16_t {
+    pub bits: u16,
+}
+#[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct ggml_context {
     _unused: [u8; 0],
@@ -636,7 +641,8 @@ pub const ggml_type_GGML_TYPE_I32: ggml_type = 26;
 pub const ggml_type_GGML_TYPE_I64: ggml_type = 27;
 pub const ggml_type_GGML_TYPE_F64: ggml_type = 28;
 pub const ggml_type_GGML_TYPE_IQ1_M: ggml_type = 29;
-pub const ggml_type_GGML_TYPE_COUNT: ggml_type = 30;
+pub const ggml_type_GGML_TYPE_BF16: ggml_type = 30;
+pub const ggml_type_GGML_TYPE_COUNT: ggml_type = 31;
 pub const ggml_prec_GGML_PREC_DEFAULT: ggml_prec = 0;
 pub const ggml_prec_GGML_PREC_F32: ggml_prec = 1;
 pub const ggml_backend_type_GGML_BACKEND_TYPE_CPU: ggml_backend_type = 0;
@@ -665,6 +671,7 @@ pub const ggml_ftype_GGML_FTYPE_MOSTLY_IQ3_S: ggml_ftype = 20;
 pub const ggml_ftype_GGML_FTYPE_MOSTLY_IQ2_S: ggml_ftype = 21;
 pub const ggml_ftype_GGML_FTYPE_MOSTLY_IQ4_XS: ggml_ftype = 22;
 pub const ggml_ftype_GGML_FTYPE_MOSTLY_IQ1_M: ggml_ftype = 23;
+pub const ggml_ftype_GGML_FTYPE_MOSTLY_BF16: ggml_ftype = 24;
 pub const ggml_op_GGML_OP_NONE: ggml_op = 0;
 pub const ggml_op_GGML_OP_DUP: ggml_op = 1;
 pub const ggml_op_GGML_OP_ADD: ggml_op = 2;
@@ -872,6 +879,7 @@ pub const llama_ftype_LLAMA_FTYPE_MOSTLY_IQ2_S: llama_ftype = 28;
 pub const llama_ftype_LLAMA_FTYPE_MOSTLY_IQ2_M: llama_ftype = 29;
 pub const llama_ftype_LLAMA_FTYPE_MOSTLY_IQ4_XS: llama_ftype = 30;
 pub const llama_ftype_LLAMA_FTYPE_MOSTLY_IQ1_M: llama_ftype = 31;
+pub const llama_ftype_LLAMA_FTYPE_MOSTLY_BF16: llama_ftype = 32;
 pub const llama_ftype_LLAMA_FTYPE_GUESSED: llama_ftype = 1024;
 pub const llama_rope_scaling_type_LLAMA_ROPE_SCALING_TYPE_UNSPECIFIED: llama_rope_scaling_type = -1;
 pub const llama_rope_scaling_type_LLAMA_ROPE_SCALING_TYPE_NONE: llama_rope_scaling_type = 0;
@@ -1200,6 +1208,31 @@ fn bindgen_test_layout__IO_FILE() {
             stringify!(_IO_FILE),
             "::",
             stringify!(_unused2)
+        )
+    );
+}
+#[test]
+fn bindgen_test_layout_ggml_bf16_t() {
+    const UNINIT: ::std::mem::MaybeUninit<ggml_bf16_t> = ::std::mem::MaybeUninit::uninit();
+    let ptr = UNINIT.as_ptr();
+    assert_eq!(
+        ::std::mem::size_of::<ggml_bf16_t>(),
+        2usize,
+        concat!("Size of: ", stringify!(ggml_bf16_t))
+    );
+    assert_eq!(
+        ::std::mem::align_of::<ggml_bf16_t>(),
+        2usize,
+        concat!("Alignment of ", stringify!(ggml_bf16_t))
+    );
+    assert_eq!(
+        unsafe { ::std::ptr::addr_of!((*ptr).bits) as usize - ptr as usize },
+        0usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(ggml_bf16_t),
+            "::",
+            stringify!(bits)
         )
     );
 }
@@ -3998,10 +4031,14 @@ impl ::std::fmt::Debug for llama_model_kv_override {
 }
 extern "C" {
     pub fn ggml_status_to_string(status: ggml_status) -> *const ::std::os::raw::c_char;
-    pub fn ggml_fp16_to_fp32(x: ggml_fp16_t) -> f32;
-    pub fn ggml_fp32_to_fp16(x: f32) -> ggml_fp16_t;
-    pub fn ggml_fp16_to_fp32_row(x: *const ggml_fp16_t, y: *mut f32, n: i64);
-    pub fn ggml_fp32_to_fp16_row(x: *const f32, y: *mut ggml_fp16_t, n: i64);
+    pub fn ggml_fp16_to_fp32(arg1: ggml_fp16_t) -> f32;
+    pub fn ggml_fp32_to_fp16(arg1: f32) -> ggml_fp16_t;
+    pub fn ggml_fp16_to_fp32_row(arg1: *const ggml_fp16_t, arg2: *mut f32, arg3: i64);
+    pub fn ggml_fp32_to_fp16_row(arg1: *const f32, arg2: *mut ggml_fp16_t, arg3: i64);
+    pub fn ggml_fp32_to_bf16(arg1: f32) -> ggml_bf16_t;
+    pub fn ggml_bf16_to_fp32(arg1: ggml_bf16_t) -> f32;
+    pub fn ggml_bf16_to_fp32_row(arg1: *const ggml_bf16_t, arg2: *mut f32, arg3: i64);
+    pub fn ggml_fp32_to_bf16_row(arg1: *const f32, arg2: *mut ggml_bf16_t, arg3: i64);
     pub fn ggml_guid_matches(guid_a: ggml_guid_t, guid_b: ggml_guid_t) -> bool;
     pub fn ggml_time_init();
     pub fn ggml_time_ms() -> i64;
