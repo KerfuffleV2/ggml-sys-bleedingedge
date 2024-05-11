@@ -715,41 +715,40 @@ pub const ggml_op_GGML_OP_SOFT_MAX: ggml_op = 39;
 pub const ggml_op_GGML_OP_SOFT_MAX_BACK: ggml_op = 40;
 pub const ggml_op_GGML_OP_ROPE: ggml_op = 41;
 pub const ggml_op_GGML_OP_ROPE_BACK: ggml_op = 42;
-pub const ggml_op_GGML_OP_ALIBI: ggml_op = 43;
-pub const ggml_op_GGML_OP_CLAMP: ggml_op = 44;
-pub const ggml_op_GGML_OP_CONV_TRANSPOSE_1D: ggml_op = 45;
-pub const ggml_op_GGML_OP_IM2COL: ggml_op = 46;
-pub const ggml_op_GGML_OP_CONV_TRANSPOSE_2D: ggml_op = 47;
-pub const ggml_op_GGML_OP_POOL_1D: ggml_op = 48;
-pub const ggml_op_GGML_OP_POOL_2D: ggml_op = 49;
-pub const ggml_op_GGML_OP_UPSCALE: ggml_op = 50;
-pub const ggml_op_GGML_OP_PAD: ggml_op = 51;
-pub const ggml_op_GGML_OP_ARANGE: ggml_op = 52;
-pub const ggml_op_GGML_OP_TIMESTEP_EMBEDDING: ggml_op = 53;
-pub const ggml_op_GGML_OP_ARGSORT: ggml_op = 54;
-pub const ggml_op_GGML_OP_LEAKY_RELU: ggml_op = 55;
-pub const ggml_op_GGML_OP_FLASH_ATTN: ggml_op = 56;
-pub const ggml_op_GGML_OP_FLASH_ATTN_EXT: ggml_op = 57;
-pub const ggml_op_GGML_OP_FLASH_FF: ggml_op = 58;
-pub const ggml_op_GGML_OP_FLASH_ATTN_BACK: ggml_op = 59;
-pub const ggml_op_GGML_OP_SSM_CONV: ggml_op = 60;
-pub const ggml_op_GGML_OP_SSM_SCAN: ggml_op = 61;
-pub const ggml_op_GGML_OP_WIN_PART: ggml_op = 62;
-pub const ggml_op_GGML_OP_WIN_UNPART: ggml_op = 63;
-pub const ggml_op_GGML_OP_GET_REL_POS: ggml_op = 64;
-pub const ggml_op_GGML_OP_ADD_REL_POS: ggml_op = 65;
-pub const ggml_op_GGML_OP_UNARY: ggml_op = 66;
-pub const ggml_op_GGML_OP_MAP_UNARY: ggml_op = 67;
-pub const ggml_op_GGML_OP_MAP_BINARY: ggml_op = 68;
-pub const ggml_op_GGML_OP_MAP_CUSTOM1_F32: ggml_op = 69;
-pub const ggml_op_GGML_OP_MAP_CUSTOM2_F32: ggml_op = 70;
-pub const ggml_op_GGML_OP_MAP_CUSTOM3_F32: ggml_op = 71;
-pub const ggml_op_GGML_OP_MAP_CUSTOM1: ggml_op = 72;
-pub const ggml_op_GGML_OP_MAP_CUSTOM2: ggml_op = 73;
-pub const ggml_op_GGML_OP_MAP_CUSTOM3: ggml_op = 74;
-pub const ggml_op_GGML_OP_CROSS_ENTROPY_LOSS: ggml_op = 75;
-pub const ggml_op_GGML_OP_CROSS_ENTROPY_LOSS_BACK: ggml_op = 76;
-pub const ggml_op_GGML_OP_COUNT: ggml_op = 77;
+pub const ggml_op_GGML_OP_CLAMP: ggml_op = 43;
+pub const ggml_op_GGML_OP_CONV_TRANSPOSE_1D: ggml_op = 44;
+pub const ggml_op_GGML_OP_IM2COL: ggml_op = 45;
+pub const ggml_op_GGML_OP_CONV_TRANSPOSE_2D: ggml_op = 46;
+pub const ggml_op_GGML_OP_POOL_1D: ggml_op = 47;
+pub const ggml_op_GGML_OP_POOL_2D: ggml_op = 48;
+pub const ggml_op_GGML_OP_UPSCALE: ggml_op = 49;
+pub const ggml_op_GGML_OP_PAD: ggml_op = 50;
+pub const ggml_op_GGML_OP_ARANGE: ggml_op = 51;
+pub const ggml_op_GGML_OP_TIMESTEP_EMBEDDING: ggml_op = 52;
+pub const ggml_op_GGML_OP_ARGSORT: ggml_op = 53;
+pub const ggml_op_GGML_OP_LEAKY_RELU: ggml_op = 54;
+pub const ggml_op_GGML_OP_FLASH_ATTN: ggml_op = 55;
+pub const ggml_op_GGML_OP_FLASH_ATTN_EXT: ggml_op = 56;
+pub const ggml_op_GGML_OP_FLASH_FF: ggml_op = 57;
+pub const ggml_op_GGML_OP_FLASH_ATTN_BACK: ggml_op = 58;
+pub const ggml_op_GGML_OP_SSM_CONV: ggml_op = 59;
+pub const ggml_op_GGML_OP_SSM_SCAN: ggml_op = 60;
+pub const ggml_op_GGML_OP_WIN_PART: ggml_op = 61;
+pub const ggml_op_GGML_OP_WIN_UNPART: ggml_op = 62;
+pub const ggml_op_GGML_OP_GET_REL_POS: ggml_op = 63;
+pub const ggml_op_GGML_OP_ADD_REL_POS: ggml_op = 64;
+pub const ggml_op_GGML_OP_UNARY: ggml_op = 65;
+pub const ggml_op_GGML_OP_MAP_UNARY: ggml_op = 66;
+pub const ggml_op_GGML_OP_MAP_BINARY: ggml_op = 67;
+pub const ggml_op_GGML_OP_MAP_CUSTOM1_F32: ggml_op = 68;
+pub const ggml_op_GGML_OP_MAP_CUSTOM2_F32: ggml_op = 69;
+pub const ggml_op_GGML_OP_MAP_CUSTOM3_F32: ggml_op = 70;
+pub const ggml_op_GGML_OP_MAP_CUSTOM1: ggml_op = 71;
+pub const ggml_op_GGML_OP_MAP_CUSTOM2: ggml_op = 72;
+pub const ggml_op_GGML_OP_MAP_CUSTOM3: ggml_op = 73;
+pub const ggml_op_GGML_OP_CROSS_ENTROPY_LOSS: ggml_op = 74;
+pub const ggml_op_GGML_OP_CROSS_ENTROPY_LOSS_BACK: ggml_op = 75;
+pub const ggml_op_GGML_OP_COUNT: ggml_op = 76;
 pub const ggml_unary_op_GGML_UNARY_OP_ABS: ggml_unary_op = 0;
 pub const ggml_unary_op_GGML_UNARY_OP_SGN: ggml_unary_op = 1;
 pub const ggml_unary_op_GGML_UNARY_OP_NEG: ggml_unary_op = 2;
@@ -4578,7 +4577,6 @@ extern "C" {
         ctx: *mut ggml_context,
         a: *mut ggml_tensor,
         mask: *mut ggml_tensor,
-        pos: *mut ggml_tensor,
         scale: f32,
         max_bias: f32,
     ) -> *mut ggml_tensor;
@@ -4670,13 +4668,6 @@ extern "C" {
         beta_slow: f32,
         xpos_base: f32,
         xpos_down: bool,
-    ) -> *mut ggml_tensor;
-    pub fn ggml_alibi(
-        ctx: *mut ggml_context,
-        a: *mut ggml_tensor,
-        n_past: ::std::os::raw::c_int,
-        n_head: ::std::os::raw::c_int,
-        bias_max: f32,
     ) -> *mut ggml_tensor;
     pub fn ggml_clamp(
         ctx: *mut ggml_context,
@@ -4826,6 +4817,7 @@ extern "C" {
         v: *mut ggml_tensor,
         mask: *mut ggml_tensor,
         scale: f32,
+        max_bias: f32,
     ) -> *mut ggml_tensor;
     pub fn ggml_flash_attn_ext_set_prec(a: *mut ggml_tensor, prec: ggml_prec);
     pub fn ggml_flash_attn_back(
