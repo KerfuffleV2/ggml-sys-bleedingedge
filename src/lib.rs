@@ -756,12 +756,13 @@ pub const ggml_unary_op_GGML_UNARY_OP_STEP: ggml_unary_op = 3;
 pub const ggml_unary_op_GGML_UNARY_OP_TANH: ggml_unary_op = 4;
 pub const ggml_unary_op_GGML_UNARY_OP_ELU: ggml_unary_op = 5;
 pub const ggml_unary_op_GGML_UNARY_OP_RELU: ggml_unary_op = 6;
-pub const ggml_unary_op_GGML_UNARY_OP_GELU: ggml_unary_op = 7;
-pub const ggml_unary_op_GGML_UNARY_OP_GELU_QUICK: ggml_unary_op = 8;
-pub const ggml_unary_op_GGML_UNARY_OP_SILU: ggml_unary_op = 9;
-pub const ggml_unary_op_GGML_UNARY_OP_HARDSWISH: ggml_unary_op = 10;
-pub const ggml_unary_op_GGML_UNARY_OP_HARDSIGMOID: ggml_unary_op = 11;
-pub const ggml_unary_op_GGML_UNARY_OP_COUNT: ggml_unary_op = 12;
+pub const ggml_unary_op_GGML_UNARY_OP_SIGMOID: ggml_unary_op = 7;
+pub const ggml_unary_op_GGML_UNARY_OP_GELU: ggml_unary_op = 8;
+pub const ggml_unary_op_GGML_UNARY_OP_GELU_QUICK: ggml_unary_op = 9;
+pub const ggml_unary_op_GGML_UNARY_OP_SILU: ggml_unary_op = 10;
+pub const ggml_unary_op_GGML_UNARY_OP_HARDSWISH: ggml_unary_op = 11;
+pub const ggml_unary_op_GGML_UNARY_OP_HARDSIGMOID: ggml_unary_op = 12;
+pub const ggml_unary_op_GGML_UNARY_OP_COUNT: ggml_unary_op = 13;
 pub const ggml_object_type_GGML_OBJECT_TYPE_TENSOR: ggml_object_type = 0;
 pub const ggml_object_type_GGML_OBJECT_TYPE_GRAPH: ggml_object_type = 1;
 pub const ggml_object_type_GGML_OBJECT_TYPE_WORK_BUFFER: ggml_object_type = 2;
@@ -4320,6 +4321,8 @@ extern "C" {
         inplace: bool,
     ) -> *mut ggml_tensor;
     pub fn ggml_relu_inplace(ctx: *mut ggml_context, a: *mut ggml_tensor) -> *mut ggml_tensor;
+    pub fn ggml_sigmoid(ctx: *mut ggml_context, a: *mut ggml_tensor) -> *mut ggml_tensor;
+    pub fn ggml_sigmoid_inplace(ctx: *mut ggml_context, a: *mut ggml_tensor) -> *mut ggml_tensor;
     pub fn ggml_gelu(ctx: *mut ggml_context, a: *mut ggml_tensor) -> *mut ggml_tensor;
     pub fn ggml_gelu_inplace(ctx: *mut ggml_context, a: *mut ggml_tensor) -> *mut ggml_tensor;
     pub fn ggml_gelu_quick(ctx: *mut ggml_context, a: *mut ggml_tensor) -> *mut ggml_tensor;
