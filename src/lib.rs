@@ -458,6 +458,7 @@ pub struct llama_model_params {
     pub split_mode: llama_split_mode,
     pub main_gpu: i32,
     pub tensor_split: *const f32,
+    pub rpc_servers: *const ::std::os::raw::c_char,
     pub progress_callback: llama_progress_callback,
     pub progress_callback_user_data: *mut ::std::os::raw::c_void,
     pub kv_overrides: *const llama_model_kv_override,
@@ -3072,7 +3073,7 @@ fn bindgen_test_layout_llama_model_params() {
     let ptr = UNINIT.as_ptr();
     assert_eq!(
         ::std::mem::size_of::<llama_model_params>(),
-        56usize,
+        64usize,
         concat!("Size of: ", stringify!(llama_model_params))
     );
     assert_eq!(
@@ -3121,8 +3122,18 @@ fn bindgen_test_layout_llama_model_params() {
         )
     );
     assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).progress_callback) as usize - ptr as usize },
+        unsafe { ::std::ptr::addr_of!((*ptr).rpc_servers) as usize - ptr as usize },
         24usize,
+        concat!(
+            "Offset of field: ",
+            stringify!(llama_model_params),
+            "::",
+            stringify!(rpc_servers)
+        )
+    );
+    assert_eq!(
+        unsafe { ::std::ptr::addr_of!((*ptr).progress_callback) as usize - ptr as usize },
+        32usize,
         concat!(
             "Offset of field: ",
             stringify!(llama_model_params),
@@ -3132,7 +3143,7 @@ fn bindgen_test_layout_llama_model_params() {
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).progress_callback_user_data) as usize - ptr as usize },
-        32usize,
+        40usize,
         concat!(
             "Offset of field: ",
             stringify!(llama_model_params),
@@ -3142,7 +3153,7 @@ fn bindgen_test_layout_llama_model_params() {
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).kv_overrides) as usize - ptr as usize },
-        40usize,
+        48usize,
         concat!(
             "Offset of field: ",
             stringify!(llama_model_params),
@@ -3152,7 +3163,7 @@ fn bindgen_test_layout_llama_model_params() {
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).vocab_only) as usize - ptr as usize },
-        48usize,
+        56usize,
         concat!(
             "Offset of field: ",
             stringify!(llama_model_params),
@@ -3162,7 +3173,7 @@ fn bindgen_test_layout_llama_model_params() {
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).use_mmap) as usize - ptr as usize },
-        49usize,
+        57usize,
         concat!(
             "Offset of field: ",
             stringify!(llama_model_params),
@@ -3172,7 +3183,7 @@ fn bindgen_test_layout_llama_model_params() {
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).use_mlock) as usize - ptr as usize },
-        50usize,
+        58usize,
         concat!(
             "Offset of field: ",
             stringify!(llama_model_params),
@@ -3182,7 +3193,7 @@ fn bindgen_test_layout_llama_model_params() {
     );
     assert_eq!(
         unsafe { ::std::ptr::addr_of!((*ptr).check_tensors) as usize - ptr as usize },
-        51usize,
+        59usize,
         concat!(
             "Offset of field: ",
             stringify!(llama_model_params),
