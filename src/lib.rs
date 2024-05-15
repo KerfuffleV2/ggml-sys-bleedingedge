@@ -4093,6 +4093,7 @@ extern "C" {
     pub fn ggml_is_3d(tensor: *const ggml_tensor) -> bool;
     pub fn ggml_n_dims(tensor: *const ggml_tensor) -> ::std::os::raw::c_int;
     pub fn ggml_are_same_shape(t0: *const ggml_tensor, t1: *const ggml_tensor) -> bool;
+    pub fn ggml_are_same_stride(t0: *const ggml_tensor, t1: *const ggml_tensor) -> bool;
     pub fn ggml_tensor_overhead() -> usize;
     pub fn ggml_validate_row_data(
         type_: ggml_type,
