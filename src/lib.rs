@@ -4788,6 +4788,14 @@ extern "C" {
         a: *mut ggml_tensor,
         scale_factor: ::std::os::raw::c_int,
     ) -> *mut ggml_tensor;
+    pub fn ggml_upscale_ext(
+        ctx: *mut ggml_context,
+        a: *mut ggml_tensor,
+        ne0: ::std::os::raw::c_int,
+        ne1: ::std::os::raw::c_int,
+        ne2: ::std::os::raw::c_int,
+        ne3: ::std::os::raw::c_int,
+    ) -> *mut ggml_tensor;
     pub fn ggml_pad(
         ctx: *mut ggml_context,
         a: *mut ggml_tensor,
