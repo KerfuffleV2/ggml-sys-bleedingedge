@@ -5254,6 +5254,7 @@ extern "C" {
     pub fn ggml_cpu_has_avx512() -> ::std::os::raw::c_int;
     pub fn ggml_cpu_has_avx512_vbmi() -> ::std::os::raw::c_int;
     pub fn ggml_cpu_has_avx512_vnni() -> ::std::os::raw::c_int;
+    pub fn ggml_cpu_has_avx512_bf16() -> ::std::os::raw::c_int;
     pub fn ggml_cpu_has_fma() -> ::std::os::raw::c_int;
     pub fn ggml_cpu_has_neon() -> ::std::os::raw::c_int;
     pub fn ggml_cpu_has_arm_fma() -> ::std::os::raw::c_int;
