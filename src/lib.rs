@@ -4622,6 +4622,38 @@ extern "C" {
         mode: ::std::os::raw::c_int,
         n_ctx: ::std::os::raw::c_int,
     ) -> *mut ggml_tensor;
+    pub fn ggml_rope_ext(
+        ctx: *mut ggml_context,
+        a: *mut ggml_tensor,
+        b: *mut ggml_tensor,
+        c: *mut ggml_tensor,
+        n_dims: ::std::os::raw::c_int,
+        mode: ::std::os::raw::c_int,
+        n_ctx: ::std::os::raw::c_int,
+        n_orig_ctx: ::std::os::raw::c_int,
+        freq_base: f32,
+        freq_scale: f32,
+        ext_factor: f32,
+        attn_factor: f32,
+        beta_fast: f32,
+        beta_slow: f32,
+    ) -> *mut ggml_tensor;
+    pub fn ggml_rope_ext_inplace(
+        ctx: *mut ggml_context,
+        a: *mut ggml_tensor,
+        b: *mut ggml_tensor,
+        c: *mut ggml_tensor,
+        n_dims: ::std::os::raw::c_int,
+        mode: ::std::os::raw::c_int,
+        n_ctx: ::std::os::raw::c_int,
+        n_orig_ctx: ::std::os::raw::c_int,
+        freq_base: f32,
+        freq_scale: f32,
+        ext_factor: f32,
+        attn_factor: f32,
+        beta_fast: f32,
+        beta_slow: f32,
+    ) -> *mut ggml_tensor;
     pub fn ggml_rope_custom(
         ctx: *mut ggml_context,
         a: *mut ggml_tensor,
@@ -4660,18 +4692,11 @@ extern "C" {
         beta_slow: f32,
         dims: *mut f32,
     );
-    pub fn ggml_rope_xpos_inplace(
-        ctx: *mut ggml_context,
-        a: *mut ggml_tensor,
-        b: *mut ggml_tensor,
-        n_dims: ::std::os::raw::c_int,
-        base: f32,
-        down: bool,
-    ) -> *mut ggml_tensor;
     pub fn ggml_rope_back(
         ctx: *mut ggml_context,
         a: *mut ggml_tensor,
         b: *mut ggml_tensor,
+        c: *mut ggml_tensor,
         n_dims: ::std::os::raw::c_int,
         mode: ::std::os::raw::c_int,
         n_ctx: ::std::os::raw::c_int,
