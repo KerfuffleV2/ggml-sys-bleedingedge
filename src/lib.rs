@@ -5265,6 +5265,7 @@ extern "C" {
     pub fn ggml_cpu_has_avx512_bf16() -> ::std::os::raw::c_int;
     pub fn ggml_cpu_has_fma() -> ::std::os::raw::c_int;
     pub fn ggml_cpu_has_neon() -> ::std::os::raw::c_int;
+    pub fn ggml_cpu_has_sve() -> ::std::os::raw::c_int;
     pub fn ggml_cpu_has_arm_fma() -> ::std::os::raw::c_int;
     pub fn ggml_cpu_has_metal() -> ::std::os::raw::c_int;
     pub fn ggml_cpu_has_f16c() -> ::std::os::raw::c_int;
@@ -5495,6 +5496,7 @@ extern "C" {
     pub fn llama_token_get_score(model: *const llama_model, token: llama_token) -> f32;
     pub fn llama_token_get_type(model: *const llama_model, token: llama_token) -> llama_token_type;
     pub fn llama_token_is_eog(model: *const llama_model, token: llama_token) -> bool;
+    pub fn llama_token_is_control(model: *const llama_model, token: llama_token) -> bool;
     pub fn llama_token_bos(model: *const llama_model) -> llama_token;
     pub fn llama_token_eos(model: *const llama_model) -> llama_token;
     pub fn llama_token_cls(model: *const llama_model) -> llama_token;
