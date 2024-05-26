@@ -840,6 +840,7 @@ pub const llama_vocab_pre_type_LLAMA_VOCAB_PRE_TYPE_STABLELM2: llama_vocab_pre_t
 pub const llama_vocab_pre_type_LLAMA_VOCAB_PRE_TYPE_QWEN2: llama_vocab_pre_type = 11;
 pub const llama_vocab_pre_type_LLAMA_VOCAB_PRE_TYPE_OLMO: llama_vocab_pre_type = 12;
 pub const llama_vocab_pre_type_LLAMA_VOCAB_PRE_TYPE_DBRX: llama_vocab_pre_type = 13;
+pub const llama_vocab_pre_type_LLAMA_VOCAB_PRE_TYPE_SMAUG: llama_vocab_pre_type = 14;
 pub const llama_rope_type_LLAMA_ROPE_TYPE_NONE: llama_rope_type = -1;
 pub const llama_rope_type_LLAMA_ROPE_TYPE_NORM: llama_rope_type = 0;
 pub const llama_rope_type_LLAMA_ROPE_TYPE_NEOX: llama_rope_type = 2;
