@@ -4684,6 +4684,14 @@ extern "C" {
         beta_fast: f32,
         beta_slow: f32,
     ) -> *mut ggml_tensor;
+    pub fn ggml_rope_xpos_inplace(
+        ctx: *mut ggml_context,
+        a: *mut ggml_tensor,
+        b: *mut ggml_tensor,
+        n_dims: ::std::os::raw::c_int,
+        base: f32,
+        down: bool,
+    ) -> *mut ggml_tensor;
     pub fn ggml_rope_yarn_corr_dims(
         n_dims: ::std::os::raw::c_int,
         n_orig_ctx: ::std::os::raw::c_int,
@@ -5282,6 +5290,7 @@ extern "C" {
     pub fn ggml_cpu_has_sse3() -> ::std::os::raw::c_int;
     pub fn ggml_cpu_has_ssse3() -> ::std::os::raw::c_int;
     pub fn ggml_cpu_has_sycl() -> ::std::os::raw::c_int;
+    pub fn ggml_cpu_has_rpc() -> ::std::os::raw::c_int;
     pub fn ggml_cpu_has_vsx() -> ::std::os::raw::c_int;
     pub fn ggml_cpu_has_matmul_int8() -> ::std::os::raw::c_int;
     pub fn ggml_internal_get_type_traits(type_: ggml_type) -> ggml_type_traits_t;
