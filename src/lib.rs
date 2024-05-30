@@ -4084,7 +4084,6 @@ extern "C" {
     pub fn ggml_is_quantized(type_: ggml_type) -> bool;
     pub fn ggml_ftype_to_ggml_type(ftype: ggml_ftype) -> ggml_type;
     pub fn ggml_is_transposed(tensor: *const ggml_tensor) -> bool;
-    pub fn ggml_is_contiguous(tensor: *const ggml_tensor) -> bool;
     pub fn ggml_is_permuted(tensor: *const ggml_tensor) -> bool;
     pub fn ggml_is_empty(tensor: *const ggml_tensor) -> bool;
     pub fn ggml_is_scalar(tensor: *const ggml_tensor) -> bool;
@@ -4092,6 +4091,10 @@ extern "C" {
     pub fn ggml_is_matrix(tensor: *const ggml_tensor) -> bool;
     pub fn ggml_is_3d(tensor: *const ggml_tensor) -> bool;
     pub fn ggml_n_dims(tensor: *const ggml_tensor) -> ::std::os::raw::c_int;
+    pub fn ggml_is_contiguous(tensor: *const ggml_tensor) -> bool;
+    pub fn ggml_is_contiguous_0(tensor: *const ggml_tensor) -> bool;
+    pub fn ggml_is_contiguous_1(tensor: *const ggml_tensor) -> bool;
+    pub fn ggml_is_contiguous_2(tensor: *const ggml_tensor) -> bool;
     pub fn ggml_are_same_shape(t0: *const ggml_tensor, t1: *const ggml_tensor) -> bool;
     pub fn ggml_are_same_stride(t0: *const ggml_tensor, t1: *const ggml_tensor) -> bool;
     pub fn ggml_tensor_overhead() -> usize;
