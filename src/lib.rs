@@ -149,9 +149,6 @@ pub type llama_progress_callback = ::std::option::Option<
 >;
 pub type llama_model_kv_override_type = ::std::os::raw::c_uint;
 pub type llama_gretype = ::std::os::raw::c_uint;
-pub type llama_beam_search_callback_fn_t = ::std::option::Option<
-    unsafe extern "C" fn(callback_data: *mut ::std::os::raw::c_void, arg1: llama_beams_state),
->;
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct _IO_marker {
@@ -562,22 +559,6 @@ pub struct llama_kv_cache_view {
     pub cells_sequences: *mut llama_seq_id,
 }
 #[repr(C)]
-#[derive(Debug, Copy, Clone, PartialOrd, PartialEq)]
-pub struct llama_beam_view {
-    pub tokens: *const llama_token,
-    pub n_tokens: usize,
-    pub p: f32,
-    pub eob: bool,
-}
-#[repr(C)]
-#[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
-pub struct llama_beams_state {
-    pub beam_views: *mut llama_beam_view,
-    pub n_beams: usize,
-    pub common_prefix_length: usize,
-    pub last_call: bool,
-}
-#[repr(C)]
 #[derive(Debug, Copy, Clone, Hash, PartialOrd, Ord, PartialEq, Eq)]
 pub struct ggml_backend_buffer {
     pub _address: u8,
@@ -854,16 +835,16 @@ pub const llama_token_type_LLAMA_TOKEN_TYPE_USER_DEFINED: llama_token_type = 4;
 pub const llama_token_type_LLAMA_TOKEN_TYPE_UNUSED: llama_token_type = 5;
 pub const llama_token_type_LLAMA_TOKEN_TYPE_BYTE: llama_token_type = 6;
 pub const llama_token_attr_LLAMA_TOKEN_ATTR_UNDEFINED: llama_token_attr = 0;
-pub const llama_token_attr_LLAMA_TOKEN_ATTR_UNKNOWN: llama_token_attr = 2;
-pub const llama_token_attr_LLAMA_TOKEN_ATTR_UNUSED: llama_token_attr = 4;
-pub const llama_token_attr_LLAMA_TOKEN_ATTR_NORMAL: llama_token_attr = 8;
-pub const llama_token_attr_LLAMA_TOKEN_ATTR_CONTROL: llama_token_attr = 16;
-pub const llama_token_attr_LLAMA_TOKEN_ATTR_USER_DEFINED: llama_token_attr = 32;
-pub const llama_token_attr_LLAMA_TOKEN_ATTR_BYTE: llama_token_attr = 64;
-pub const llama_token_attr_LLAMA_TOKEN_ATTR_NORMALIZED: llama_token_attr = 128;
-pub const llama_token_attr_LLAMA_TOKEN_ATTR_LSTRIP: llama_token_attr = 256;
-pub const llama_token_attr_LLAMA_TOKEN_ATTR_RSTRIP: llama_token_attr = 512;
-pub const llama_token_attr_LLAMA_TOKEN_ATTR_SINGLE_WORD: llama_token_attr = 1024;
+pub const llama_token_attr_LLAMA_TOKEN_ATTR_UNKNOWN: llama_token_attr = 1;
+pub const llama_token_attr_LLAMA_TOKEN_ATTR_UNUSED: llama_token_attr = 2;
+pub const llama_token_attr_LLAMA_TOKEN_ATTR_NORMAL: llama_token_attr = 4;
+pub const llama_token_attr_LLAMA_TOKEN_ATTR_CONTROL: llama_token_attr = 8;
+pub const llama_token_attr_LLAMA_TOKEN_ATTR_USER_DEFINED: llama_token_attr = 16;
+pub const llama_token_attr_LLAMA_TOKEN_ATTR_BYTE: llama_token_attr = 32;
+pub const llama_token_attr_LLAMA_TOKEN_ATTR_NORMALIZED: llama_token_attr = 64;
+pub const llama_token_attr_LLAMA_TOKEN_ATTR_LSTRIP: llama_token_attr = 128;
+pub const llama_token_attr_LLAMA_TOKEN_ATTR_RSTRIP: llama_token_attr = 256;
+pub const llama_token_attr_LLAMA_TOKEN_ATTR_SINGLE_WORD: llama_token_attr = 512;
 pub const llama_ftype_LLAMA_FTYPE_ALL_F32: llama_ftype = 0;
 pub const llama_ftype_LLAMA_FTYPE_MOSTLY_F16: llama_ftype = 1;
 pub const llama_ftype_LLAMA_FTYPE_MOSTLY_Q4_0: llama_ftype = 2;
@@ -3922,116 +3903,6 @@ fn bindgen_test_layout_llama_kv_cache_view() {
         )
     );
 }
-#[test]
-fn bindgen_test_layout_llama_beam_view() {
-    const UNINIT: ::std::mem::MaybeUninit<llama_beam_view> = ::std::mem::MaybeUninit::uninit();
-    let ptr = UNINIT.as_ptr();
-    assert_eq!(
-        ::std::mem::size_of::<llama_beam_view>(),
-        24usize,
-        concat!("Size of: ", stringify!(llama_beam_view))
-    );
-    assert_eq!(
-        ::std::mem::align_of::<llama_beam_view>(),
-        8usize,
-        concat!("Alignment of ", stringify!(llama_beam_view))
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).tokens) as usize - ptr as usize },
-        0usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(llama_beam_view),
-            "::",
-            stringify!(tokens)
-        )
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).n_tokens) as usize - ptr as usize },
-        8usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(llama_beam_view),
-            "::",
-            stringify!(n_tokens)
-        )
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).p) as usize - ptr as usize },
-        16usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(llama_beam_view),
-            "::",
-            stringify!(p)
-        )
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).eob) as usize - ptr as usize },
-        20usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(llama_beam_view),
-            "::",
-            stringify!(eob)
-        )
-    );
-}
-#[test]
-fn bindgen_test_layout_llama_beams_state() {
-    const UNINIT: ::std::mem::MaybeUninit<llama_beams_state> = ::std::mem::MaybeUninit::uninit();
-    let ptr = UNINIT.as_ptr();
-    assert_eq!(
-        ::std::mem::size_of::<llama_beams_state>(),
-        32usize,
-        concat!("Size of: ", stringify!(llama_beams_state))
-    );
-    assert_eq!(
-        ::std::mem::align_of::<llama_beams_state>(),
-        8usize,
-        concat!("Alignment of ", stringify!(llama_beams_state))
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).beam_views) as usize - ptr as usize },
-        0usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(llama_beams_state),
-            "::",
-            stringify!(beam_views)
-        )
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).n_beams) as usize - ptr as usize },
-        8usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(llama_beams_state),
-            "::",
-            stringify!(n_beams)
-        )
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).common_prefix_length) as usize - ptr as usize },
-        16usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(llama_beams_state),
-            "::",
-            stringify!(common_prefix_length)
-        )
-    );
-    assert_eq!(
-        unsafe { ::std::ptr::addr_of!((*ptr).last_call) as usize - ptr as usize },
-        24usize,
-        concat!(
-            "Offset of field: ",
-            stringify!(llama_beams_state),
-            "::",
-            stringify!(last_call)
-        )
-    );
-}
 #[repr(C)]
 #[derive(Copy, Clone)]
 pub union llama_model_kv_override__bindgen_ty_1 {
@@ -5298,7 +5169,6 @@ extern "C" {
     pub fn ggml_cpu_has_wasm_simd() -> ::std::os::raw::c_int;
     pub fn ggml_cpu_has_blas() -> ::std::os::raw::c_int;
     pub fn ggml_cpu_has_cuda() -> ::std::os::raw::c_int;
-    pub fn ggml_cpu_has_clblast() -> ::std::os::raw::c_int;
     pub fn ggml_cpu_has_vulkan() -> ::std::os::raw::c_int;
     pub fn ggml_cpu_has_kompute() -> ::std::os::raw::c_int;
     pub fn ggml_cpu_has_gpublas() -> ::std::os::raw::c_int;
@@ -5674,15 +5544,6 @@ extern "C" {
         ctx: *mut llama_context,
         grammar: *mut llama_grammar,
         token: llama_token,
-    );
-    #[doc = " @details Deterministically returns entire sentence constructed by a beam search.\n @param ctx Pointer to the llama_context.\n @param callback Invoked for each iteration of the beam_search loop, passing in beams_state.\n @param callback_data A pointer that is simply passed back to callback.\n @param n_beams Number of beams to use.\n @param n_past Number of tokens already evaluated.\n @param n_predict Maximum number of tokens to predict. EOS may occur earlier."]
-    pub fn llama_beam_search(
-        ctx: *mut llama_context,
-        callback: llama_beam_search_callback_fn_t,
-        callback_data: *mut ::std::os::raw::c_void,
-        n_beams: usize,
-        n_past: i32,
-        n_predict: i32,
     );
     #[doc = " @details Build a split GGUF final path for this chunk.\n          llama_split_path(split_path, sizeof(split_path), \"/models/ggml-model-q4_0\", 2, 4) => split_path = \"/models/ggml-model-q4_0-00002-of-00004.gguf\""]
     pub fn llama_split_path(
