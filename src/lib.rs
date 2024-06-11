@@ -902,6 +902,7 @@ pub const llama_gretype_LLAMA_GRETYPE_CHAR: llama_gretype = 3;
 pub const llama_gretype_LLAMA_GRETYPE_CHAR_NOT: llama_gretype = 4;
 pub const llama_gretype_LLAMA_GRETYPE_CHAR_RNG_UPPER: llama_gretype = 5;
 pub const llama_gretype_LLAMA_GRETYPE_CHAR_ALT: llama_gretype = 6;
+pub const llama_gretype_LLAMA_GRETYPE_CHAR_ANY: llama_gretype = 7;
 #[test]
 fn bindgen_test_layout__IO_FILE() {
     const UNINIT: ::std::mem::MaybeUninit<_IO_FILE> = ::std::mem::MaybeUninit::uninit();
