@@ -887,6 +887,7 @@ pub const llama_pooling_type_LLAMA_POOLING_TYPE_UNSPECIFIED: llama_pooling_type 
 pub const llama_pooling_type_LLAMA_POOLING_TYPE_NONE: llama_pooling_type = 0;
 pub const llama_pooling_type_LLAMA_POOLING_TYPE_MEAN: llama_pooling_type = 1;
 pub const llama_pooling_type_LLAMA_POOLING_TYPE_CLS: llama_pooling_type = 2;
+pub const llama_pooling_type_LLAMA_POOLING_TYPE_LAST: llama_pooling_type = 3;
 pub const llama_split_mode_LLAMA_SPLIT_MODE_NONE: llama_split_mode = 0;
 pub const llama_split_mode_LLAMA_SPLIT_MODE_LAYER: llama_split_mode = 1;
 pub const llama_split_mode_LLAMA_SPLIT_MODE_ROW: llama_split_mode = 2;
@@ -5358,6 +5359,7 @@ extern "C" {
     pub fn llama_set_n_threads(ctx: *mut llama_context, n_threads: u32, n_threads_batch: u32);
     pub fn llama_n_threads(ctx: *mut llama_context) -> u32;
     pub fn llama_n_threads_batch(ctx: *mut llama_context) -> u32;
+    pub fn llama_set_embeddings(ctx: *mut llama_context, embeddings: bool);
     pub fn llama_set_causal_attn(ctx: *mut llama_context, causal_attn: bool);
     pub fn llama_set_abort_callback(
         ctx: *mut llama_context,
