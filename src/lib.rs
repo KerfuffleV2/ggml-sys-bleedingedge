@@ -788,6 +788,7 @@ pub const llama_vocab_type_LLAMA_VOCAB_TYPE_NONE: llama_vocab_type = 0;
 pub const llama_vocab_type_LLAMA_VOCAB_TYPE_SPM: llama_vocab_type = 1;
 pub const llama_vocab_type_LLAMA_VOCAB_TYPE_BPE: llama_vocab_type = 2;
 pub const llama_vocab_type_LLAMA_VOCAB_TYPE_WPM: llama_vocab_type = 3;
+pub const llama_vocab_type_LLAMA_VOCAB_TYPE_UGM: llama_vocab_type = 4;
 pub const llama_vocab_pre_type_LLAMA_VOCAB_PRE_TYPE_DEFAULT: llama_vocab_pre_type = 0;
 pub const llama_vocab_pre_type_LLAMA_VOCAB_PRE_TYPE_LLAMA3: llama_vocab_pre_type = 1;
 pub const llama_vocab_pre_type_LLAMA_VOCAB_PRE_TYPE_DEEPSEEK_LLM: llama_vocab_pre_type = 2;
@@ -5230,6 +5231,7 @@ extern "C" {
     pub fn llama_token_cls(model: *const llama_model) -> llama_token;
     pub fn llama_token_sep(model: *const llama_model) -> llama_token;
     pub fn llama_token_nl(model: *const llama_model) -> llama_token;
+    pub fn llama_token_pad(model: *const llama_model) -> llama_token;
     pub fn llama_add_bos_token(model: *const llama_model) -> i32;
     pub fn llama_add_eos_token(model: *const llama_model) -> i32;
     pub fn llama_token_prefix(model: *const llama_model) -> llama_token;
@@ -5263,6 +5265,7 @@ extern "C" {
         buf: *mut ::std::os::raw::c_char,
         length: i32,
     ) -> i32;
+    #[doc = " Initialize a llama_grammar.\n\n @param rules The rule elements of the grammar to initialize.\n @param n_rules The number of rules.\n @param start_rule_index The index of the root rule (the starting point of the grammar).\n @return The initialized llama_grammar or nullptr if initialization failed."]
     pub fn llama_grammar_init(
         rules: *mut *const llama_grammar_element,
         n_rules: usize,
